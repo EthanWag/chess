@@ -8,22 +8,26 @@ package chess;
  */
 public class ChessMove {
 
+    private ChessPosition myStartPosition;
+    private ChessPosition myEndPosition;
+    private ChessPiece.PieceType myPieceType; // double check and make sure that it valid syntax
+
+
     public ChessMove(ChessPosition startPosition, ChessPosition endPosition,
                      ChessPiece.PieceType promotionPiece) {
+
+        myStartPosition = startPosition;
+        myEndPosition = endPosition;
+        myPieceType = promotionPiece;
+
     }
 
-    /**
-     * @return ChessPosition of starting location
-     */
     public ChessPosition getStartPosition() {
-        throw new RuntimeException("Not implemented");
+        return myStartPosition;
     }
 
-    /**
-     * @return ChessPosition of ending location
-     */
     public ChessPosition getEndPosition() {
-        throw new RuntimeException("Not implemented");
+        return myEndPosition;
     }
 
     /**
@@ -33,6 +37,35 @@ public class ChessMove {
      * @return Type of piece to promote a pawn to, or null if no promotion
      */
     public ChessPiece.PieceType getPromotionPiece() {
-        throw new RuntimeException("Not implemented");
+        // This function does a bit more than expected, will let use know if it can change types
+        return null;
     }
+
+    // right now, this function makes sure that
+    public boolean AllowedMove(){
+        // might want to replace magic number, it stands for the boundries of the board
+        return true;
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 }

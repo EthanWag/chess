@@ -8,8 +8,12 @@ package chess;
  */
 public class ChessBoard {
 
+    private final int[][] myChessBoard;
+
+    private final int BOUNDRIES = 8;
+
     public ChessBoard() {
-        
+        myChessBoard = new int[BOUNDRIES][BOUNDRIES]; // check syntax on this intilzation
     }
 
     /**

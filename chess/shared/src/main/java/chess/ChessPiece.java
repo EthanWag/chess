@@ -1,6 +1,7 @@
 package chess;
 
 import java.util.Collection;
+import java.util.ArrayList;
 
 /**
  * Represents a single chess piece
@@ -10,7 +11,16 @@ import java.util.Collection;
  */
 public class ChessPiece {
 
+    //Instance-Field for Chess Piece object
+    private final ChessGame.TeamColor myColor;
+    private final PieceType myPieceType; // might need to change final but it maks sense, once this object is created, no need to change it
+    private boolean firstMove;
+
     public ChessPiece(ChessGame.TeamColor pieceColor, ChessPiece.PieceType type) {
+        // simple constructor
+        myColor = pieceColor;
+        myPieceType = type;
+        firstMove = true;
     }
 
     /**
@@ -29,14 +39,14 @@ public class ChessPiece {
      * @return Which team this chess piece belongs to
      */
     public ChessGame.TeamColor getTeamColor() {
-        throw new RuntimeException("Not implemented");
+        return myColor;
     }
 
     /**
      * @return which type of chess piece this piece is
      */
     public PieceType getPieceType() {
-        throw new RuntimeException("Not implemented");
+        return myPieceType;
     }
 
     /**
@@ -47,6 +57,179 @@ public class ChessPiece {
      * @return Collection of valid moves
      */
     public Collection<ChessMove> pieceMoves(ChessBoard board, ChessPosition myPosition) {
-        throw new RuntimeException("Not implemented");
+
+        Collection<ChessMove> possible_moves;
+
+        // decides moved based off of which kind of piece it is
+        switch(this.myPieceType){
+            case KING:
+                possible_moves = this.Poss_Move_King(board,myPosition);
+                break;
+            case QUEEN:
+                possible_moves = this.Poss_Move_Queen(board,myPosition);
+                break;
+            case BISHOP:
+                // stuff here
+                break;
+            case KNIGHT:
+                // stuff here
+                break;
+            case ROOK:
+                // stuff here
+                break;
+            case PAWN:
+                // stuff here
+                break;
+            default:
+                possible_moves = new ArrayList<ChessMove>();
+
+        }
+        // updates first move condition
+        this.firstMove = false;
+
+        return possible_moves;
     }
+
+    /*
+     * So for this function, given the chess board and the current position it will give you a list of moves you can make.
+     * Tips for starting,
+     * make some sort of switch statement that will go through and do the math for each piece and possible spots it can go too
+     * you may want to break this up a bit more, and create more methods to find spots or you might not.
+     *
+     * NOTE: take into account if there are other pieces that are currently in the way
+     *
+     */
+
+    // methods for possible moves for each of the pieces
+
+    public ArrayList<ChessMove> Poss_Move_King(ChessBoard board, ChessPosition myPosition){
+
+        // makes all the variables we need
+        ArrayList<ChessMove> possible_move_king = new ArrayList<ChessMove>();
+        int copyRow = myPosition.getRow();
+        int copyCol = myPosition.getColumn();
+        ChessPosition newPosition = new ChessPosition(copyRow,copyCol);
+
+        if(newPosition.up()){
+            ChessMove newMove = new ChessMove(myPosition,newPosition,myPieceType);
+            possible_move_king.add(newMove);
+            newPosition.setRow(copyRow);
+            newPosition.setCol(copyCol);
+        }
+        if(newPosition.upperRight()){
+            ChessMove newMove = new ChessMove(myPosition,newPosition,myPieceType);
+            possible_move_king.add(newMove);
+            newPosition.setRow(copyRow);
+            newPosition.setCol(copyCol);
+        }
+        if(newPosition.right()){
+            ChessMove newMove = new ChessMove(myPosition,newPosition,myPieceType);
+            possible_move_king.add(newMove);
+            newPosition.setRow(copyRow);
+            newPosition.setCol(copyCol);
+        }
+        if(newPosition.lowerRight()){
+            ChessMove newMove = new ChessMove(myPosition,newPosition,myPieceType);
+            possible_move_king.add(newMove);
+            newPosition.setRow(copyRow);
+            newPosition.setCol(copyCol);
+        }
+        if(newPosition.down()){
+            ChessMove newMove = new ChessMove(myPosition,newPosition,myPieceType);
+            possible_move_king.add(newMove);
+            newPosition.setRow(copyRow);
+            newPosition.setCol(copyCol);
+        }
+        if(newPosition.lowerLeft()){
+            ChessMove newMove = new ChessMove(myPosition,newPosition,myPieceType);
+            possible_move_king.add(newMove);
+            newPosition.setRow(copyRow);
+            newPosition.setCol(copyCol);
+        }
+        if(newPosition.left()){
+            ChessMove newMove = new ChessMove(myPosition,newPosition,myPieceType);
+            possible_move_king.add(newMove);
+            newPosition.setRow(copyRow);
+            newPosition.setCol(copyCol);
+        }
+        if(newPosition.upperLeft()){
+            ChessMove newMove = new ChessMove(myPosition,newPosition,myPieceType);
+            possible_move_king.add(newMove);
+            newPosition.setRow(copyRow);
+            newPosition.setCol(copyCol);
+        }
+        return possible_move_king;
+    }
+
+    public ArrayList<ChessMove> Poss_Move_Queen(ChessBoard board, ChessPosition myPosition){
+
+        // makes all the variables we need
+        ArrayList<ChessMove> possible_move_queen = new ArrayList<ChessMove>();
+        int copyRow = myPosition.getRow();
+        int copyCol = myPosition.getColumn();
+        ChessPosition newPosition = new ChessPosition(copyRow,copyCol);
+
+        while(newPosition.up()){
+            ChessMove newMove = new ChessMove(myPosition,newPosition,myPieceType);
+            possible_move_queen.add(newMove);
+        }
+        newPosition.setRow(copyRow);
+        newPosition.setCol(copyCol);
+
+        while(newPosition.upperRight()){
+            ChessMove newMove = new ChessMove(myPosition,newPosition,myPieceType);
+            possible_move_queen.add(newMove);
+        }
+        newPosition.setRow(copyRow);
+        newPosition.setCol(copyCol);
+
+        while(newPosition.right()){
+            ChessMove newMove = new ChessMove(myPosition,newPosition,myPieceType);
+            possible_move_queen.add(newMove);
+        }
+        newPosition.setRow(copyRow);
+        newPosition.setCol(copyCol);
+
+        while(newPosition.lowerRight()){
+            ChessMove newMove = new ChessMove(myPosition,newPosition,myPieceType);
+            possible_move_queen.add(newMove);
+        }
+        newPosition.setRow(copyRow);
+        newPosition.setCol(copyCol);
+
+        while(newPosition.down()){
+            ChessMove newMove = new ChessMove(myPosition,newPosition,myPieceType);
+            possible_move_queen.add(newMove);
+        }
+        newPosition.setRow(copyRow);
+        newPosition.setCol(copyCol);
+
+        while(newPosition.lowerLeft()){
+            ChessMove newMove = new ChessMove(myPosition,newPosition,myPieceType);
+            possible_move_queen.add(newMove);
+        }
+        newPosition.setRow(copyRow);
+        newPosition.setCol(copyCol);
+
+        while(newPosition.left()){
+            ChessMove newMove = new ChessMove(myPosition,newPosition,myPieceType);
+            possible_move_queen.add(newMove);
+        }
+        newPosition.setRow(copyRow);
+        newPosition.setCol(copyCol);
+
+        while(newPosition.upperLeft()){
+            ChessMove newMove = new ChessMove(myPosition,newPosition,myPieceType);
+            possible_move_queen.add(newMove);
+        }
+        newPosition.setRow(copyRow);
+        newPosition.setCol(copyCol);
+
+        return possible_move_queen;
+    }
+
+
+
+
+
 }
