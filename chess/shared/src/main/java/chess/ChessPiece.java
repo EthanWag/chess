@@ -22,6 +22,7 @@ public class ChessPiece {
         myPieceType = type;
         firstMove = true;
     }
+    // using default constructor for empty pieces
 
     /**
      * The various different chess piece options
