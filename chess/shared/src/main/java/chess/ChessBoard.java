@@ -8,9 +8,9 @@ package chess;
  */
 public class ChessBoard {
 
+    public final static ChessPiece EMPTY = null; // empty just means null, nothing special
     private final ChessPiece[][] myChessBoard;
     private final static int BOUNDRIES = 8;
-    private final static ChessPiece EMPTY = null; // used to repusent an empty space
 
     public ChessBoard() {
         myChessBoard = new ChessPiece[BOUNDRIES][BOUNDRIES]; // check syntax on this intilzation

@@ -45,48 +45,46 @@ public class ChessPosition {
         myRow--;
         return checkBounds();
     }
-
     public boolean down(){
         myRow++;
         return checkBounds();
     }
-
     public boolean right(){
         myCol++;
         return checkBounds();
     }
-
     public boolean left(){
         myCol--;
         return checkBounds();
     }
-
     public boolean upperRight(){
         myRow--;
         myCol++;
         return checkBounds();
     }
-
     public boolean upperLeft(){
         myRow--;
         myCol--;
         return checkBounds();
     }
-
     public boolean lowerRight(){
         myRow++;
         myCol++;
         return checkBounds();
     }
-
     public boolean lowerLeft(){
         myRow++;
         myCol--;
         return checkBounds();
     }
-
     // checks boundries, returns true if is within boundries and false if is out
     private boolean checkBounds(){
         return !(((myRow > 7)||(myRow < 0)) || ((myCol > 7) || (myCol < 0)));
     }
+
+    // this object us used to make a copy of a piece passed in
+    public ChessPosition deepCopy(){
+        return new ChessPosition(myRow,myCol);
+    }
+
 }
