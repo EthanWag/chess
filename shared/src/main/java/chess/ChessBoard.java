@@ -1,5 +1,8 @@
 package chess;
 
+import java.util.Objects;
+import java.util.Arrays;
+
 /**
  * A chessboard that can hold and rearrange chess pieces.
  * <p>
@@ -9,8 +12,8 @@ package chess;
 public class ChessBoard {
 
     public final static ChessPiece EMPTY = null; // empty just means null, nothing special
-    private final ChessPiece[][] myChessBoard;
     private final static int BOUNDRIES = 8;
+    private final ChessPiece[][] myChessBoard;
 
     public ChessBoard() {
         myChessBoard = new ChessPiece[BOUNDRIES][BOUNDRIES]; // check syntax on this intilzation
@@ -73,7 +76,22 @@ public class ChessBoard {
         // fills in the rest of the empty space
 
     }
-    //
+
+    // note that you need to edit this code, you should use a deepequals method that checks everything
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        ChessBoard that = (ChessBoard) o;
+        return Arrays.equals(myChessBoard, that.myChessBoard);
+    }
+
+    @Override
+    public int hashCode() {
+        return Arrays.hashCode(myChessBoard);
+    }
+
+    // fills the entire team given a color and two rows
     private void fillTeam(ChessGame.TeamColor color, int back_row, int pawn_row){
         // fills the back row with rooks, knights and bishops
         int back_col = 1;
