@@ -21,7 +21,7 @@ public class ChessMove {
 
         myStartPosition = startPosition;
         myEndPosition = endPosition;
-        myPieceType = promotionPiece;
+        myPieceType = promotionPiece; // what does this mean? what does it want me to set this as?
 
     }
 
@@ -185,30 +185,51 @@ public class ChessMove {
         return moves;
     }
 
-    public static ArrayList<ChessMove> allowKing(ChessBoard board, ChessPosition position){
+    public static ArrayList<ChessMove> allowKing(ChessBoard board, ChessPosition position, ChessGame.TeamColor color){
 
         ArrayList<ChessMove> moves = new ArrayList<>();
         ArrayList<ChessPosition> positions = new ArrayList<>();
 
         ChessPosition copyPos = position.deepCopy();
 
-        // this might not work so feel free to scrap this
-        if(copyPos.up()){positions.add(copyPos);}
-        if(copyPos.right()){positions.add(copyPos);}
-        if(copyPos.down()){positions.add(copyPos);}
-        if(copyPos.down()){positions.add(copyPos);}
-        if(copyPos.left()){positions.add(copyPos);}
-        if(copyPos.left()){positions.add(copyPos);}
-        if(copyPos.up()){positions.add(copyPos);}
-        if(copyPos.up()){positions.add(copyPos);}
+        // adds all possible moves the king can make
+        if(copyPos.up()){positions.add(copyPos.deepCopy());}
+        copyPos = position.deepCopy();
+        if(copyPos.upperRight()){positions.add(copyPos.deepCopy());}
+        copyPos = position.deepCopy();
+        if(copyPos.right()){positions.add(copyPos.deepCopy());}
+        copyPos = position.deepCopy();
+        if(copyPos.lowerRight()){positions.add(copyPos.deepCopy());}
+        copyPos = position.deepCopy();
+        if(copyPos.down()){positions.add(copyPos.deepCopy());}
+        copyPos = position.deepCopy();
+        if(copyPos.lowerLeft()){positions.add(copyPos.deepCopy());}
+        copyPos = position.deepCopy();
+        if(copyPos.left()){positions.add(copyPos.deepCopy());}
+        copyPos = position.deepCopy();
+        if(copyPos.upperLeft()){positions.add(copyPos.deepCopy());}
 
-        for(ChessPosition pos : positions){
-            ChessMove newMove = new ChessMove(position,pos,null);
-            moves.add(newMove);
+
+        // you may want to add to this function later on in the project, if that is the case, come back to
+        // this location
+
+        // this loops from the possible options and adds them if they are possible to make
+        for(ChessPosition pos: positions){
+
+            ChessPiece tempPiece = board.getPiece(pos);
+            if (tempPiece != ChessBoard.EMPTY) {
+                if(color != tempPiece.getTeamColor()){
+                    ChessMove newMove = new ChessMove(position,pos,null);
+                    moves.add(newMove);
+                }
+            }else{
+                ChessMove newMove = new ChessMove(position,pos,null);
+                moves.add(newMove);
+            }
         }
         return moves;
     }
-    public static ArrayList<ChessMove> allowKnight(ChessBoard board, ChessPosition position){
+    public static ArrayList<ChessMove> allowKnight(ChessBoard board, ChessPosition position, ChessGame.TeamColor color){
 
         ArrayList<ChessMove> moves = new ArrayList<>();
         // this might create a lot of garbage so come back to this
@@ -216,49 +237,121 @@ public class ChessMove {
 
         ChessPosition copyPos = position.deepCopy();
 
+        // checks to see if it can move up
         if(copyPos.up()){
-            ChessPosition copyPos1 = copyPos.deepCopy();
-            if(copyPos.upperLeft()){
-                positions.add(copyPos);
+            ChessPosition move_left = copyPos.deepCopy();
+            ChessPosition move_right = copyPos.deepCopy();
+
+            // checks both sides
+            if(move_left.upperLeft()){
+                ChessPiece tempPiece = board.getPiece(move_left);
+                if(tempPiece != ChessBoard.EMPTY){
+                    if(color != tempPiece.getTeamColor()){
+                        positions.add(move_left.deepCopy());
+                    }
+                }else{
+                    positions.add(move_left.deepCopy());
+                }
             }
-            if(copyPos1.upperRight()){
-                positions.add(copyPos1);
+
+            if(move_right.upperRight()){
+                ChessPiece tempPiece = board.getPiece(move_right);
+                if(tempPiece != ChessBoard.EMPTY){
+                    if(color != tempPiece.getTeamColor()){
+                        positions.add(move_right.deepCopy());
+                    }
+                }else{
+                    positions.add(move_right.deepCopy());
+                }
             }
         }
         copyPos = position.deepCopy();
 
         if(copyPos.right()){
-            ChessPosition copyPos1 = copyPos.deepCopy();
-            if(copyPos.upperRight()){
-                positions.add(copyPos);
+            ChessPosition move_up = copyPos.deepCopy();
+            ChessPosition move_down = copyPos.deepCopy();
+
+            // checks the left side from current position
+            if(move_up.upperRight()){
+                ChessPiece tempPiece = board.getPiece(move_up);
+                if(tempPiece != ChessBoard.EMPTY){
+                    if(color != tempPiece.getTeamColor()){
+                        positions.add(move_up.deepCopy());
+                    }
+                }else{
+                    positions.add(move_up.deepCopy());
+                }
             }
-            if(copyPos1.lowerRight()){
-                positions.add(copyPos1);
+            // checks the right side from current location
+            if(move_down.lowerRight()){
+                ChessPiece tempPiece = board.getPiece(move_down);
+                if(tempPiece != ChessBoard.EMPTY){
+                    if(color != tempPiece.getTeamColor()){
+                        positions.add(move_down.deepCopy());
+                    }
+                }else{
+                    positions.add(move_down.deepCopy());
+                }
             }
         }
+
         copyPos = position.deepCopy();
 
         if(copyPos.down()){
-            ChessPosition copyPos1 = copyPos.deepCopy();
-            if(copyPos.lowerLeft()){
-                positions.add(copyPos);
+            ChessPosition move_right = copyPos.deepCopy();
+            ChessPosition move_left = copyPos.deepCopy();
+
+            if(move_right.lowerRight()){
+                ChessPiece tempPiece = board.getPiece(move_right);
+                if(tempPiece != ChessBoard.EMPTY){
+                    if(color != tempPiece.getTeamColor()){
+                        positions.add(move_right.deepCopy());
+                    }
+                }else{
+                    positions.add(move_right.deepCopy());
+                }
             }
-            if(copyPos1.lowerRight()){
-                positions.add(copyPos1);
+            if(move_left.lowerLeft()){
+                ChessPiece tempPiece = board.getPiece(move_left);
+                if(tempPiece != ChessBoard.EMPTY){
+                    if(color != tempPiece.getTeamColor()){
+                        positions.add(move_left.deepCopy());
+                    }
+                }else{
+                    positions.add(move_left.deepCopy());
+                }
             }
         }
+
         copyPos = position.deepCopy();
 
         if(copyPos.left()){
-            ChessPosition copyPos1 = copyPos.deepCopy();
-            if(copyPos.upperLeft()){
-                positions.add(copyPos);
+            ChessPosition move_up = copyPos.deepCopy();
+            ChessPosition move_down = copyPos.deepCopy();
+
+            if(move_up.upperLeft()){
+                ChessPiece tempPiece = board.getPiece(move_up);
+                if(tempPiece != ChessBoard.EMPTY){
+                    if(color != tempPiece.getTeamColor()){
+                        positions.add(move_up.deepCopy());
+                    }
+                }else{
+                    positions.add(move_up.deepCopy());
+                }
             }
-            if(copyPos1.lowerLeft()){
-                positions.add(copyPos1);
+            if(move_down.lowerLeft()){
+                ChessPiece tempPiece = board.getPiece(move_down);
+                if(tempPiece != ChessBoard.EMPTY){
+                    if(color != tempPiece.getTeamColor()){
+                        positions.add(move_down.deepCopy());
+                    }
+                }else{
+                    positions.add(move_down.deepCopy());
+                }
             }
         }
 
+        // makes all the moves that a knight can make
         for(ChessPosition pos : positions){
             ChessMove newMove = new ChessMove(position,pos,null);
             moves.add(newMove);
@@ -273,26 +366,34 @@ public class ChessMove {
 
         ChessPosition copyPos = position.deepCopy();
 
-        // checks to see if it can move up once or twice??
+        // This takes care of the moves up that a pawn can make
         if(copyPos.up() && (board.getPiece(copyPos) == ChessBoard.EMPTY)){
-            positions.add(copyPos);
+            positions.add(copyPos.deepCopy());
 
             // checks to see if it can go up two spaces
             if(copyPos.up() && (board.getPiece(copyPos) == ChessBoard.EMPTY) && pawn.getFirstMove()){
-                positions.add(copyPos);
+                positions.add(copyPos.deepCopy());
             }
         }
-        copyPos = position.deepCopy();
-        ChessPosition copyPos1 = position.deepCopy();
 
-        copyPos.upperLeft();
-        copyPos1.upperRight();
+        ChessPosition attack_left = position.deepCopy();
+        ChessPosition attack_right = position.deepCopy();
 
-        if(board.getPiece(copyPos) != ChessBoard.EMPTY){
-            positions.add(copyPos);
+        // first makes sure that it is even a legal move
+        if(attack_left.upperLeft()) {
+            ChessPiece left_p = board.getPiece(attack_left);
+            // then checks if there is a piece there, then checks to see if it can take it
+            if((left_p != ChessBoard.EMPTY) && (pawn.getTeamColor() != left_p.getTeamColor())) {
+                positions.add(attack_left.deepCopy()); // if it can, it adds it as a possible move
+            }
         }
-        if(board.getPiece(copyPos1) != ChessBoard.EMPTY){
-            positions.add(copyPos1);
+
+        // Also checks to see if upperRight is a valid move, has the same logic as the left
+        if(attack_right.upperRight()) {
+            ChessPiece right_p = board.getPiece(attack_right);
+            if ((right_p != ChessBoard.EMPTY) && (pawn.getTeamColor() != right_p.getTeamColor())) {
+                positions.add(attack_right.deepCopy());
+            }
         }
         // NOTE: need to program case where pawn can get promoted
         for(ChessPosition pos: positions){

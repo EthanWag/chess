@@ -80,7 +80,7 @@ public class ChessPiece {
         // decides moved based off of which kind of piece it is
         switch(this.myPieceType){
             case KING:
-                possible_moves = ChessMove.allowKing(board, myPosition);
+                possible_moves = ChessMove.allowKing(board, myPosition,myColor);
                 break;
             case QUEEN:
                 possible_moves = ChessMove.allowVertical(board, myPosition,myColor);
@@ -90,7 +90,7 @@ public class ChessPiece {
                 possible_moves = ChessMove.allowDiagonal(board, myPosition,myColor);
                 break;
             case KNIGHT:
-                possible_moves = ChessMove.allowKnight(board, myPosition);
+                possible_moves = ChessMove.allowKnight(board, myPosition,myColor);
                 break;
             case ROOK:
                 possible_moves = ChessMove.allowVertical(board, myPosition,myColor);
