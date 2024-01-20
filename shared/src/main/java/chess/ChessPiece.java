@@ -1,6 +1,7 @@
 package chess;
 
 import chess.Piece_Calculators.*;
+import chess.ChessGame;
 
 import java.util.Collection;
 import java.util.ArrayList;
@@ -55,6 +56,17 @@ public class ChessPiece {
 
     public boolean getFirstMove() { return firstMove;}
 
+
+    public boolean pawnFirstMove(ChessPosition myPosition){
+
+        if(myColor == ChessGame.TeamColor.WHITE){
+            return (myPosition.getRow() == 2) && firstMove;
+        }else{
+            return (myPosition.getRow() == 6) && firstMove;
+        }
+    }
+
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -85,9 +97,6 @@ public class ChessPiece {
                 possible_moves = Calculator_King.findKingMoves(board, myPosition,myColor);
                 break;
             case QUEEN:
-                // possible_moves = ChessMove.allowVertical(board, myPosition,myColor);
-                // possible_moves.addAll(ChessMove.allowDiagonal(board,myPosition,myColor));
-
                 // This and the rest of the Calculator classes aren't objects, they strictly do math
                 possible_moves = Calculator_Queen.findQueenMoves(board, myPosition,myColor);
                 break;
@@ -101,7 +110,7 @@ public class ChessPiece {
                 possible_moves = Calculator_Rook.findRookMoves(board,myPosition,myColor);
                 break;
             case PAWN:
-                possible_moves = ChessMove.allowPawn(board, myPosition,this);
+                possible_moves = Calculator_Pawn.findPawnMoves(board, myPosition,this);
                 break;
             default:
                 possible_moves = new ArrayList<>();
@@ -109,7 +118,6 @@ public class ChessPiece {
         }
         // updates first move condition
         firstMove = false;
-
         return possible_moves;
     }
 
