@@ -1,5 +1,7 @@
 package chess;
 
+import chess.Piece_Calculators.*;
+
 import java.util.Collection;
 import java.util.ArrayList;
 import java.util.Objects;
@@ -80,20 +82,23 @@ public class ChessPiece {
         // decides moved based off of which kind of piece it is
         switch(this.myPieceType){
             case KING:
-                possible_moves = ChessMove.allowKing(board, myPosition,myColor);
+                possible_moves = Calculator_King.findKingMoves(board, myPosition,myColor);
                 break;
             case QUEEN:
-                possible_moves = ChessMove.allowVertical(board, myPosition,myColor);
-                possible_moves.addAll(ChessMove.allowDiagonal(board,myPosition,myColor));
+                // possible_moves = ChessMove.allowVertical(board, myPosition,myColor);
+                // possible_moves.addAll(ChessMove.allowDiagonal(board,myPosition,myColor));
+
+                // This and the rest of the Calculator classes aren't objects, they strictly do math
+                possible_moves = Calculator_Queen.findQueenMoves(board, myPosition,myColor);
                 break;
             case BISHOP:
-                possible_moves = ChessMove.allowDiagonal(board, myPosition,myColor);
+                possible_moves = Calculator_Bishop.findBishopMoves(board,myPosition,myColor);
                 break;
             case KNIGHT:
-                possible_moves = ChessMove.allowKnight(board, myPosition,myColor);
+                possible_moves = Calculator_Knight.findKnightMoves(board,myPosition,myColor);
                 break;
             case ROOK:
-                possible_moves = ChessMove.allowVertical(board, myPosition,myColor);
+                possible_moves = Calculator_Rook.findRookMoves(board,myPosition,myColor);
                 break;
             case PAWN:
                 possible_moves = ChessMove.allowPawn(board, myPosition,this);
@@ -107,4 +112,5 @@ public class ChessPiece {
 
         return possible_moves;
     }
+
 }
