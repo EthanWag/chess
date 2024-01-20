@@ -81,7 +81,7 @@ public class ChessPosition {
     }
     // checks boundries, returns true if is within boundries and false if is out
     private boolean checkBounds(){
-        return !(((myRow > 7)||(myRow < 0)) || ((myCol > 7) || (myCol < 0)));
+        return !(((myRow > 8)||(myRow < 1)) || ((myCol > 8) || (myCol < 1)));
     }
 
     // this object us used to make a copy of a piece passed in

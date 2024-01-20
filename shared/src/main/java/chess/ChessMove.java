@@ -50,7 +50,7 @@ public class ChessMove {
         return true;
     }
 
-    public static ArrayList<ChessMove> allowDiagonal(ChessBoard board, ChessPosition position){
+    public static ArrayList<ChessMove> allowDiagonal(ChessBoard board, ChessPosition position, ChessGame.TeamColor color){
 
         // this will be the list of moves that will be possible given the piece position, this is what will be returned
         ArrayList<ChessMove> moves = new ArrayList<>();
@@ -61,35 +61,55 @@ public class ChessMove {
         ChessPosition copyPos = position.deepCopy();
 
         while(copyPos.upperRight()){
-            positions.add(copyPos);
-            if(board.getPiece(copyPos) != board.EMPTY){
+            ChessPiece tempPiece = board.getPiece(copyPos); // should just be a pointer to checked piece
+            if(tempPiece != board.EMPTY){
+                if(color != tempPiece.getTeamColor()){
+                    positions.add(copyPos.deepCopy()); // takes the enemy piece if they are not the same color
+                }
                 break;
             }
+            positions.add(copyPos.deepCopy());
         }
         copyPos = position.deepCopy();
+
 
         while(copyPos.lowerRight()){
-            positions.add(copyPos);
-            if(board.getPiece(copyPos) != board.EMPTY){
+            ChessPiece tempPiece = board.getPiece(copyPos);
+            if(tempPiece != board.EMPTY){
+                if(color != tempPiece.getTeamColor()){
+                    positions.add(copyPos.deepCopy());
+                }
                 break;
             }
+            positions.add(copyPos.deepCopy());
         }
         copyPos = position.deepCopy();
+
 
         while(copyPos.lowerLeft()){
-            positions.add(copyPos);
-            if(board.getPiece(copyPos) != board.EMPTY){
+            ChessPiece tempPiece = board.getPiece(copyPos);
+            if(tempPiece != board.EMPTY){
+                if(color != tempPiece.getTeamColor()){
+                    positions.add(copyPos.deepCopy());
+                }
                 break;
             }
+            positions.add(copyPos.deepCopy());
         }
         copyPos = position.deepCopy();
 
+
         while(copyPos.upperLeft()){
-            positions.add(copyPos);
-            if(board.getPiece(copyPos) != board.EMPTY){
+            ChessPiece tempPiece = board.getPiece(copyPos);
+            if(tempPiece != board.EMPTY){
+                if(color != tempPiece.getTeamColor()){
+                    positions.add(copyPos.deepCopy());
+                }
                 break;
             }
+            positions.add(copyPos.deepCopy());
         }
+
 
         for(ChessPosition pos : positions){
             ChessMove newMove = new ChessMove(position,pos,null); // null because no pawn will ever use this function

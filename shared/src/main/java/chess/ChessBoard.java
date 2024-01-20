@@ -17,7 +17,8 @@ public class ChessBoard {
 
     public ChessBoard() {
         myChessBoard = new ChessPiece[BOUNDRIES][BOUNDRIES]; // check syntax on this intilzation
-        this.resetBoard();
+        //this.resetBoard();
+        this.fillEmptySpace();
     }
 
     /**
