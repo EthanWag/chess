@@ -44,12 +44,6 @@ public class ChessMove {
         return null;
     }
 
-    // right now, this function makes sure that
-    public boolean AllowedMove(){
-        // might want to replace magic number, it stands for the boundries of the board
-        return true;
-    }
-
     public static ArrayList<ChessMove> allowDiagonal(ChessBoard board, ChessPosition position, ChessGame.TeamColor color){
 
         // this will be the list of moves that will be possible given the piece position, this is what will be returned
@@ -60,6 +54,7 @@ public class ChessMove {
 
         ChessPosition copyPos = position.deepCopy();
 
+        // checks all positions in the upper right position of the current position
         while(copyPos.upperRight()){
             ChessPiece tempPiece = board.getPiece(copyPos); // should just be a pointer to checked piece
             if(tempPiece != board.EMPTY){
@@ -72,7 +67,7 @@ public class ChessMove {
         }
         copyPos = position.deepCopy();
 
-
+        // checks all positions in the lower right position of the current position
         while(copyPos.lowerRight()){
             ChessPiece tempPiece = board.getPiece(copyPos);
             if(tempPiece != board.EMPTY){
@@ -85,7 +80,7 @@ public class ChessMove {
         }
         copyPos = position.deepCopy();
 
-
+        // checks all positions in the lower left position of the current position
         while(copyPos.lowerLeft()){
             ChessPiece tempPiece = board.getPiece(copyPos);
             if(tempPiece != board.EMPTY){
@@ -98,7 +93,7 @@ public class ChessMove {
         }
         copyPos = position.deepCopy();
 
-
+        // checks all positions in the upper left position of the current position
         while(copyPos.upperLeft()){
             ChessPiece tempPiece = board.getPiece(copyPos);
             if(tempPiece != board.EMPTY){
@@ -110,7 +105,7 @@ public class ChessMove {
             positions.add(copyPos.deepCopy());
         }
 
-
+        // finally creates all the values
         for(ChessPosition pos : positions){
             ChessMove newMove = new ChessMove(position,pos,null); // null because no pawn will ever use this function
             moves.add(newMove);
@@ -120,7 +115,7 @@ public class ChessMove {
         return moves;
     }
 
-    public static ArrayList<ChessMove> allowVertical(ChessBoard board, ChessPosition position){
+    public static ArrayList<ChessMove> allowVertical(ChessBoard board, ChessPosition position, ChessGame.TeamColor color){
 
         // this will be the list of moves that will be possible given the piece position, this is what will be returned
         ArrayList<ChessMove> moves = new ArrayList<>();
@@ -130,37 +125,58 @@ public class ChessMove {
 
         ChessPosition copyPos = position.deepCopy();
 
+        // checks all up positions and gives possible moves
         while(copyPos.up()){
-            positions.add(copyPos);
-            if(board.getPiece(copyPos) != board.EMPTY){
+            ChessPiece tempPiece = board.getPiece(copyPos);
+            if(tempPiece != board.EMPTY){
+                if(color != tempPiece.getTeamColor()){
+                    positions.add(copyPos.deepCopy());
+                }
                 break;
             }
+            positions.add(copyPos.deepCopy());
         }
         copyPos = position.deepCopy();
 
+        // checks all right positions and gives possible moves
         while(copyPos.right()){
-            positions.add(copyPos);
+            ChessPiece tempPiece = board.getPiece(copyPos);
             if(board.getPiece(copyPos) != board.EMPTY){
+                if(color != tempPiece.getTeamColor()){
+                    positions.add(copyPos.deepCopy());
+                }
                 break;
             }
+            positions.add(copyPos.deepCopy());
         }
         copyPos = position.deepCopy();
 
+        // checks all down positions and gives possible moves
         while(copyPos.down()){
-            positions.add(copyPos);
+            ChessPiece tempPiece = board.getPiece(copyPos);
             if(board.getPiece(copyPos) != board.EMPTY){
+                if(color != tempPiece.getTeamColor()){
+                    positions.add(copyPos.deepCopy());
+                }
                 break;
             }
+            positions.add(copyPos.deepCopy());
         }
         copyPos = position.deepCopy();
 
+        // checks all left positions and gives possible moves
         while(copyPos.left()){
-            positions.add(copyPos);
+            ChessPiece tempPiece = board.getPiece(copyPos);
             if(board.getPiece(copyPos) != board.EMPTY){
+                if(color != tempPiece.getTeamColor()){
+                    positions.add(copyPos.deepCopy());
+                }
                 break;
             }
+            positions.add(copyPos.deepCopy());
         }
 
+        // finally creates all moves the a piece can make
         for(ChessPosition pos : positions){
             ChessMove newMove = new ChessMove(position,pos,null); // null because no pawn will ever use this function
             moves.add(newMove);

@@ -83,7 +83,7 @@ public class ChessPiece {
                 possible_moves = ChessMove.allowKing(board, myPosition);
                 break;
             case QUEEN:
-                possible_moves = ChessMove.allowVertical(board, myPosition);
+                possible_moves = ChessMove.allowVertical(board, myPosition,myColor);
                 possible_moves.addAll(ChessMove.allowDiagonal(board,myPosition,myColor));
                 break;
             case BISHOP:
@@ -93,7 +93,7 @@ public class ChessPiece {
                 possible_moves = ChessMove.allowKnight(board, myPosition);
                 break;
             case ROOK:
-                possible_moves = ChessMove.allowVertical(board, myPosition);
+                possible_moves = ChessMove.allowVertical(board, myPosition,myColor);
                 break;
             case PAWN:
                 possible_moves = ChessMove.allowPawn(board, myPosition,this);
