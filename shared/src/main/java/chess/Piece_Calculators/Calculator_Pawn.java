@@ -63,8 +63,6 @@ public class Calculator_Pawn {
     }
 
 
-
-
     private static ArrayList<ChessMove> allowPawnBlack(ChessBoard board, ChessPosition position, ChessPiece pawn){
 
         ArrayList<ChessMove> moves = new ArrayList<>();
@@ -103,7 +101,7 @@ public class Calculator_Pawn {
         }
         // NOTE: need to program case where pawn can get promoted
         for(ChessPosition pos: positions){
-            ChessMove newMove = new ChessMove(position,pos,null);
+            ChessMove newMove = new ChessMove(position,pos,ChessPiece.PieceType.PAWN); // what do you want me to put for this value? do I need to be concerned?
             moves.add(newMove);
         }
         return moves;
