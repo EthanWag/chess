@@ -62,7 +62,7 @@ public class ChessPiece {
         if(myColor == ChessGame.TeamColor.WHITE){
             return (myPosition.getRow() == 2) && firstMove;
         }else{
-            return (myPosition.getRow() == 6) && firstMove;
+            return (myPosition.getRow() == 7) && firstMove;
         }
     }
 

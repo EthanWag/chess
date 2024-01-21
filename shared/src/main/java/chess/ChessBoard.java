@@ -13,6 +13,7 @@ public class ChessBoard {
 
     public final static ChessPiece EMPTY = null; // empty just means null, nothing special
     private final static int BOUNDRIES = 8;
+    private final static int FLIP_VAL = 8;
     private final ChessPiece[][] myChessBoard;
 
     public ChessBoard() {
@@ -29,7 +30,8 @@ public class ChessBoard {
      */
     public void addPiece(ChessPosition position, ChessPiece piece) {
 
-        int row = position.getRow() - 1;
+        // flips the row correctly
+        int row = FLIP_VAL - position.getRow();
         int col = position.getColumn() - 1;
 
         // puts piece on board
@@ -37,7 +39,10 @@ public class ChessBoard {
     }
     // just adds a null values given a position
     public void addEmpty(ChessPosition position){
-        int row = position.getRow() - 1;
+
+
+        // flips the board correctly
+        int row = FLIP_VAL - position.getRow();
         int col = position.getColumn() - 1;
 
         myChessBoard[row][col] = EMPTY;
@@ -51,8 +56,11 @@ public class ChessBoard {
      * position
      */
     public ChessPiece getPiece(ChessPosition position) {
-        int row = position.getRow() - 1;
+
+        // flips the board correctly
+        int row = FLIP_VAL - position.getRow();
         int col = position.getColumn() - 1;
+
         return myChessBoard[row][col];
     }
 

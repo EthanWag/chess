@@ -44,11 +44,11 @@ public class ChessPosition {
 // methods for simple movements. does move and returns weather that move is within the gameboard limits
 
     public boolean up(){
-        myRow--;
+        myRow++;
         return checkBounds();
     }
     public boolean down(){
-        myRow++;
+        myRow--;
         return checkBounds();
     }
     public boolean right(){
@@ -60,22 +60,22 @@ public class ChessPosition {
         return checkBounds();
     }
     public boolean upperRight(){
-        myRow--;
+        myRow++;
         myCol++;
         return checkBounds();
     }
     public boolean upperLeft(){
-        myRow--;
+        myRow++;
         myCol--;
         return checkBounds();
     }
     public boolean lowerRight(){
-        myRow++;
+        myRow--;
         myCol++;
         return checkBounds();
     }
     public boolean lowerLeft(){
-        myRow++;
+        myRow--;
         myCol--;
         return checkBounds();
     }
