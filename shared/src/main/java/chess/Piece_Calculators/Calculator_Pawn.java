@@ -56,8 +56,19 @@ public class Calculator_Pawn {
         }
         // NOTE: need to program case where pawn can get promoted
         for(ChessPosition pos: positions){
-            ChessMove newMove = new ChessMove(position,pos,null);
-            moves.add(newMove);
+            if(pos.getRow() == 8){
+                ChessMove newMove = new ChessMove(position, pos, ChessPiece.PieceType.QUEEN);
+                moves.add(newMove);
+                newMove = new ChessMove(position, pos, ChessPiece.PieceType.KNIGHT);
+                moves.add(newMove);
+                newMove = new ChessMove(position, pos, ChessPiece.PieceType.BISHOP);
+                moves.add(newMove);
+                newMove = new ChessMove(position, pos, ChessPiece.PieceType.ROOK);
+                moves.add(newMove);
+            } else {
+                ChessMove newMove = new ChessMove(position, pos,null);
+                moves.add(newMove);
+            }
         }
         return moves;
     }
@@ -101,8 +112,19 @@ public class Calculator_Pawn {
         }
         // NOTE: need to program case where pawn can get promoted
         for(ChessPosition pos: positions){
-            ChessMove newMove = new ChessMove(position,pos,ChessPiece.PieceType.PAWN); // what do you want me to put for this value? do I need to be concerned?
-            moves.add(newMove);
+            if(pos.getRow() == 1){
+                ChessMove newMove = new ChessMove(position, pos, ChessPiece.PieceType.QUEEN);
+                moves.add(newMove);
+                newMove = new ChessMove(position, pos, ChessPiece.PieceType.KNIGHT);
+                moves.add(newMove);
+                newMove = new ChessMove(position, pos, ChessPiece.PieceType.BISHOP);
+                moves.add(newMove);
+                newMove = new ChessMove(position, pos, ChessPiece.PieceType.ROOK);
+                moves.add(newMove);
+            } else {
+                ChessMove newMove = new ChessMove(position, pos, null);
+                moves.add(newMove);
+            }
         }
         return moves;
     }
