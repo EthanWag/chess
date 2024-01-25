@@ -17,7 +17,7 @@ public class ChessPiece {
 
     //Instance-Field for Chess Piece object
     private final ChessGame.TeamColor myColor;
-    private final PieceType myPieceType; // might need to change final but it maks sense, once this object is created, no need to change it
+    private final PieceType myPieceType;
     private boolean firstMove;
 
     public ChessPiece(ChessGame.TeamColor pieceColor, ChessPiece.PieceType type) {
@@ -66,7 +66,6 @@ public class ChessPiece {
         }
     }
 
-
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -94,10 +93,10 @@ public class ChessPiece {
         // decides moved based off of which kind of piece it is
         switch(this.myPieceType){
             case KING:
+                // This and the rest of the Calculator classes aren't objects, they strictly do math
                 possible_moves = Calculator_King.findKingMoves(board, myPosition,myColor);
                 break;
             case QUEEN:
-                // This and the rest of the Calculator classes aren't objects, they strictly do math
                 possible_moves = Calculator_Queen.findQueenMoves(board, myPosition,myColor);
                 break;
             case BISHOP:

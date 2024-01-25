@@ -1,6 +1,5 @@
 package chess;
 
-import java.util.Objects;
 import java.util.Arrays;
 
 /**
@@ -12,12 +11,14 @@ import java.util.Arrays;
 public class ChessBoard {
 
     public final static ChessPiece EMPTY = null; // empty just means null, nothing special
-    private final static int BOUNDRIES = 8;
+    private final static int BOUNDARIES = 8;
     private final static int FLIP_VAL = 8;
+
+
     private final ChessPiece[][] myChessBoard;
 
     public ChessBoard() {
-        myChessBoard = new ChessPiece[BOUNDRIES][BOUNDRIES]; // check syntax on this intilzation
+        myChessBoard = new ChessPiece[BOUNDARIES][BOUNDARIES]; // check syntax on this intilzation
         //this.resetBoard();
         this.fillEmptySpace();
     }
@@ -70,6 +71,7 @@ public class ChessBoard {
      */
     public void resetBoard() {
 
+        // these will never change, these variables are just where the pieces are set up
         int WHITE_BACK_ROW = 1;
         int WHITE_FRONT_ROW= 2;
         int BLACK_FRONT_ROW = 7;
@@ -97,7 +99,7 @@ public class ChessBoard {
 
     @Override
     public int hashCode() {
-        return Arrays.hashCode(myChessBoard);
+        return Arrays.deepHashCode(myChessBoard);
     }
 
     // fills the entire team given a color and two rows
@@ -118,7 +120,7 @@ public class ChessBoard {
         this.addPiece(king_index,king);
 
         // fills pawns for both colors
-        for(int col = 1; col <= BOUNDRIES; col++){
+        for(int col = 1; col <= BOUNDARIES; col++){
             // creates the piece's index as well as the pawn and adds it to the board
             ChessPosition index = new ChessPosition(pawn_row,col);
             ChessPiece pawn = new ChessPiece(color, ChessPiece.PieceType.PAWN);
@@ -134,15 +136,15 @@ public class ChessBoard {
         this.addPiece(back_position,back_piece);
 
         // makes a mirror of piece one
-        ChessPosition back_position_mirror = new ChessPosition(back_row, (BOUNDRIES - (back_col-1)));
+        ChessPosition back_position_mirror = new ChessPosition(back_row, (BOUNDARIES - (back_col-1)));
         ChessPiece back_piece_mirror = new ChessPiece(color,type);
         this.addPiece(back_position_mirror, back_piece_mirror);
     }
 
     // just fills all slots on the board with null values
     private void fillEmptySpace(){
-        for(int i = 1; i <= BOUNDRIES; i++){
-            for(int k = 1; k <= BOUNDRIES; k++){
+        for(int i = 1; i <= BOUNDARIES; i++){
+            for(int k = 1; k <= BOUNDARIES; k++){
                 ChessPosition newPosition = new ChessPosition(i,k);
                 this.addEmpty(newPosition);
             }

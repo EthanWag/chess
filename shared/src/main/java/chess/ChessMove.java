@@ -13,7 +13,7 @@ public class ChessMove {
 
     private ChessPosition myStartPosition;
     private ChessPosition myEndPosition;
-    private ChessPiece.PieceType myPieceType; // double check and make sure that it valid syntax
+    private ChessPiece.PieceType myPromotionType;
 
 
     public ChessMove(ChessPosition startPosition, ChessPosition endPosition,
@@ -21,7 +21,7 @@ public class ChessMove {
 
         myStartPosition = startPosition;
         myEndPosition = endPosition;
-        myPieceType = promotionPiece; // what does this mean? what does it want me to set this as?
+        myPromotionType = promotionPiece; // what does this mean? what does it want me to set this as?
 
     }
 
@@ -39,21 +39,18 @@ public class ChessMove {
      *
      * @return Type of piece to promote a pawn to, or null if no promotion
      */
-    public ChessPiece.PieceType getPromotionPiece() {
-        // This function does a bit more than expected, will let use know if it can change types
-        return null;
-    }
+    public ChessPiece.PieceType getPromotionPiece() { return myPromotionType; }
 
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         ChessMove chessMove = (ChessMove) o;
-        return Objects.equals(myStartPosition, chessMove.myStartPosition) && Objects.equals(myEndPosition, chessMove.myEndPosition) && myPieceType == chessMove.myPieceType;
+        return Objects.equals(myStartPosition, chessMove.myStartPosition) && Objects.equals(myEndPosition, chessMove.myEndPosition) && myPromotionType == chessMove.myPromotionType;
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(myStartPosition, myEndPosition, myPieceType);
+        return Objects.hash(myStartPosition, myEndPosition, myPromotionType);
     }
 }

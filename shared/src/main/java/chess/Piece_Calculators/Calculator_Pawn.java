@@ -13,9 +13,7 @@ public class Calculator_Pawn {
         }else{
             pawn_moves = allowPawnBlack(myBoard, myPosition, myPawn);
         }
-
         return pawn_moves;
-
     }
 
     private static ArrayList<ChessMove> allowPawnWhite(ChessBoard board, ChessPosition position, ChessPiece pawn){
