@@ -12,11 +12,6 @@ public class ChessGame {
 
     public ChessGame() {
 
-
-        // ChessPiece myKing = new ChessPiece(getTeamTurn(), ChessPiece.PieceType.KING);
-
-
-
     }
 
     /**

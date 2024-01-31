@@ -1,6 +1,5 @@
 package chess;
 
-import java.util.ArrayList;
 import java.util.Objects;
 
 /**
@@ -11,9 +10,9 @@ import java.util.Objects;
  */
 public class ChessMove {
 
-    private ChessPosition myStartPosition;
-    private ChessPosition myEndPosition;
-    private ChessPiece.PieceType myPromotionType;
+    ChessPosition myStartPosition;
+    ChessPosition myEndPosition;
+    ChessPiece.PieceType myPromotionPiece;
 
 
     public ChessMove(ChessPosition startPosition, ChessPosition endPosition,
@@ -21,14 +20,20 @@ public class ChessMove {
 
         myStartPosition = startPosition;
         myEndPosition = endPosition;
-        myPromotionType = promotionPiece; // what does this mean? what does it want me to set this as?
+        myPromotionPiece = promotionPiece;
 
     }
 
+    /**
+     * @return ChessPosition of starting location
+     */
     public ChessPosition getStartPosition() {
         return myStartPosition;
     }
 
+    /**
+     * @return ChessPosition of ending location
+     */
     public ChessPosition getEndPosition() {
         return myEndPosition;
     }
@@ -39,18 +44,20 @@ public class ChessMove {
      *
      * @return Type of piece to promote a pawn to, or null if no promotion
      */
-    public ChessPiece.PieceType getPromotionPiece() { return myPromotionType; }
+    public ChessPiece.PieceType getPromotionPiece() {
+        return myPromotionPiece;
+    }
 
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         ChessMove chessMove = (ChessMove) o;
-        return Objects.equals(myStartPosition, chessMove.myStartPosition) && Objects.equals(myEndPosition, chessMove.myEndPosition) && myPromotionType == chessMove.myPromotionType;
+        return Objects.equals(myStartPosition, chessMove.myStartPosition) && Objects.equals(myEndPosition, chessMove.myEndPosition) && myPromotionPiece == chessMove.myPromotionPiece;
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(myStartPosition, myEndPosition, myPromotionType);
+        return Objects.hash(myStartPosition, myEndPosition, myPromotionPiece);
     }
 }

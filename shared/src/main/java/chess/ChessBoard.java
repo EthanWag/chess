@@ -10,17 +10,14 @@ import java.util.Arrays;
  */
 public class ChessBoard {
 
-    public final static ChessPiece EMPTY = null; // empty just means null, nothing special
-    private final static int BOUNDARIES = 8;
-    private final static int FLIP_VAL = 8;
-
-
-    private final ChessPiece[][] myChessBoard;
+    public static final ChessPiece EMPTY = null;
+    private static final int BOUNDRIES = 8;
+    private static final int FLIP_VAL = 8;
+    private final ChessPiece[][] board;
 
     public ChessBoard() {
-        myChessBoard = new ChessPiece[BOUNDARIES][BOUNDARIES]; // check syntax on this intilzation
-        //this.resetBoard();
-        this.fillEmptySpace();
+        board = new ChessPiece[BOUNDRIES][BOUNDRIES];
+        fillBoard();
     }
 
     /**
@@ -30,23 +27,10 @@ public class ChessBoard {
      * @param piece    the piece to add
      */
     public void addPiece(ChessPosition position, ChessPiece piece) {
-
-        // flips the row correctly
         int row = FLIP_VAL - position.getRow();
         int col = position.getColumn() - 1;
 
-        // puts piece on board
-        myChessBoard[row][col] = piece;
-    }
-    // just adds a null values given a position
-    public void addEmpty(ChessPosition position){
-
-
-        // flips the board correctly
-        int row = FLIP_VAL - position.getRow();
-        int col = position.getColumn() - 1;
-
-        myChessBoard[row][col] = EMPTY;
+        board[row][col] = piece;
     }
 
     /**
@@ -57,12 +41,39 @@ public class ChessBoard {
      * position
      */
     public ChessPiece getPiece(ChessPosition position) {
-
-        // flips the board correctly
         int row = FLIP_VAL - position.getRow();
         int col = position.getColumn() - 1;
 
-        return myChessBoard[row][col];
+        return board[row][col];
+    }
+
+    public void fillEmptySpot(ChessPosition position){
+        int row = FLIP_VAL - position.getRow();
+        int col = position.getColumn() - 1;
+
+        board[row][col] = EMPTY;
+    }
+
+    private void fillBoard(){
+        for(int i = 1; i <= BOUNDRIES; i++){
+            for(int k = 1; k <= BOUNDRIES; k++){
+                ChessPosition empty = new ChessPosition(i,k);
+                fillEmptySpot(empty);
+            }
+        }
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        ChessBoard that = (ChessBoard) o;
+        return Arrays.deepEquals(board, that.board);
+    }
+
+    @Override
+    public int hashCode() {
+        return Arrays.deepHashCode(board);
     }
 
     /**
@@ -71,83 +82,55 @@ public class ChessBoard {
      */
     public void resetBoard() {
 
-        // these will never change, these variables are just where the pieces are set up
-        int WHITE_BACK_ROW = 1;
-        int WHITE_FRONT_ROW= 2;
-        int BLACK_FRONT_ROW = 7;
-        int BLACK_BACK_ROW = 8;
+        int WHITE_PAWN = 2;
+        int WHITE_BACK = 1;
+        int BLACK_PAWN = 7;
+        int BLACK_BACK = 8;
 
-        this.fillEmptySpace();
+        fillBoard();
 
-        // creates white side
-        this.fillTeam(ChessGame.TeamColor.WHITE,WHITE_BACK_ROW,WHITE_FRONT_ROW);
-        // creates the black side
-        this.fillTeam(ChessGame.TeamColor.BLACK,BLACK_BACK_ROW,BLACK_FRONT_ROW);
-
-        // fills in the rest of the empty space
-
+        fillTeam(ChessGame.TeamColor.WHITE,WHITE_PAWN,WHITE_BACK);
+        fillTeam(ChessGame.TeamColor.BLACK,BLACK_PAWN,BLACK_BACK);
     }
 
-    // note that you need to edit this code, you should use a deepequals method that checks everything
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        ChessBoard that = (ChessBoard) o;
-        return Arrays.deepEquals(myChessBoard, that.myChessBoard);
-    }
+    private void fillTeam(ChessGame.TeamColor color, int pawn_row, int back_row){
 
-    @Override
-    public int hashCode() {
-        return Arrays.deepHashCode(myChessBoard);
-    }
+        int col = 1;
+        // mirrors all first pieces
+        mirrorSide(color, ChessPiece.PieceType.ROOK,back_row,col++);
+        mirrorSide(color, ChessPiece.PieceType.KNIGHT,back_row,col++);
+        mirrorSide(color, ChessPiece.PieceType.BISHOP,back_row,col++);
 
-    // fills the entire team given a color and two rows
-    private void fillTeam(ChessGame.TeamColor color, int back_row, int pawn_row){
-        // fills the back row with rooks, knights and bishops
-        int back_col = 1;
-        mirrorBackRow(color,ChessPiece.PieceType.ROOK,back_row,back_col++);
-        mirrorBackRow(color,ChessPiece.PieceType.KNIGHT,back_row,back_col++);
-        mirrorBackRow(color,ChessPiece.PieceType.BISHOP,back_row,back_col++);
+        // creates queen
+        ChessPosition queen_pos = new ChessPosition(back_row,col++);
+        ChessPiece queen = new ChessPiece(color, ChessPiece.PieceType.QUEEN);
+        addPiece(queen_pos,queen);
 
-        // puts in king and queen in the order they are supposed to come in
-        ChessPosition queen_index = new ChessPosition(back_row,back_col++);
-        ChessPiece queen = new ChessPiece(color,ChessPiece.PieceType.QUEEN);
-        this.addPiece(queen_index,queen);
+        // creates king
+        ChessPosition king_pos = new ChessPosition(back_row,col);
+        ChessPiece king = new ChessPiece(color, ChessPiece.PieceType.KING);
+        addPiece(king_pos,king);
 
-        ChessPosition king_index = new ChessPosition(back_row,back_col);
-        ChessPiece king = new ChessPiece(color,ChessPiece.PieceType.KING);
-        this.addPiece(king_index,king);
-
-        // fills pawns for both colors
-        for(int col = 1; col <= BOUNDARIES; col++){
-            // creates the piece's index as well as the pawn and adds it to the board
-            ChessPosition index = new ChessPosition(pawn_row,col);
+        for(int i = 1; i <= BOUNDRIES; i++){
+            ChessPosition pawn_pos = new ChessPosition(pawn_row,i);
             ChessPiece pawn = new ChessPiece(color, ChessPiece.PieceType.PAWN);
-            this.addPiece(index,pawn);
+            addPiece(pawn_pos,pawn);
         }
     }
 
-    // Fills the back row and mirrors all pieces. Rook,Knight,Bishop are the same both sides
-    private void mirrorBackRow(ChessGame.TeamColor color,ChessPiece.PieceType type, int back_row, int back_col){
-        // creates piece one
-        ChessPosition back_position = new ChessPosition(back_row,back_col);
-        ChessPiece back_piece = new ChessPiece(color,type);
-        this.addPiece(back_position,back_piece);
+    private void mirrorSide(ChessGame.TeamColor color,
+                            ChessPiece.PieceType type, int row, int col){
 
-        // makes a mirror of piece one
-        ChessPosition back_position_mirror = new ChessPosition(back_row, (BOUNDARIES - (back_col-1)));
-        ChessPiece back_piece_mirror = new ChessPiece(color,type);
-        this.addPiece(back_position_mirror, back_piece_mirror);
+        ChessPosition pos = new ChessPosition(row,col);
+        ChessPiece new_piece = new ChessPiece(color,type);
+        addPiece(pos,new_piece);
+
+        // mirrors other side
+
+        ChessPosition other_pos = new ChessPosition(row,(BOUNDRIES - (col - 1)));
+        ChessPiece other_piece = new ChessPiece(color,type);
+        addPiece(other_pos,other_piece);
+
     }
 
-    // just fills all slots on the board with null values
-    private void fillEmptySpace(){
-        for(int i = 1; i <= BOUNDARIES; i++){
-            for(int k = 1; k <= BOUNDARIES; k++){
-                ChessPosition newPosition = new ChessPosition(i,k);
-                this.addEmpty(newPosition);
-            }
-        }
-    }
 }

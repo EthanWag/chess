@@ -14,8 +14,10 @@ public class ChessPosition {
     private int myCol;
 
     public ChessPosition(int row, int col) {
+
         myRow = row;
         myCol = col;
+
     }
 
     /**
@@ -33,15 +35,24 @@ public class ChessPosition {
     public int getColumn() {
         return myCol;
     }
-    // Setter methods
-    public void setRow(int newRow){
-        myRow = newRow;
-    }
-    public void setCol(int newCol){
-        myCol = newCol;
+
+    // equals and hascode
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        ChessPosition that = (ChessPosition) o;
+        return myRow == that.myRow && myCol == that.myCol;
     }
 
-// methods for simple movements. does move and returns weather that move is within the gameboard limits
+    @Override
+    public int hashCode() {
+        return Objects.hash(myRow, myCol);
+    }
+
+
+    // directional moves
 
     public boolean up(){
         myRow++;
@@ -64,14 +75,14 @@ public class ChessPosition {
         myCol++;
         return checkBounds();
     }
-    public boolean upperLeft(){
-        myRow++;
-        myCol--;
-        return checkBounds();
-    }
     public boolean lowerRight(){
         myRow--;
         myCol++;
+        return checkBounds();
+    }
+    public boolean upperLeft(){
+        myRow++;
+        myCol--;
         return checkBounds();
     }
     public boolean lowerLeft(){
@@ -79,27 +90,16 @@ public class ChessPosition {
         myCol--;
         return checkBounds();
     }
-    // checks boundries, returns true if is within boundries and false if is out
+
+
+    // checkbounds
     private boolean checkBounds(){
-        return !(((myRow > 8)||(myRow < 1)) || ((myCol > 8) || (myCol < 1)));
+        return !((myRow > 8) || (myRow < 1) || (myCol > 8) || (myCol < 1));
     }
 
-    // this object us used to make a copy of a piece passed in
+    // deep copy
     public ChessPosition deepCopy(){
         return new ChessPosition(myRow,myCol);
     }
 
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        ChessPosition that = (ChessPosition) o;
-        return myRow == that.myRow && myCol == that.myCol;
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(myRow, myCol);
-    }
 }
