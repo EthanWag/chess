@@ -1,5 +1,6 @@
 package chess;
 
+import javax.management.relation.InvalidRoleInfoException;
 import java.util.Arrays;
 
 /**
@@ -11,7 +12,7 @@ import java.util.Arrays;
 public class ChessBoard {
 
     public static final ChessPiece EMPTY = null;
-    private static final int BOUNDRIES = 8;
+    public static final int BOUNDRIES = 8;
     private static final int FLIP_VAL = 8;
     private final ChessPiece[][] board;
 
@@ -31,6 +32,30 @@ public class ChessBoard {
         int col = position.getColumn() - 1;
 
         board[row][col] = piece;
+    }
+
+    // given a color, will return the position of the king, given the color
+    public ChessPosition getKing(ChessGame.TeamColor color) throws NullPointerException {
+        for(int i = 1; i <= BOUNDRIES; i++){
+            for(int k = 1; k <= BOUNDRIES; k++){
+
+                ChessPosition check_pos = new ChessPosition(i,k);
+                ChessPiece check_king = getPiece(check_pos);
+
+                if(check_king != EMPTY){
+                    // checks to see the piece and it's color
+                    if((check_king.getPieceType() == ChessPiece.PieceType.KING) && (check_king.getTeamColor() == color)){
+                        return check_pos;
+                    }
+                }
+            }
+
+            throw new NullPointerException("Error: King for color " + color + " not found");
+            return null; // should never get here, so feel free to change it
+        }
+
+        // if for some reason the king is not on the board, it will throw an IllegalAccessError
+        throw new
     }
 
     /**
@@ -80,6 +105,7 @@ public class ChessBoard {
      * Sets the board to the default starting board
      * (How the game of chess normally starts)
      */
+
     public void resetBoard() {
 
         int WHITE_PAWN = 2;
