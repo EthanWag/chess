@@ -25,6 +25,11 @@ public class ChessPiece {
         firstMove = true;
 
     }
+    public ChessPiece(ChessPiece other){
+        this.myColor = other.myColor;
+        this.myType = other.myType;
+        this.firstMove = other.firstMove;
+    }
 
     /**
      * The various different chess piece options

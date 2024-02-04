@@ -27,35 +27,12 @@ public class ChessBoard {
      * @param position where to add the piece to
      * @param piece    the piece to add
      */
+
     public void addPiece(ChessPosition position, ChessPiece piece) {
         int row = FLIP_VAL - position.getRow();
         int col = position.getColumn() - 1;
 
         board[row][col] = piece;
-    }
-
-    // given a color, will return the position of the king, given the color
-    public ChessPosition getKing(ChessGame.TeamColor color) throws NullPointerException {
-        for(int i = 1; i <= BOUNDRIES; i++){
-            for(int k = 1; k <= BOUNDRIES; k++){
-
-                ChessPosition check_pos = new ChessPosition(i,k);
-                ChessPiece check_king = getPiece(check_pos);
-
-                if(check_king != EMPTY){
-                    // checks to see the piece and it's color
-                    if((check_king.getPieceType() == ChessPiece.PieceType.KING) && (check_king.getTeamColor() == color)){
-                        return check_pos;
-                    }
-                }
-            }
-
-            throw new NullPointerException("Error: King for color " + color + " not found");
-            return null; // should never get here, so feel free to change it
-        }
-
-        // if for some reason the king is not on the board, it will throw an IllegalAccessError
-        throw new
     }
 
     /**
@@ -70,6 +47,10 @@ public class ChessBoard {
         int col = position.getColumn() - 1;
 
         return board[row][col];
+    }
+
+    public ChessPiece[][] __getBoard() {
+        return board;
     }
 
     public void fillEmptySpot(ChessPosition position){
@@ -88,6 +69,27 @@ public class ChessBoard {
         }
     }
 
+    // given a color, will return the position of the king, given the color
+    public ChessPosition getKing(ChessGame.TeamColor color) throws NullPointerException {
+        for(int i = 1; i <= BOUNDRIES; i++){
+            for(int k = 1; k <= BOUNDRIES; k++){
+
+                ChessPosition check_pos = new ChessPosition(i,k);
+                ChessPiece check_king = getPiece(check_pos);
+
+                if(check_king != EMPTY){
+                    // checks to see the piece and it's color
+                    if((check_king.getPieceType() == ChessPiece.PieceType.KING) && (check_king.getTeamColor() == color)){
+                        return check_pos;
+                    }
+                }
+            }
+        }
+
+        // if for some reason the king is not on the board, it will throw an NullPointerExecption
+        throw new NullPointerException("Error: King for color " + color + " not found");
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -100,6 +102,27 @@ public class ChessBoard {
     public int hashCode() {
         return Arrays.deepHashCode(board);
     }
+
+    @Override
+    public ChessBoard clone(){
+
+        ChessBoard newChessBoard = new ChessBoard();
+
+        for(int row = 0; row < BOUNDRIES; row++){
+            for(int col = 0; col < BOUNDRIES; col++){
+
+                if(board[row][col] == EMPTY){
+                    newChessBoard.__getBoard()[row][col] = EMPTY;
+                }else {
+                    newChessBoard.__getBoard()[row][col] = new ChessPiece(board[row][col]);
+                }
+            }
+        }
+        return newChessBoard;
+    }
+
+
+
 
     /**
      * Sets the board to the default starting board
