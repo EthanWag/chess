@@ -66,7 +66,7 @@ public class ChessPiece {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         ChessPiece that = (ChessPiece) o;
-        return firstMove == that.firstMove && myColor == that.myColor && myType == that.myType;
+        return myColor == that.myColor && myType == that.myType;
     }
 
     @Override
