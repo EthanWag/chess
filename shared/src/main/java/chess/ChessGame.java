@@ -102,30 +102,34 @@ public class ChessGame {
      */
     public boolean isInCheck(TeamColor teamColor) {
 
-        try{
-
+        try {
+            // first off the bat, get the other team color and get the king position
+            TeamColor opp_color = oppColor(teamColor);
             ChessPosition king_pos = myBoard.getKing(teamColor);
 
-            // find the moves the king and other team can make
-            Collection<ChessMove> opp_team_moves = calculator_Team.find_moves(myBoard,teamColor);
+            // finds the kings moves and how the other team can move in response to that
+
             Collection<ChessMove> king_moves = validMoves(king_pos);
+            Collection<ChessMove> opp_team_moves = findOppTeamMoves(opp_color,(ArrayList<ChessMove>)king_moves);
 
+            // these functions then convert them to sets for easy comparison
+            LinkedHashSet<ChessPosition> opp_possible_pos = MoveToSetEnd((ArrayList<ChessMove>) opp_team_moves, null);
+            LinkedHashSet<ChessPosition> king_possible_pos = MoveToSetEnd((ArrayList<ChessMove>) king_moves, king_pos);
 
+            LinkedHashSet<ChessPosition> isCheck = find_complement(king_possible_pos, opp_possible_pos);
 
-
-
-
-            // king_moves = find_complement((ArrayList<ChessMove>)king_moves, (ArrayList<ChessMove>) opp_team_moves);
-
-            // returns true if the only if there are chess moves, and none of them can move to itself
-            return true;
+            // EDGE CASE :
+            if(!isCheck.isEmpty()){
+                return !isCheck.contains(king_pos);
+            }
+            return false;
 
         }catch(NullPointerException m){
-            // catches the error and prints the message
-            System.err.println(m.getMessage());
-            System.err.println("Board not intilized properly?");
-            return false;
+
+            System.err.println(m);
+            System.err.println("error occured in the is checkname function");
         }
+        return false;
     }
 
     /**
@@ -135,45 +139,31 @@ public class ChessGame {
      * @return True if the specified team is in checkmate
      */
     public boolean isInCheckmate(TeamColor teamColor) {
-        // first off the bat, get the other team color and get the king position
-        TeamColor opp_color = oppColor(teamColor);
-        ChessPosition king_pos = myBoard.getKing(teamColor);
 
-        // finds where the king can move on all spots on the board and checks to see any pieces can current get it
+        try {
+            // first off the bat, get the other team color and get the king position
+            TeamColor opp_color = oppColor(teamColor);
+            ChessPosition king_pos = myBoard.getKing(teamColor);
 
-        Collection<ChessMove> king_moves = validMoves(king_pos);
-        Collection<ChessMove> opp_team_moves = calculator_Team.find_moves(myBoard,opp_color);
+            // finds the kings moves and how the other team can move in response to that
 
+            Collection<ChessMove> king_moves = validMoves(king_pos);
+            Collection<ChessMove> opp_team_moves = findOppTeamMoves(opp_color,(ArrayList<ChessMove>)king_moves);
 
+            // these functions then convert them to sets for easy comparison
+            LinkedHashSet<ChessPosition> opp_possible_pos = MoveToSetEnd((ArrayList<ChessMove>) opp_team_moves, null);
+            LinkedHashSet<ChessPosition> king_possible_pos = MoveToSetEnd((ArrayList<ChessMove>) king_moves, king_pos);
 
+            LinkedHashSet<ChessPosition> isCheck = find_complement(king_possible_pos, opp_possible_pos);
 
+            return isCheck.isEmpty();
 
-        // TODO:need to debug the code below, it's purpose is to detect all possible moves a king can make and then
-        // TODO:add how the pawns will act accordingly, doesn't quite work
+        }catch(NullPointerException m){
 
-        for(ChessMove possible_move : king_moves) {
-            ChessBoard copy_board = myBoard.clone(); // This is really weird syntax, be sure to double check, also optimization?
-            makeMove(possible_move,copy_board);
-
-            // find all those moves and adds them to the calculator
-            opp_team_moves.addAll(calculator_Team.find_moves(myBoard,opp_color));
-
+            System.err.println(m);
+            System.err.println("error occured in the is checkname function");
         }
-
-
-
-
-
-
-
-        // these functions then convert them to sets for easy comparison
-        LinkedHashSet<ChessPosition> opp_possible_pos = MoveToSetEnd((ArrayList<ChessMove>) opp_team_moves,null);
-        LinkedHashSet<ChessPosition> king_possible_pos = MoveToSetEnd((ArrayList<ChessMove>) king_moves,king_pos);
-
-        LinkedHashSet<ChessPosition> isCheck = find_complement(king_possible_pos,opp_possible_pos);
-
-        return isCheck.isEmpty();
-
+        return false;
     }
 
     /**
@@ -184,22 +174,32 @@ public class ChessGame {
      * @return True if the specified team is in stalemate, otherwise false
      */
     public boolean isInStalemate(TeamColor teamColor) {
-        /*
-        ChessPosition king_pos = myBoard.getKing(teamColor);
 
-        // find the moves the king and other team can make
-        Collection<ChessMove> opp_team_moves = calculator_Team.find_moves(myBoard,teamColor);
-        Collection<ChessMove> king_moves = validMoves(king_pos);
+        try {
+            // first off the bat, get the other team color and get the king position
+            TeamColor opp_color = oppColor(teamColor);
+            ChessPosition king_pos = myBoard.getKing(teamColor);
 
-        // these functions then convert them to sets for easy comparison
-        LinkedHashSet<ChessPosition> opp_possible_pos = MoveToSetEnd((ArrayList<ChessMove>) opp_team_moves,null);
-        LinkedHashSet<ChessPosition> king_possible_pos = MoveToSetEnd((ArrayList<ChessMove>) king_moves,king_pos);
+            // finds the kings moves and how the other team can move in response to that
 
-        LinkedHashSet<ChessPosition> isCheck = find_complement(king_possible_pos,opp_possible_pos);
-        return isCheck.isEmpty();
+            Collection<ChessMove> king_moves = validMoves(king_pos);
+            Collection<ChessMove> opp_team_moves = findOppTeamMoves(opp_color,(ArrayList<ChessMove>)king_moves);
 
-         */
-        return true;
+            // these functions then convert them to sets for easy comparison
+            LinkedHashSet<ChessPosition> opp_possible_pos = MoveToSetEnd((ArrayList<ChessMove>) opp_team_moves, null);
+            LinkedHashSet<ChessPosition> king_possible_pos = MoveToSetEnd((ArrayList<ChessMove>) king_moves, king_pos);
+
+            LinkedHashSet<ChessPosition> isStalemate = find_complement(king_possible_pos, opp_possible_pos);
+
+            // checks to see if it can only stay in the same place
+            return (isStalemate.size() == 1) && isStalemate.getFirst() == king_pos;
+
+        }catch(NullPointerException m){
+
+            System.err.println(m);
+            System.err.println("error occured in the is checkname function");
+        }
+        return false;
     }
 
     /**
@@ -220,8 +220,29 @@ public class ChessGame {
         return myBoard;
     }
 
-
     // helper functions for the ChessGame class
+
+    // this method find all a team can attack with given piece moves and a color
+    private Collection<ChessMove> findOppTeamMoves(TeamColor color, ArrayList<ChessMove> piece_moves){
+
+        // finds the team moves with the current board
+        Collection<ChessMove> opp_team_moves = calculator_Team.find_moves(myBoard, color);
+
+        // finds the team moves with alternitve moves
+        for (ChessMove possible_move : piece_moves) {
+            ChessBoard copy_board = myBoard.clone(); // cloning works but doesn't quite override
+
+            makeMove(possible_move, copy_board);
+
+            // find all those moves and adds them to the calculator
+            ArrayList<ChessMove> opp_moves = calculator_Team.find_moves(copy_board, color); // could optimize here because you are adding unnessary moves
+
+            // add them to the opponents total count
+            opp_team_moves.addAll(opp_moves);
+        }
+        return opp_team_moves;
+    }
+
 
     private static LinkedHashSet<ChessPosition> find_complement(LinkedHashSet<ChessPosition> king_positions,
                                                                 LinkedHashSet<ChessPosition> team_positions){
