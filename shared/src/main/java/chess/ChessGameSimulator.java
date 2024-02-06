@@ -27,12 +27,28 @@ public class ChessGameSimulator {
 
     // simulate game functions
 
-    public Collection<ChessMove> simulateMove(ChessPosition startPosition) {
+    // simulates moves and returns the list of approved moves
+    public Collection<ChessMove> approvedMoves(ChessPosition startPosition) {
 
-        return null;
+        ArrayList<ChessMove> approved_moves = new ArrayList<>();
 
+
+        // get the piece, it's color and it's moves
+        ChessPiece piece = board.getPiece(startPosition);
+        ChessGame.TeamColor teamColor = piece.getTeamColor();
+        Collection<ChessMove> pieceMoves = piece.pieceMoves(board,startPosition);
+
+
+        for(ChessMove move : pieceMoves){
+            // makes a simple move and if it puts the king in danger, it doesn't add it to the approved moves
+            simpleMakeMove(move);
+            if(!kingInDanger(teamColor)){
+                approved_moves.add(move);
+            }
+            resetBoard();
+        }
+        return approved_moves;
     }
-
 
     public LinkedHashSet<ChessPosition> findKingMoves(ChessGame.TeamColor teamColor) throws NullPointerException{
 
@@ -59,12 +75,6 @@ public class ChessGameSimulator {
         }
     }
 
-
-
-
-
-
-
     // this method find all a team can attack with given piece moves and a color
     private Collection<ChessMove> findOppTeamMoves(ChessGame.TeamColor color, ArrayList<ChessMove> piece_moves){
 
@@ -73,7 +83,7 @@ public class ChessGameSimulator {
 
         // finds the team moves with alternitve moves
         for (ChessMove possible_move : piece_moves) {
-            simpleMakeMove(possible_move, board);
+            simpleMakeMove(possible_move);
 
             // find all those moves and adds them to the calculator
             ArrayList<ChessMove> opp_moves = calculator_Team.find_moves(board, color); // could optimize here because you are adding unnessary moves
@@ -86,11 +96,32 @@ public class ChessGameSimulator {
         return opp_team_moves;
     }
 
+    // kinda like the find king moves but useful for finding weather or not a given move will put the king in danger
+    private boolean kingInDanger(ChessGame.TeamColor color){
 
+        try {
+            ChessPosition king_pos = board.getKing(color);
+            ArrayList<ChessMove> opp_moves = calculator_Team.find_moves(board, oppColor(color));
+            LinkedHashSet<ChessPosition> opp_positions = MoveToSetEnd(opp_moves,null);
 
+            return opp_positions.contains(king_pos);
 
+        }catch(NullPointerException m){
+            System.err.println(m.getMessage());
+        }
+        return false;
+    }
 
+    // this function is very simple, just makes a simple move without being tied to any ChessGame rules
+    private void simpleMakeMove(ChessMove move){
 
+        ChessPiece move_piece = board.getPiece(move.getStartPosition());
+        board.addPiece(move.getEndPosition(),move_piece);
+        board.fillEmptySpot(move.getStartPosition());
+
+    }
+
+    // finds the complement between two lists
     private static LinkedHashSet<ChessPosition> find_complement(LinkedHashSet<ChessPosition> king_positions,
                                                                 LinkedHashSet<ChessPosition> team_positions){
 
@@ -116,15 +147,6 @@ public class ChessGameSimulator {
             pos_set.add(start_pos);
         }
         return pos_set;
-    }
-
-    // this function is very simple, just makes a simple move without being tied to any ChessGame rules
-    private void simpleMakeMove(ChessMove move, ChessBoard thisBoard){
-
-        ChessPiece move_piece = thisBoard.getPiece(move.getStartPosition());
-        thisBoard.addPiece(move.getEndPosition(),move_piece);
-        thisBoard.fillEmptySpot(move.getStartPosition());
-
     }
 
     // simple function that returns the other team color

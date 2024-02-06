@@ -57,6 +57,10 @@ public class ChessPiece {
         return myType;
     }
 
+    public void setPieceType(PieceType newType){
+        myType = newType;
+    }
+
     public boolean getFirstMove(){
         return firstMove;
     }

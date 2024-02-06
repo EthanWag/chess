@@ -61,26 +61,9 @@ public class ChessGame {
     public Collection<ChessMove> validMoves(ChessPosition startPosition) {
 
         ChessPiece my_piece = myBoard.getPiece(startPosition);
-        // checks to make sure it is not an empty space
-        if(my_piece == ChessBoard.EMPTY){ return null; } // handles edge case were you pass in an empty piece
 
-        TeamColor my_color = my_piece.getTeamColor();
-        Collection<ChessMove> my_moves = my_piece.pieceMoves(myBoard,startPosition);
-
-        // using an iterator for this loop
-        Iterator<ChessMove> iterator = my_moves.iterator();
-
-        // so it look like it can detect wrong moves the first time but not any other time. I'm thinking
-        // you need to be careful moving pieces on the board. Might be worth making a simulation class
-
-        while(iterator.hasNext()){
-            ChessMove move = iterator.next();
-            simpleMakeMove(move,myBoard);
-            if(isInCheck(my_color)){
-                iterator.remove(); // error here
-                undo(move,myBoard);
-            }
-        }
+        simulator.setBoard(myBoard);
+        Collection<ChessMove> my_moves = simulator.approvedMoves(startPosition);
 
         return my_moves;
     }
@@ -95,20 +78,37 @@ public class ChessGame {
      */
     public void makeMove(ChessMove move) throws InvalidMoveException {
 
-        // get the start variable and valid moves it can make
+        // get the start position, the piece and the valid moves
         ChessPosition start = move.getStartPosition();
+        ChessPiece move_piece = myBoard.getPiece(move.getStartPosition());
+
+        // first checks to see if your not trying to move an empty space
+        if(move_piece == ChessBoard.EMPTY){
+            throw new InvalidMoveException("Cannot Move Empty Position");
+        }
+        // then checks to see if your not trying to move opponent piece
+        if(move_piece.getTeamColor() != myTeam){
+            throw new InvalidMoveException("Cannot Move Opponents piece");
+        }
+
         Collection<ChessMove> valid_moves = validMoves(start);
 
         // checks the valid move and throws an error if it doesn't work
         if(!valid_moves.contains(move)){
             throw new InvalidMoveException("Invalid Move");
         }
-        // extra conditions if it in check
 
-        ChessPiece move_piece = myBoard.getPiece(move.getStartPosition());
+        // makes the actual move on the board
         myBoard.addPiece(move.getEndPosition(),move_piece);
         myBoard.fillEmptySpot(move.getStartPosition());
 
+        // finally promotes the pawn if applicable
+        if(move_piece.getPieceType() == ChessPiece.PieceType.PAWN){
+            promotePawn(move_piece,move.getEndPosition(),move.getPromotionPiece());
+        }
+
+        // changes the turn after you're done
+        changeTurn();
     }
 
     // grab the start position and then grab the piece currently at that location
@@ -180,21 +180,27 @@ public class ChessGame {
         return myBoard;
     }
 
-    // this function is very simple, just makes a simple move without being tied to any ChessGame rules
-    private void simpleMakeMove(ChessMove move, ChessBoard thisBoard){
-
-        ChessPiece move_piece = thisBoard.getPiece(move.getStartPosition());
-        thisBoard.addPiece(move.getEndPosition(),move_piece);
-        thisBoard.fillEmptySpot(move.getStartPosition());
-
-    }
-
-    // simple function that returns the other team color
-    private static ChessGame.TeamColor oppColor(ChessGame.TeamColor color){
-        if(color == TeamColor.WHITE){
-            return TeamColor.BLACK;
+    private void changeTurn(){
+        if (myTeam == TeamColor.WHITE) {
+            myTeam = TeamColor.BLACK;
         }else{
-            return TeamColor.WHITE;
+            myTeam = TeamColor.WHITE;
         }
     }
+
+    private void promotePawn(ChessPiece pawn, ChessPosition pawn_pos, ChessPiece.PieceType promotion){
+
+        if(myTeam == TeamColor.WHITE){ // white case
+            // 8 is just the row that white pawns have to get to in order to be promoted
+           if(pawn_pos.getRow() == 8){
+               pawn.setPieceType(promotion);
+           }
+        }else{ // black case
+            if(pawn_pos.getRow() == 1){
+                pawn.setPieceType(promotion);
+            }
+        }
+
+    }
+
 }
