@@ -3,13 +3,13 @@ package models;
 
 
 
-public class Authtoken {
+public class AuthData {
 
     // instance field
     private String authToken;
     private String username;
 
-    public Authtoken(String myAuthToken, String myUsername){
+    public AuthData(String myAuthToken, String myUsername){
         authToken = myAuthToken;
         username = myUsername;
     }

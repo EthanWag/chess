@@ -1,13 +1,23 @@
 package dataAccess;
 
-public class AuthDAO implements DAO{
+import models.AuthData;
 
-    public static void create() {}
+public class AuthDAO{
 
-    public static void read() {}
+    public AuthDAO() {}
 
-    public static void update() {}
+    public AuthData create() {
+        return null;
+    }
 
-    public static void delete() {}
+    public AuthData read() {
+        return null;
+    }
+
+    public void update() {}
+
+    public boolean delete() {
+        return true;
+    }
 
 }

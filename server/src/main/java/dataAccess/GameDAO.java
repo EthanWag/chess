@@ -1,13 +1,23 @@
 package dataAccess;
 
-public class GameDAO implements DAO{
+import models.Game;
 
-    public static void create() {}
+public class GameDAO{
 
-    public static void read() {}
+    public GameDAO() {}
 
-    public static void update() {}
+    public Game create() {
+        return null;
+    }
 
-    public static void delete() {}
+    public Game read() {
+        return null;
+    }
+
+    public void update() {}
+
+    public boolean delete() {
+        return true;
+    }
 
 }

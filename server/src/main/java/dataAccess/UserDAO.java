@@ -1,13 +1,23 @@
 package dataAccess;
 
-public class UserDAO implements DAO{
+import models.User;
 
-    public static void create() {}
+public class UserDAO{
 
-    public static void read() {}
+    public UserDAO(){}
 
-    public static void update() {}
+    public User create() {
+        return null;
+    }
 
-    public static void delete() {}
+    public User read() {
+        return null;
+    }
+
+    public void update() {}
+
+    public boolean delete() {
+        return true;
+    }
 
 }
