@@ -1,6 +1,6 @@
 package dataAccess;
 
-public class GameDAO implements DAO{
+public interface DAO {
 
     public static void create() {}
 
