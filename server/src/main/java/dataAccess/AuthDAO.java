@@ -6,17 +6,17 @@ public class AuthDAO{
 
     public AuthDAO() {}
 
-    public AuthData create() {
+    public AuthData create(AuthData newAuthData) {
         return null;
     }
 
-    public AuthData read() {
+    public AuthData read(String authToken) throws DataAccessException {
         return null;
     }
 
-    public void update() {}
+    public void update() throws DataAccessException {}
 
-    public boolean delete() {
+    public boolean delete() throws DataAccessException {
         return true;
     }
 

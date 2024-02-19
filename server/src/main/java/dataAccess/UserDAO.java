@@ -2,21 +2,23 @@ package dataAccess;
 
 import models.User;
 
+import javax.xml.crypto.Data;
+
 public class UserDAO{
 
     public UserDAO(){}
 
-    public User create() {
+    public void create(User newUser) {
+        return;
+    }
+
+    public User read(String username) throws DataAccessException {
         return null;
     }
 
-    public User read() {
-        return null;
-    }
+    public void update(User updateUser) throws DataAccessException{}
 
-    public void update() {}
-
-    public boolean delete() {
+    public boolean delete() throws DataAccessException{
         return true;
     }
 

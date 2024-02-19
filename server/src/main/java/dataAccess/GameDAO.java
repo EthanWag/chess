@@ -6,17 +6,17 @@ public class GameDAO{
 
     public GameDAO() {}
 
-    public Game create() {
+    public Game create(){
         return null;
     }
 
-    public Game read() {
+    public Game read() throws DataAccessException{
         return null;
     }
 
-    public void update() {}
+    public void update() throws DataAccessException {}
 
-    public boolean delete() {
+    public boolean delete() throws DataAccessException {
         return true;
     }
 
