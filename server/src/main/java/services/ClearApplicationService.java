@@ -6,8 +6,19 @@ public class ClearApplicationService extends Service{
 
     // service functions
 
+    public boolean completeJob(){
+        return clearApplication();
+    }
+
     private boolean clearApplication(){
+
+        AuthDAO.deleteAll();
+        UserDAO.deleteAll();
+        GameDAO.deleteAll();
         return true;
+
     }
 
 }
+
+// complete for now

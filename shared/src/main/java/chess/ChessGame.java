@@ -27,6 +27,11 @@ public class ChessGame {
 
     }
 
+    public ChessGame(ChessGame other){
+        myTeam = other.myTeam;
+        myBoard = other.myBoard.clone();
+    }
+
     /**
      * @return Which team's turn it is
      */

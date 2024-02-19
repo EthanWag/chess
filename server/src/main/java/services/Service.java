@@ -11,16 +11,13 @@ public abstract class Service {
     protected static AuthDAO AuthDAO = new AuthDAO();
     protected static GameDAO GameDAO = new GameDAO();
 
-    protected AuthData getAuthData(String authToken) {
+    protected AuthData getAuthData(String authToken) throws DataAccessException{
 
         try{
             return AuthDAO.read(authToken);
 
         }catch(DataAccessException error){
-
-            System.err.println(error.getMessage());
-            return null;
-
+            throw error;
         }
 
     }

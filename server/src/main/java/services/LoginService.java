@@ -18,6 +18,7 @@ public class LoginService extends Service{
             }else{
                 System.err.println("Incorrect password");
                 System.err.println("Try again");
+                return null;
             }
 
         }catch(DataAccessException error){
@@ -35,3 +36,5 @@ public class LoginService extends Service{
         return enteredPassword.equals(userPassword);
     }
 }
+
+// complete for now

@@ -6,8 +6,8 @@ public class AuthDAO{
 
     public AuthDAO() {}
 
-    public AuthData create(AuthData newAuthData) {
-        return null;
+    public void create(AuthData newAuthData) {
+        return;
     }
 
     public AuthData read(String authToken) throws DataAccessException {
@@ -16,8 +16,11 @@ public class AuthDAO{
 
     public void update() throws DataAccessException {}
 
-    public boolean delete() throws DataAccessException {
-        return true;
+    public boolean delete(AuthData delAuthData){
+
+        return false;
+        // code in here that removes it from the database
     }
 
+    public void deleteAll(){return;}
 }

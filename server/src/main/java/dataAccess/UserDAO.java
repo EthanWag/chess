@@ -22,4 +22,6 @@ public class UserDAO{
         return true;
     }
 
+    public void deleteAll(){return;}
+
 }
