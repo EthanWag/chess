@@ -1,10 +1,13 @@
 package dataAccess;
 
+import java.util.HashMap;
+
 import models.User;
 
-import javax.xml.crypto.Data;
 
 public class UserDAO{
+
+    HashMap<User,String> Users;
 
     public UserDAO(){}
 
@@ -16,9 +19,9 @@ public class UserDAO{
         return null;
     }
 
-    public void update(User updateUser) throws DataAccessException{}
+    public void update(User updateUser,String AuthToken) throws DataAccessException{}
 
-    public boolean delete() throws DataAccessException{
+    public boolean delete(User delUser) throws DataAccessException{
         return true;
     }
 

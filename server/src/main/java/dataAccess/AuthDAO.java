@@ -1,10 +1,16 @@
 package dataAccess;
 
+import java.util.ArrayList;
+
 import models.AuthData;
 
 public class AuthDAO{
 
-    public AuthDAO() {}
+    ArrayList<AuthData> AllAuths;
+
+    public AuthDAO() {
+        AllAuths = new ArrayList<>();
+    }
 
     public void create(AuthData newAuthData) {
         return;
