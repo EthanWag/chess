@@ -1,32 +1,48 @@
 package dataAccess;
 
-import java.util.ArrayList;
+import java.util.HashMap;
 
 import models.AuthData;
 
 public class AuthDAO{
 
-    ArrayList<AuthData> AllAuths;
+    HashMap<String,AuthData> allAuths;
 
     public AuthDAO() {
-        AllAuths = new ArrayList<>();
+        allAuths = new HashMap<>();
     }
 
     public void create(AuthData newAuthData) {
-        return;
+
+        String AuthToken = newAuthData.getAuthToken();
+        // maybe put some sort of code here to catch errors
+
+        allAuths.put(AuthToken,newAuthData);
     }
 
     public AuthData read(String authToken) throws DataAccessException {
-        return null;
+
+        if(!allAuths.containsKey(authToken)){ throw new DataAccessException("[400] Invalid AuthToken");}
+
+        return allAuths.get(authToken);
     }
 
-    public void update() throws DataAccessException {}
+    public void update(String authToken, AuthData updateAuthData) throws DataAccessException {
 
-    public boolean delete(AuthData delAuthData){
+        if(!allAuths.containsKey(authToken)){ throw new DataAccessException("[400] Invalid AuthToken");}
 
-        return false;
+        allAuths.put(authToken,updateAuthData);
+    }
+
+    public void delete(String authToken) throws DataAccessException {
+
+        if(!allAuths.containsKey(authToken)){ throw new DataAccessException("[400] Invalid AuthToken");}
+
+        allAuths.remove(authToken);
         // code in here that removes it from the database
     }
 
-    public void deleteAll(){return;}
+    public void deleteAll(){
+        allAuths.clear();
+    }
 }

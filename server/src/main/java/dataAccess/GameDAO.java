@@ -1,41 +1,59 @@
 package dataAccess;
 
 import models.Game;
-import models.User;
 
 import java.util.Collection;
-import java.util.ArrayList;
+import java.lang.Integer;
 import java.util.HashMap;
 
 public class GameDAO{
 
     // Data structures: that keeps track of the user and all of their games
-    HashMap<User,ArrayList<Game>> dbGames;
+    HashMap<Integer,Game> dbGames;
 
 
     public GameDAO() {
         dbGames = new HashMap<>();
     }
 
-    public void create(User cur_user, Game newGame){
-        return; // add the game passed in and add it to the database
+    public void create(Game newGame){
+        int newGameId = newGame.getGameID();
+        dbGames.put(newGameId,newGame); // what happens if you create a new game?
+
+        // come up with some sort of check in case you need to if you already have a game
     }
 
-    public Game read(User cur_user, int gameId) throws DataAccessException{
-        return null;
+    public Game read(int gameId) throws DataAccessException{
+
+        if(!dbGames.containsKey(gameId)){
+            throw new DataAccessException("[400] Invalild game ID");
+        }else{
+            return  dbGames.get(gameId);;
+        }
     }
 
-    public void update(User cur_user, Game updateGame, Game OldGame) throws DataAccessException {
-        return;
+    public void update(int gameId, Game updateGame) throws DataAccessException {
+
+        // just throws an object error if it can't find anything
+        if(!dbGames.containsKey(gameId)) {throw new DataAccessException("[400] Invalid game Id");}
+
+        dbGames.put(gameId,updateGame);
     }
 
-    public boolean delete(User cur_user,Game delGame) throws DataAccessException {
-        return true;
+    public void delete(int gameId) throws DataAccessException {
+
+        if(!dbGames.containsKey(gameId)) {throw new DataAccessException("[400] Invalid game Id");}
+        dbGames.remove(gameId);
     }
 
-    public Collection<Game> getAll(User cur_user){
-        return null; // returns null for right now but in the future, will return all games in the database from that user
+    public Collection<Game> getAll(){
+        // simply just returns all the names
+        return dbGames.values();
+
     }
 
-    public void deleteAll(){return;}
+    public void deleteAll(){
+        dbGames.clear();
+    }
+
 }
