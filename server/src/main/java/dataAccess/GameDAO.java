@@ -16,40 +16,39 @@ public class GameDAO{
         dbGames = new HashMap<>();
     }
 
-    public void create(Game newGame){
+    public void create(Game newGame) throws DataAccessException {
         int newGameId = newGame.getGameID();
-        dbGames.put(newGameId,newGame); // what happens if you create a new game?
+        // checks for if it is already taken
+        if(dbGames.containsKey(newGameId)){ throw new DataAccessException("[403] Already Taken");}
 
-        // come up with some sort of check in case you need to if you already have a game
+        dbGames.put(newGameId,newGame);
     }
 
     public Game read(int gameId) throws DataAccessException{
 
-        if(!dbGames.containsKey(gameId)){
-            throw new DataAccessException("[400] Invalild game ID");
-        }else{
-            return  dbGames.get(gameId);;
-        }
+        if(!dbGames.containsKey(gameId)){ throw new DataAccessException("[404] Not found");}
+
+        return  dbGames.get(gameId);
     }
 
     public void update(int gameId, Game updateGame) throws DataAccessException {
 
         // just throws an object error if it can't find anything
-        if(!dbGames.containsKey(gameId)) {throw new DataAccessException("[400] Invalid game Id");}
+        if(!dbGames.containsKey(gameId)) {throw new DataAccessException("[404] Not found");}
 
         dbGames.put(gameId,updateGame);
     }
 
     public void delete(int gameId) throws DataAccessException {
 
-        if(!dbGames.containsKey(gameId)) {throw new DataAccessException("[400] Invalid game Id");}
+        if(!dbGames.containsKey(gameId)) {throw new DataAccessException("[404] Not found");}
+
         dbGames.remove(gameId);
     }
 
     public Collection<Game> getAll(){
-        // simply just returns all the names
+        // simply just returns all the games
         return dbGames.values();
-
     }
 
     public void deleteAll(){

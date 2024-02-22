@@ -12,31 +12,34 @@ public class AuthDAO{
         allAuths = new HashMap<>();
     }
 
-    public void create(AuthData newAuthData) {
+    public void create(AuthData newAuthData) throws DataAccessException {
 
-        String AuthToken = newAuthData.getAuthToken();
+        String authToken = newAuthData.getAuthToken();
         // maybe put some sort of code here to catch errors
 
-        allAuths.put(AuthToken,newAuthData);
+        // makes sure that you already haven't made that token
+        if(allAuths.containsKey(authToken)){ throw new DataAccessException("[403] Already Taken");}
+
+        allAuths.put(authToken,newAuthData);
     }
 
     public AuthData read(String authToken) throws DataAccessException {
 
-        if(!allAuths.containsKey(authToken)){ throw new DataAccessException("[400] Invalid AuthToken");}
+        if(!allAuths.containsKey(authToken)){ throw new DataAccessException("[404] Not Found");}
 
         return allAuths.get(authToken);
     }
 
     public void update(String authToken, AuthData updateAuthData) throws DataAccessException {
 
-        if(!allAuths.containsKey(authToken)){ throw new DataAccessException("[400] Invalid AuthToken");}
+        if(!allAuths.containsKey(authToken)){ throw new DataAccessException("[404] Not Found");}
 
         allAuths.put(authToken,updateAuthData);
     }
 
     public void delete(String authToken) throws DataAccessException {
 
-        if(!allAuths.containsKey(authToken)){ throw new DataAccessException("[400] Invalid AuthToken");}
+        if(!allAuths.containsKey(authToken)){ throw new DataAccessException("[404] Not Found");}
 
         allAuths.remove(authToken);
         // code in here that removes it from the database

@@ -13,13 +13,7 @@ public abstract class Service {
 
     protected AuthData getAuthData(String authToken) throws DataAccessException{
 
-        try{
-            return AuthDAO.read(authToken);
-
-        }catch(DataAccessException error){
-            throw error;
-        }
-
+        return AuthDAO.read(authToken);
     }
 
     // given a username, will return a user object, if not found will print a message
@@ -34,9 +28,24 @@ public abstract class Service {
         }
     }
 
+    // checks to make sure you entered in the correct authToken
+    protected User checkAuthToken(String authToken)throws DataAccessException{
 
-    // Generates AuthTokens and adds them to the Database
-    protected AuthData createAuthData(String username){
+        // will throw an [404] not found exception if it can't find it
+        try {
+            AuthData checkData = AuthDAO.read(authToken);
+
+            // grabs current user with that authToken and returns user
+            return UserDAO.read(checkData.getUsername());
+
+        }catch(DataAccessException invalid){ // throws an unauthorized execption in case it can't find it
+            throw new DataAccessException("[401] unauthorized");
+        }
+    }
+
+
+    // Generates AuthTokens and adds them to the Database. used in multiple services
+    protected AuthData createAuthData(String username)throws DataAccessException{
 
         String authToken = "banana"; // generate token here
         AuthData newAuth = new AuthData(authToken,username);

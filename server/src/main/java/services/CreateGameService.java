@@ -3,45 +3,35 @@ package services;
 import models.*;
 import dataAccess.DataAccessException;
 
+import javax.xml.crypto.Data;
 
 
 public class CreateGameService extends Service{
 
     public CreateGameService(){}
 
-    public int completeJob(String Authtoken, String gameName){
+    public int completeJob(String authToken, String gameName)throws DataAccessException{
 
-        try{
+        checkAuthToken(authToken); // throws exception in case if can't find authToken
 
-            getAuthData(Authtoken);
-            return createGame(gameName);
-
-        }catch(DataAccessException error){
-
-            System.err.println("Invalid user");
-            System.err.println("exiting");
-            return -1;
-
-        }
+        // returns gameId
+        return createGame(gameName);
     }
 
     // service functions
 
-    // getAuthData is in service
-
-    private int createGame(String gameName){
+    private int createGame(String gameName)throws DataAccessException{
 
         // creates all the new variables
-        int newGameId = 5;
-        String black = "name";
-        String white = "name";
+        int newGameId = 5; // generate int here
+        String black = "";
+        String white = "";
 
         // creates game and adds it to the database
         Game newGame = new Game(newGameId,white,black,gameName);
         GameDAO.create(newGame);
 
         return newGameId;
-
     }
 }
 

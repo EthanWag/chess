@@ -8,42 +8,48 @@ public class JoinGameService extends Service{
 
     public JoinGameService() {}
 
-    public boolean completeJob(String authToken, String ClientColor, int gameId){
+    public void completeJob(String authToken, String ClientColor, int gameId) throws DataAccessException{
 
-        try{
+        // gets user and game, throws exceptions if it can't find it
+        User currentUser = checkAuthToken(authToken);
+        Game currentGame = getGame(gameId);
 
-            // just checks to see if authData even exists
-            getAuthData(authToken);
-            Game joinGame = getGame(gameId);
-            updateGame(joinGame, ClientColor);
-            return true;
+        // gets the username of the player
+        String username = currentUser.getUsername();
 
-        }catch(DataAccessException error){
-
-            System.err.println("[401] unauthorized");
-            return false;
-        }
-
+        // adds the player to the game if they are
+        addPlayer(currentGame,username,ClientColor);
     }
 
     // Service functions
 
-    // getAuthToken is found in Service function
-
     private Game getGame(int gameID) throws DataAccessException{
-
         return GameDAO.read(gameID);
-
     }
 
-    private void updateGame(Game joinGame, String TeamColor)throws DataAccessException{
+    private void addPlayer(Game joinGame, String username, String TeamColor)throws DataAccessException{
 
-        Game updatedGame = new Game(joinGame);
-        updatedGame.setWhiteUsername(TeamColor);
+        switch(TeamColor){ //checks to see what team they entered
+            case "WHITE":
+                if(!joinGame.isWhiteTaken()){ // if white is not taken
+                    joinGame.joinWhiteSide(username);
+                }else{
+                    throw new DataAccessException("[403] already taken");
+                }
+                break;
 
-        GameDAO.update(updatedGame,joinGame);
+            case "BLACK":
+                if(!joinGame.isBlackTaken()){ // if black is not taken
+                    joinGame.joinBlackSide(username);
+                }else{
+                    throw new DataAccessException("[403] already taken");
+                }
+                break;
+
+            default: // throws an error if they entered in a invalid team color
+                throw new DataAccessException("[400] bad request");
+        }
     }
-
 }
 
 // complete for now
