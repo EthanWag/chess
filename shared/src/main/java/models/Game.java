@@ -12,6 +12,10 @@ public class Game {
     private String gameName;
     private final ChessGame game;
 
+    private boolean whiteTaken = false;
+
+    private boolean blackTaken = false;
+
     public Game(int myGameID, String myWhiteUser, String myBlackUser, String myGameName){
 
         gameID = myGameID;
@@ -68,8 +72,15 @@ public class Game {
     }
 
 
+    // getters for checkers
 
+    public boolean isWhiteTaken(){
+        return whiteTaken;
+    }
 
+    public boolean isBlackTaken(){
+        return blackTaken;
+    }
 
 
     // override equals and hashCode
@@ -85,4 +96,19 @@ public class Game {
     public int hashCode() {
         return Objects.hash(gameID, whiteUsername, blackUsername, gameName, game);
     }
+
+    // methods for joining games
+
+    public void joinWhiteSide(String username){
+
+        whiteUsername = username;
+        whiteTaken = true;
+    }
+
+    public void joinBlackSide(String username){
+
+        blackUsername = username;
+        blackTaken = true;
+    }
+
 }
