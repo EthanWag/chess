@@ -1,21 +1,19 @@
 package services.handlers;
 
-import com.google.gson.JsonSyntaxException;
-import dataAccess.DataAccessException;
 import services.RegisterService;
+import services.RegisterService.RegisterPackage;
 
 import spark.*;
-
-import models.User;
 
 public class RegisterHandler {
 
     private static RegisterService service = new RegisterService();
     private static ConvertGson GsonConverter = new ConvertGson();
+    private static ExceptionHandler exceptionDecider= new ExceptionHandler();
 
-    public RegisterHandler() {}
+    public RegisterHandler(){}
 
-    public String registerHandler(Request request){
+    public String registerHandler(Request request,Response response){
 
         try {
 
@@ -24,45 +22,28 @@ public class RegisterHandler {
             register newRegister = (register) newObj;
 
             // then runs the program through the services and returns the newly created authToken
-            String newAuthToken = service.completeJob(newRegister.username, newRegister.password, newRegister.email);
+            RegisterPackage newPackage = service.completeJob(newRegister.username, newRegister.password, newRegister.email);
 
             // converts that string in to a response object and returns it
-            return GsonConverter.ObjToJson(newAuthToken);
+            response.status(200);
+            return GsonConverter.ObjToJson(newPackage);
 
         }catch(Exception error){
 
-            // So this code catches the error thrown and prints off a message currently that checks to which kind
-            // error was thrown
-            // NOTE: you will want to handle these Exception another way
-            String errorType = error.getClass().getName();
+            // if an error is detected, it will pass it to an exception handler which will serialize it and
+            // handle the status of the response
 
-            switch(errorType){
-
-                case "DataAccessException":
-                    System.out.println("This is a DataAccessException");
-                    break;
-                case "JsonSyntaxException":
-                    System.out.println("This is a JsonSyntaxException");
-                    break;
-                default:
-                    System.out.println(errorType);
-                    System.out.println("unknown error");
-            }
-
-            return null;
-
+            return exceptionDecider.ExceptionHandler(error,response);
         }
     }
 
     // this is my private class and it can only be used by my RegisterHandler
-    private class register{
+    private static class register{
         public String username,password,email;
         public register(String username,String password, String email){
             this.username = username;
             this.password = password;
             this.email = email;
         }
-
     }
-
 }

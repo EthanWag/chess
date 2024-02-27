@@ -7,7 +7,7 @@ public class LoginService extends Service{
 
     public LoginService() {}
 
-    public AuthData CompleteJob(String username, String password) throws DataAccessException {
+    public LoginPackage CompleteJob(String username, String password) throws DataAccessException {
 
 
         User loginUser = UserDAO.read(username);
@@ -15,7 +15,10 @@ public class LoginService extends Service{
         // compares the two passwords
         if(comparePasswords(password,loginUser.getPassword())){
             // creates a authToken using the username
-            return createAuthData(loginUser.getUsername());
+            createAuthData(loginUser.getUsername());
+
+            // returns the user's username and password
+            return new LoginPackage(loginUser.getUsername(), loginUser.getPassword());
         }else{
             // means that they entered the wrong password
             throw new DataAccessException("[401] unauthorized (Invalid password)");
@@ -25,5 +28,14 @@ public class LoginService extends Service{
     // service functions
     private boolean comparePasswords(String enteredPassword,String userPassword){
         return enteredPassword.equals(userPassword);
+    }
+
+    public static class LoginPackage{
+        public String username,password;
+
+        public LoginPackage(String username, String password){
+            this.username = username;
+            this.password = password;
+        }
     }
 }

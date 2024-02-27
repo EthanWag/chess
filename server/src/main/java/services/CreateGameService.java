@@ -10,12 +10,13 @@ public class CreateGameService extends Service{
 
     public CreateGameService(){}
 
-    public int completeJob(String authToken, String gameName)throws DataAccessException{
+    public CreateGamePackage completeJob(String authToken, String gameName)throws DataAccessException{
 
         checkAuthToken(authToken); // throws exception in case if can't find authToken
 
-        // returns gameId
-        return createGame(gameName);
+        // returns gameId and puts it into the package, which is then sent back
+        int gameID = createGame(gameName);
+        return new CreateGamePackage(gameID);
     }
 
     // service functions
@@ -32,6 +33,13 @@ public class CreateGameService extends Service{
         GameDAO.create(newGame);
 
         return newGameId;
+    }
+
+    public static class CreateGamePackage{
+        public int gameID;
+        public CreateGamePackage(int gameID){
+            this.gameID = gameID;
+        }
     }
 }
 
