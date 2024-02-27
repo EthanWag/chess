@@ -1,5 +1,6 @@
 package server;
 
+import services.LoginService;
 import services.handlers.*;
 
 
@@ -39,7 +40,11 @@ public class Server {
 
         });
         Spark.post("/session", (request, response) -> { // logs a new user into a game
-            return "login method\n";
+
+            // does request and sends it back to the server
+            LoginHandler loginUser = new LoginHandler();
+            return loginUser.loginHandler(request,response);
+
         });
         Spark.delete("/session", (request, response) -> { // logout, logs out a user from the chessgame
             return "logout method\n";
