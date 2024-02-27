@@ -35,10 +35,7 @@ public class Server {
 
             // makes a new handler and sends it to the handler function
             RegisterHandler registerUser = new RegisterHandler();
-            String result = registerUser.registerHandler(request);
-
-            response.status(200);
-            return result;
+            return registerUser.registerHandler(request,response);
 
         });
         Spark.post("/session", (request, response) -> { // logs a new user into a game

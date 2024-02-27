@@ -4,6 +4,7 @@ import models.*;
 import dataAccess.*;
 
 import javax.xml.crypto.Data;
+import java.util.UUID;
 
 public abstract class Service {
 
@@ -47,7 +48,7 @@ public abstract class Service {
     // Generates AuthTokens and adds them to the Database. used in multiple services
     protected AuthData createAuthData(String username)throws DataAccessException{
 
-        String authToken = "banana"; // generate token here
+        String authToken = UUID.randomUUID().toString(); // generate token here
         AuthData newAuth = new AuthData(authToken,username);
         AuthDAO.create(newAuth);
         return newAuth;

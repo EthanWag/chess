@@ -8,7 +8,7 @@ public class RegisterService extends Service{
     public RegisterService() {}
 
 
-    public String completeJob(String username, String password, String email)throws DataAccessException{
+    public registerPackage completeJob(String username, String password, String email)throws DataAccessException{
 
 
         // create user and adds it to the database
@@ -16,8 +16,12 @@ public class RegisterService extends Service{
 
         // create an authToken and return it
         AuthData newAuth = createAuthData(username);
-        return newAuth.getAuthToken();
 
+        // grabs user data
+        String authUsername = newAuth.getUsername();
+        String authToken = newAuth.getAuthToken();
+
+        return new registerPackage(authUsername,authToken);
     }
 
     // service functions
@@ -26,5 +30,13 @@ public class RegisterService extends Service{
     private void createUser(String username, String password, String email)throws DataAccessException{
         User newUser = new User(username,password,email);
         UserDAO.create(newUser);
+    }
+
+    public static class registerPackage{
+        public String username,authToken;
+        public registerPackage(String username, String newAuthToken){
+            this.username = username;
+            this.authToken = newAuthToken;
+        }
     }
 }
