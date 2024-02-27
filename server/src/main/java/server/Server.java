@@ -1,5 +1,8 @@
 package server;
 
+import services.handlers.*;
+
+
 import spark.*;
 
 public class Server {
@@ -29,7 +32,14 @@ public class Server {
             return "Clear application method\n";
         });
         Spark.post("/user", (request, response) -> { // register a new user
-            return "register method\n";
+
+            // makes a new handler and sends it to the handler function
+            RegisterHandler registerUser = new RegisterHandler();
+            String result = registerUser.registerHandler(request);
+
+            response.status(200);
+            return result;
+
         });
         Spark.post("/session", (request, response) -> { // logs a new user into a game
             return "login method\n";
