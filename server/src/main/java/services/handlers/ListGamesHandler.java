@@ -32,14 +32,4 @@ public class ListGamesHandler {
             return exceptionHandler.ExceptionHandler(error,response);
         }
     }
-
-
-
-
-
-
-
-
-
-
 }

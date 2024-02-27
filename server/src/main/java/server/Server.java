@@ -40,6 +40,8 @@ public class Server {
             return registerUser.registerHandler(request,response);
 
         });
+
+
         Spark.post("/session", (request, response) -> { // logs a new user into a game
 
             // does request and sends it back to the server
@@ -47,21 +49,32 @@ public class Server {
             return loginUser.loginHandler(request,response);
 
         });
+
+
         Spark.delete("/session", (request, response) -> { // logout, logs out a user from the chessgame
 
             LogoutHandler logoutUser = new LogoutHandler();
             return logoutUser.logoutHandler(request,response);
 
         });
+
+
         Spark.get("/game", (request, response) -> { // gives you a list of all games
 
             ListGamesHandler allGames = new ListGamesHandler();
             return allGames.ListGamesHandler(request,response);
 
         });
+
+
         Spark.post("/game", (request, response) -> { // create game method
-            return "create game method\n";
+
+            CreateGameHandler createGame = new CreateGameHandler();
+            return createGame.createGameHandler(request,response);
+
         });
+
+
         Spark.put("/game", (request, response) -> {
             return "join game method\n";
         });
