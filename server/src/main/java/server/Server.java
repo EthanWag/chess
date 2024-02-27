@@ -32,6 +32,7 @@ public class Server {
         Spark.delete("/db", (request, response) -> { // deletes everything from the database
             return "Clear application method\n";
         });
+
         Spark.post("/user", (request, response) -> { // register a new user
 
             // makes a new handler and sends it to the handler function
@@ -47,10 +48,16 @@ public class Server {
 
         });
         Spark.delete("/session", (request, response) -> { // logout, logs out a user from the chessgame
-            return "logout method\n";
+
+            LogoutHandler logoutUser = new LogoutHandler();
+            return logoutUser.logoutHandler(request,response);
+
         });
         Spark.get("/game", (request, response) -> { // gives you a list of all games
-            return "list games method\n";
+
+            ListGamesHandler allGames = new ListGamesHandler();
+            return allGames.ListGamesHandler(request,response);
+
         });
         Spark.post("/game", (request, response) -> { // create game method
             return "create game method\n";

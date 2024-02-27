@@ -43,9 +43,6 @@ public class ConvertGson {
 
 
 
-
-
-
     // TODO:
     // add some more classes that that tackle more complex objects
     // also if you need to grab users, or need to specify objects, create some more methods useful for that
