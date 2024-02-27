@@ -1,5 +1,6 @@
 package server;
 
+import services.ClearApplicationService;
 import services.LoginService;
 import services.handlers.*;
 
@@ -30,7 +31,10 @@ public class Server {
     private void installEndPoints(){
 
         Spark.delete("/db", (request, response) -> { // deletes everything from the database
-            return "Clear application method\n";
+
+            ClearApplicationHandler clear = new ClearApplicationHandler();
+            return clear.clearApplicationHandler(response);
+
         });
 
         Spark.post("/user", (request, response) -> { // register a new user
@@ -76,7 +80,10 @@ public class Server {
 
 
         Spark.put("/game", (request, response) -> {
-            return "join game method\n";
+            // this allows the user to join the game
+            JoinGameHandler joinGame = new JoinGameHandler();
+            return joinGame.joinGameHandler(request,response);
+
         });
         Spark.notFound("<html><body>hello user, invalid response </body></html>");
     }
