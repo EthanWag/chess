@@ -2,20 +2,20 @@ package chess.Calculator;
 
 import java.util.ArrayList;
 import chess.*;
-public class calculator_pawn {
+public class CalculatorPawn {
 
-    public static ArrayList<ChessMove> find_moves(ChessBoard board, ChessGame.TeamColor color,
-                                                  ChessPosition position, ChessPiece pawn){
+    public static ArrayList<ChessMove> findMoves(ChessBoard board, ChessGame.TeamColor color,
+                                                 ChessPosition position, ChessPiece pawn){
 
-        ArrayList<ChessMove> new_moves;
+        ArrayList<ChessMove> chessMoves;
 
         if(color == ChessGame.TeamColor.WHITE){
-            new_moves = allowWhite(board,color,position,pawn);
+            chessMoves = allowWhite(board,color,position,pawn);
         }else{
-            new_moves = allowBlack(board,color,position,pawn);
+            chessMoves = allowBlack(board,color,position,pawn);
         }
 
-        return new_moves;
+        return chessMoves;
     }
 
     private static ArrayList<ChessMove> allowWhite(ChessBoard board, ChessGame.TeamColor color,
@@ -144,6 +144,29 @@ public class calculator_pawn {
         }
         return new_moves;
     }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
     private static boolean checkPawnStart(ChessPiece piece, ChessPosition position){
 

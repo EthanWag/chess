@@ -93,22 +93,22 @@ public class ChessPiece {
         switch(myType){
 
             case QUEEN:
-                possible_moves = calculator_queen.find_moves(board,myColor,myPosition);
+                possible_moves = CalculatorQueen.findMoves(board,myColor,myPosition);
                 break;
             case KING:
-                possible_moves = calculator_king.find_moves(board,myColor,myPosition);
+                possible_moves = CalculatorKing.findMoves(board,myColor,myPosition);
                 break;
             case ROOK:
-                possible_moves = calculator_rook.find_moves(board,myColor,myPosition);
+                possible_moves = CalculatorRook.findMoves(board,myColor,myPosition);
                 break;
             case BISHOP:
-                possible_moves = calculator_bishop.find_moves(board,myColor,myPosition);
+                possible_moves = CalculatorBishop.findMoves(board,myColor,myPosition);
                 break;
             case KNIGHT:
-                possible_moves = calculator_knight.find_moves(board,myColor,myPosition);
+                possible_moves = CalculatorKnight.findMoves(board,myColor,myPosition);
                 break;
             case PAWN:
-                possible_moves = calculator_pawn.find_moves(board,myColor,myPosition,this);
+                possible_moves = CalculatorPawn.findMoves(board,myColor,myPosition,this);
                 break;
             default:
                 possible_moves = new ArrayList<>();

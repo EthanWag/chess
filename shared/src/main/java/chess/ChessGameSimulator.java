@@ -78,14 +78,14 @@ public class ChessGameSimulator {
     private Collection<ChessMove> findOppTeamMoves(ChessGame.TeamColor color, ArrayList<ChessMove> piece_moves){
 
         // finds the team moves with the current board
-        Collection<ChessMove> opp_team_moves = calculator_Team.find_moves(board, color);
+        Collection<ChessMove> opp_team_moves = CalculatorTeam.findMoves(board, color);
 
         // finds the team moves with alternitve moves
         for (ChessMove possible_move : piece_moves) {
             simpleMakeMove(possible_move);
 
             // find all those moves and adds them to the calculator
-            ArrayList<ChessMove> opp_moves = calculator_Team.find_moves(board, color); // could optimize here because you are adding unnessary moves
+            ArrayList<ChessMove> opp_moves = CalculatorTeam.findMoves(board, color); // could optimize here because you are adding unnessary moves
 
             // add them to the opponents total count
             opp_team_moves.addAll(opp_moves);
@@ -100,7 +100,7 @@ public class ChessGameSimulator {
 
         try {
             ChessPosition king_pos = board.getKing(color);
-            ArrayList<ChessMove> opp_moves = calculator_Team.find_moves(board, oppColor(color));
+            ArrayList<ChessMove> opp_moves = CalculatorTeam.findMoves(board, oppColor(color));
             LinkedHashSet<ChessPosition> opp_positions = MoveToSetEnd(opp_moves,null);
 
             return opp_positions.contains(king_pos);

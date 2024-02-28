@@ -3,23 +3,23 @@ package chess.Calculator;
 import java.util.ArrayList;
 import chess.*;
 
-public class calculator_Team {
+public class CalculatorTeam {
 
-    public static ArrayList<ChessMove> find_moves(ChessBoard board, ChessGame.TeamColor color){
+    public static ArrayList<ChessMove> findMoves(ChessBoard board, ChessGame.TeamColor color){
 
-        ArrayList<ChessMove> all_moves;
+        ArrayList<ChessMove> allMoves;
 
 
-        all_moves = find_team_moves(board,color);
+        allMoves = findTeamMoves(board,color);
 
-        return all_moves;
+        return allMoves;
     }
 
 
     // finds all the moves that a team can make on the board
-    private static ArrayList<ChessMove> find_team_moves(ChessBoard board, ChessGame.TeamColor color){
+    private static ArrayList<ChessMove> findTeamMoves(ChessBoard board, ChessGame.TeamColor color){
 
-        ArrayList<ChessMove> all_moves = new ArrayList<>();
+        ArrayList<ChessMove> allMoves = new ArrayList<>();
 
         for(int row = 1; row <= ChessBoard.BOUNDRIES; row++){
             for(int col = 1; col <= ChessBoard.BOUNDRIES; col++){
@@ -32,12 +32,12 @@ public class calculator_Team {
                 if((piece != ChessBoard.EMPTY) && (piece.getTeamColor() == color)){
 
                     // find the pieces the move can make
-                    all_moves.addAll(piece.pieceMoves(board,pos));
+                    allMoves.addAll(piece.pieceMoves(board,pos));
                 }
             // otherwise continues and moves onto the next piece in the array
             }
         }
 
-        return all_moves;
+        return allMoves;
     }
 }
