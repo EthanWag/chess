@@ -107,8 +107,8 @@ public abstract class SharedCalculator {
 
         // goes through the different, positions you are given and makes a list of ChessMoves
         for(ChessPosition pos : posList){
-            ChessMove new_move = new ChessMove(startPos,pos,null);
-            newMoves.add(new_move);
+            ChessMove newMove = new ChessMove(startPos,pos,null);
+            newMoves.add(newMove);
         }
         return newMoves;
     }

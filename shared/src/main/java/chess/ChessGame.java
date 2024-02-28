@@ -62,12 +62,8 @@ public class ChessGame {
      */
     public Collection<ChessMove> validMoves(ChessPosition startPosition) {
 
-        ChessPiece my_piece = myBoard.getPiece(startPosition);
-
         simulator.setBoard(myBoard);
-        Collection<ChessMove> my_moves = simulator.approvedMoves(startPosition);
-
-        return my_moves;
+        return simulator.approvedMoves(startPosition);
     }
     // helpful for makeMove function below, will find a position and find the moves it can make
 
@@ -82,31 +78,31 @@ public class ChessGame {
 
         // get the start position, the piece and the valid moves
         ChessPosition start = move.getStartPosition();
-        ChessPiece move_piece = myBoard.getPiece(move.getStartPosition());
+        ChessPiece movePiece = myBoard.getPiece(move.getStartPosition());
 
         // first checks to see if your not trying to move an empty space
-        if(move_piece == ChessBoard.EMPTY){
+        if(movePiece == ChessBoard.EMPTY){
             throw new InvalidMoveException("Cannot Move Empty Position");
         }
         // then checks to see if your not trying to move opponent piece
-        if(move_piece.getTeamColor() != myTeam){
+        if(movePiece.getTeamColor() != myTeam){
             throw new InvalidMoveException("Cannot Move Opponents piece");
         }
 
-        Collection<ChessMove> valid_moves = validMoves(start);
+        Collection<ChessMove> validMoves = validMoves(start);
 
         // checks the valid move and throws an error if it doesn't work
-        if(!valid_moves.contains(move)){
+        if(!validMoves.contains(move)){
             throw new InvalidMoveException("Invalid Move");
         }
 
         // makes the actual move on the board
-        myBoard.addPiece(move.getEndPosition(),move_piece);
+        myBoard.addPiece(move.getEndPosition(),movePiece);
         myBoard.fillEmptySpot(move.getStartPosition());
 
         // finally promotes the pawn if applicable
-        if(move_piece.getPieceType() == ChessPiece.PieceType.PAWN){
-            promotePawn(move_piece,move.getEndPosition(),move.getPromotionPiece());
+        if(movePiece.getPieceType() == ChessPiece.PieceType.PAWN){
+            promotePawn(movePiece,move.getEndPosition(),move.getPromotionPiece());
         }
 
         // changes the turn after you're done
@@ -126,10 +122,10 @@ public class ChessGame {
 
         simulator.setBoard(myBoard);
         LinkedHashSet<ChessPosition> isCheck = simulator.findKingMoves(teamColor);
-        ChessPosition king_pos = myBoard.getKing(teamColor);
+        ChessPosition kingPos = myBoard.getKing(teamColor);
 
         if(!isCheck.isEmpty()){
-            return !isCheck.contains(king_pos);
+            return !isCheck.contains(kingPos);
         }
         return false;
     }
@@ -158,10 +154,10 @@ public class ChessGame {
     public boolean isInStalemate(TeamColor teamColor) {
 
         simulator.setBoard(myBoard);
-        ChessPosition king_pos = myBoard.getKing(teamColor);
+        ChessPosition kingPos = myBoard.getKing(teamColor);
         LinkedHashSet<ChessPosition> isStalemate = simulator.findKingMoves(teamColor);
 
-        return (isStalemate.size() == 1) && isStalemate.contains(king_pos);
+        return (isStalemate.size() == 1) && isStalemate.contains(kingPos);
     }
 
     /**
@@ -190,15 +186,15 @@ public class ChessGame {
         }
     }
 
-    private void promotePawn(ChessPiece pawn, ChessPosition pawn_pos, ChessPiece.PieceType promotion){
+    private void promotePawn(ChessPiece pawn, ChessPosition pawnPos, ChessPiece.PieceType promotion){
 
         if(myTeam == TeamColor.WHITE){ // white case
             // 8 is just the row that white pawns have to get to in order to be promoted
-           if(pawn_pos.getRow() == 8){
+           if(pawnPos.getRow() == 8){
                pawn.setPieceType(promotion);
            }
         }else{ // black case
-            if(pawn_pos.getRow() == 1){
+            if(pawnPos.getRow() == 1){
                 pawn.setPieceType(promotion);
             }
         }

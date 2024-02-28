@@ -21,148 +21,129 @@ public class CalculatorPawn {
     private static ArrayList<ChessMove> allowWhite(ChessBoard board, ChessGame.TeamColor color,
                                                    ChessPosition position, ChessPiece pawn){
 
-        ArrayList<ChessMove> new_moves = new ArrayList<>();
-        ArrayList<ChessPosition> new_pos = new ArrayList<>();
+        ArrayList<ChessMove> newMoves = new ArrayList<>();
+        ArrayList<ChessPosition> newPos = new ArrayList<>();
         ChessPosition copyPos = position.deepCopy();
 
         if(copyPos.up()){
             ChessPiece temp = board.getPiece(copyPos);
             if(temp == board.EMPTY){
-                new_pos.add(copyPos.deepCopy());
+                newPos.add(copyPos.deepCopy());
 
                 if(copyPos.up()){
                     temp = board.getPiece(copyPos);
                     if((temp == board.EMPTY) && checkPawnStart(pawn,position)){
-                        new_pos.add(copyPos.deepCopy());
+                        newPos.add(copyPos.deepCopy());
                     }
                 }
             }
         }
 
-        ChessPosition attack_right = position.deepCopy();
-        ChessPosition attack_left = position.deepCopy();
+        ChessPosition attackRight = position.deepCopy();
+        ChessPosition attackLeft = position.deepCopy();
 
         // checks to see if it can attack right
-        if(attack_right.upperRight()){
-            ChessPiece temp = board.getPiece(attack_right);
+        if(attackRight.upperRight()){
+            ChessPiece temp = board.getPiece(attackRight);
             if(temp != board.EMPTY){
                 if(temp.getTeamColor() != color){
-                    new_pos.add(attack_right.deepCopy());
+                    newPos.add(attackRight.deepCopy());
                 }
             }
         }
         // checks to see if it can attack left
-        if(attack_left.upperLeft()){
-            ChessPiece temp = board.getPiece(attack_left);
+        if(attackLeft.upperLeft()){
+            ChessPiece temp = board.getPiece(attackLeft);
             if(temp != board.EMPTY){
                 if(temp.getTeamColor() != color){
-                    new_pos.add(attack_left.deepCopy());
+                    newPos.add(attackLeft.deepCopy());
                 }
             }
         }
 
 
-        for(ChessPosition pos : new_pos){
+        for(ChessPosition pos : newPos){
 
             if(pos.getRow() == 8){
-                ChessMove new_move = new ChessMove(position,pos, ChessPiece.PieceType.QUEEN);
-                new_moves.add(new_move);
-                new_move = new ChessMove(position,pos, ChessPiece.PieceType.KNIGHT);
-                new_moves.add(new_move);
-                new_move = new ChessMove(position,pos, ChessPiece.PieceType.ROOK);
-                new_moves.add(new_move);
-                new_move = new ChessMove(position,pos, ChessPiece.PieceType.BISHOP);
-                new_moves.add(new_move);
+                ChessMove newMove = new ChessMove(position,pos, ChessPiece.PieceType.QUEEN);
+                newMoves.add(newMove);
+                newMove = new ChessMove(position,pos, ChessPiece.PieceType.KNIGHT);
+                newMoves.add(newMove);
+                newMove = new ChessMove(position,pos, ChessPiece.PieceType.ROOK);
+                newMoves.add(newMove);
+                newMove = new ChessMove(position,pos, ChessPiece.PieceType.BISHOP);
+                newMoves.add(newMove);
             }else{
-                ChessMove new_move = new ChessMove(position,pos, null);
-                new_moves.add(new_move);
+                ChessMove newMove = new ChessMove(position,pos, null);
+                newMoves.add(newMove);
             }
         }
-        return new_moves;
+        return newMoves;
     }
 
 
     private static ArrayList<ChessMove> allowBlack(ChessBoard board, ChessGame.TeamColor color,
                                                    ChessPosition position, ChessPiece pawn){
 
-        ArrayList<ChessMove> new_moves = new ArrayList<>();
-        ArrayList<ChessPosition> new_pos = new ArrayList<>();
+        ArrayList<ChessMove> newMoves = new ArrayList<>();
+        ArrayList<ChessPosition> newPos = new ArrayList<>();
         ChessPosition copyPos = position.deepCopy();
 
         if(copyPos.down()){
             ChessPiece temp = board.getPiece(copyPos);
             if(temp == board.EMPTY){
-                new_pos.add(copyPos.deepCopy());
+                newPos.add(copyPos.deepCopy());
 
                 if(copyPos.down()){
                     temp = board.getPiece(copyPos);
                     if((temp == board.EMPTY) && checkPawnStart(pawn,position)){
-                        new_pos.add(copyPos.deepCopy());
+                        newPos.add(copyPos.deepCopy());
                     }
                 }
             }
         }
 
-        ChessPosition attack_right = position.deepCopy();
-        ChessPosition attack_left = position.deepCopy();
+        ChessPosition attackRight = position.deepCopy();
+        ChessPosition attackLeft = position.deepCopy();
 
         // checks to see if it can attack right
-        if(attack_right.lowerRight()){
-            ChessPiece temp = board.getPiece(attack_right);
+        if(attackRight.lowerRight()){
+            ChessPiece temp = board.getPiece(attackRight);
             if(temp != board.EMPTY){
                 if(temp.getTeamColor() != color){
-                    new_pos.add(attack_right.deepCopy());
+                    newPos.add(attackRight.deepCopy());
                 }
             }
         }
         // checks to see if it can attack left
-        if(attack_left.lowerLeft()){
-            ChessPiece temp = board.getPiece(attack_left);
+        if(attackLeft.lowerLeft()){
+            ChessPiece temp = board.getPiece(attackLeft);
             if(temp != board.EMPTY){
                 if(temp.getTeamColor() != color){
-                    new_pos.add(attack_left.deepCopy());
+                    newPos.add(attackLeft.deepCopy());
                 }
             }
         }
 
 
-        for(ChessPosition pos : new_pos){
+        for(ChessPosition pos : newPos){
 
             if(pos.getRow() == 1){
-                ChessMove new_move = new ChessMove(position,pos, ChessPiece.PieceType.QUEEN);
-                new_moves.add(new_move);
-                new_move = new ChessMove(position,pos, ChessPiece.PieceType.KNIGHT);
-                new_moves.add(new_move);
-                new_move = new ChessMove(position,pos, ChessPiece.PieceType.ROOK);
-                new_moves.add(new_move);
-                new_move = new ChessMove(position,pos, ChessPiece.PieceType.BISHOP);
-                new_moves.add(new_move);
+                ChessMove newMove = new ChessMove(position,pos, ChessPiece.PieceType.QUEEN);
+                newMoves.add(newMove);
+                newMove = new ChessMove(position,pos, ChessPiece.PieceType.KNIGHT);
+                newMoves.add(newMove);
+                newMove = new ChessMove(position,pos, ChessPiece.PieceType.ROOK);
+                newMoves.add(newMove);
+                newMove = new ChessMove(position,pos, ChessPiece.PieceType.BISHOP);
+                newMoves.add(newMove);
             }else{
-                ChessMove new_move = new ChessMove(position,pos, null);
-                new_moves.add(new_move);
+                ChessMove chessMove = new ChessMove(position,pos, null);
+                newMoves.add(chessMove);
             }
         }
-        return new_moves;
+        return newMoves;
     }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 

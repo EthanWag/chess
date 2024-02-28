@@ -29,7 +29,7 @@ public class ChessGameSimulator {
     // simulates moves and returns the list of approved moves
     public Collection<ChessMove> approvedMoves(ChessPosition startPosition) {
 
-        ArrayList<ChessMove> approved_moves = new ArrayList<>();
+        ArrayList<ChessMove> approvedMoves = new ArrayList<>();
 
 
         // get the piece, it's color and it's moves
@@ -42,32 +42,32 @@ public class ChessGameSimulator {
             // makes a simple move and if it puts the king in danger, it doesn't add it to the approved moves
             simpleMakeMove(move);
             if(!kingInDanger(teamColor)){
-                approved_moves.add(move);
+                approvedMoves.add(move);
             }
             resetBoard();
         }
-        return approved_moves;
+        return approvedMoves;
     }
 
     public LinkedHashSet<ChessPosition> findKingMoves(ChessGame.TeamColor teamColor) throws NullPointerException{
 
         try {
             // first off the bat, get the other team color and get the king position
-            ChessGame.TeamColor opp_color = oppColor(teamColor);
+            ChessGame.TeamColor oppColor = oppColor(teamColor);
 
             // find the king, his position and his moves
-            ChessPosition king_pos = board.getKing(teamColor);
-            ChessPiece king = board.getPiece(king_pos);
-            Collection<ChessMove> king_moves = king.pieceMoves(board,king_pos);
+            ChessPosition kingPos = board.getKing(teamColor);
+            ChessPiece king = board.getPiece(kingPos);
+            Collection<ChessMove> kingMoves = king.pieceMoves(board,kingPos);
 
             // finds other teams moves
-            Collection<ChessMove> opp_team_moves = findOppTeamMoves(opp_color,(ArrayList<ChessMove>)king_moves);
+            Collection<ChessMove> oppTeamMoves = findOppTeamMoves(oppColor,(ArrayList<ChessMove>)kingMoves);
 
             // these functions then convert them to sets for easy comparison
-            LinkedHashSet<ChessPosition> opp_possible_pos = MoveToSetEnd((ArrayList<ChessMove>) opp_team_moves, null);
-            LinkedHashSet<ChessPosition> king_possible_pos = MoveToSetEnd((ArrayList<ChessMove>) king_moves, king_pos);
+            LinkedHashSet<ChessPosition> oppPossiblePos = moveToSetEnd((ArrayList<ChessMove>) oppTeamMoves, null);
+            LinkedHashSet<ChessPosition> kingPossiblePos = moveToSetEnd((ArrayList<ChessMove>) kingMoves, kingPos);
 
-            return find_complement(king_possible_pos, opp_possible_pos);
+            return findComplement(kingPossiblePos, oppPossiblePos);
 
         }catch(NullPointerException m){
             throw m;
@@ -75,24 +75,24 @@ public class ChessGameSimulator {
     }
 
     // this method find all a team can attack with given piece moves and a color
-    private Collection<ChessMove> findOppTeamMoves(ChessGame.TeamColor color, ArrayList<ChessMove> piece_moves){
+    private Collection<ChessMove> findOppTeamMoves(ChessGame.TeamColor color, ArrayList<ChessMove> pieceMoves){
 
         // finds the team moves with the current board
-        Collection<ChessMove> opp_team_moves = CalculatorTeam.findMoves(board, color);
+        Collection<ChessMove> oppTeamMoves = CalculatorTeam.findMoves(board, color);
 
         // finds the team moves with alternitve moves
-        for (ChessMove possible_move : piece_moves) {
-            simpleMakeMove(possible_move);
+        for (ChessMove possibleMove : pieceMoves) {
+            simpleMakeMove(possibleMove);
 
             // find all those moves and adds them to the calculator
-            ArrayList<ChessMove> opp_moves = CalculatorTeam.findMoves(board, color); // could optimize here because you are adding unnessary moves
+            ArrayList<ChessMove> oppMoves = CalculatorTeam.findMoves(board, color); // could optimize here because you are adding unnessary moves
 
             // add them to the opponents total count
-            opp_team_moves.addAll(opp_moves);
+            oppTeamMoves.addAll(oppMoves);
 
             resetBoard(); // resets the board so you can use it again
         }
-        return opp_team_moves;
+        return oppTeamMoves;
     }
 
     // kinda like the find king moves but useful for finding weather or not a given move will put the king in danger
@@ -100,8 +100,8 @@ public class ChessGameSimulator {
 
         try {
             ChessPosition king_pos = board.getKing(color);
-            ArrayList<ChessMove> opp_moves = CalculatorTeam.findMoves(board, oppColor(color));
-            LinkedHashSet<ChessPosition> opp_positions = MoveToSetEnd(opp_moves,null);
+            ArrayList<ChessMove> oppMoves = CalculatorTeam.findMoves(board, oppColor(color));
+            LinkedHashSet<ChessPosition> opp_positions = moveToSetEnd(oppMoves,null);
 
             return opp_positions.contains(king_pos);
 
@@ -114,38 +114,38 @@ public class ChessGameSimulator {
     // this function is very simple, just makes a simple move without being tied to any ChessGame rules
     private void simpleMakeMove(ChessMove move){
 
-        ChessPiece move_piece = board.getPiece(move.getStartPosition());
-        board.addPiece(move.getEndPosition(),move_piece);
+        ChessPiece movePiece = board.getPiece(move.getStartPosition());
+        board.addPiece(move.getEndPosition(),movePiece);
         board.fillEmptySpot(move.getStartPosition());
 
     }
 
     // finds the complement between two lists
-    private static LinkedHashSet<ChessPosition> find_complement(LinkedHashSet<ChessPosition> king_positions,
-                                                                LinkedHashSet<ChessPosition> team_positions){
+    private static LinkedHashSet<ChessPosition> findComplement(LinkedHashSet<ChessPosition> kingPositions,
+                                                               LinkedHashSet<ChessPosition> teamPositions){
 
-        LinkedHashSet<ChessPosition> copy_king_pos = new LinkedHashSet<>(king_positions);
+        LinkedHashSet<ChessPosition> copyKingPos = new LinkedHashSet<>(kingPositions);
 
         // will remove the current position if it is found in team positions
-        copy_king_pos.removeIf(team_positions::contains);
-        return copy_king_pos;
+        copyKingPos.removeIf(teamPositions::contains);
+        return copyKingPos;
     }
 
     // This function takes in an ArrayList and converts them to a set with all possible end positions, also your allowed
     // to add one extra position to the set, but you don't have to
-    private static LinkedHashSet<ChessPosition> MoveToSetEnd(ArrayList<ChessMove> all_moves, ChessPosition start_pos){
+    private static LinkedHashSet<ChessPosition> moveToSetEnd(ArrayList<ChessMove> allMoves, ChessPosition startPos){
 
-        LinkedHashSet<ChessPosition> pos_set = new LinkedHashSet<>();
+        LinkedHashSet<ChessPosition> posSet = new LinkedHashSet<>();
 
-        for(ChessMove move : all_moves){
+        for(ChessMove move : allMoves){
             // Converts all moves into end positions
-            pos_set.add(move.getEndPosition());
+            posSet.add(move.getEndPosition());
         }
-        // adds the start_pos, if you want it
-        if(start_pos != null){
-            pos_set.add(start_pos);
+        // adds the startPos, if you want it
+        if(startPos != null){
+            posSet.add(startPos);
         }
-        return pos_set;
+        return posSet;
     }
 
     // simple function that returns the other team color

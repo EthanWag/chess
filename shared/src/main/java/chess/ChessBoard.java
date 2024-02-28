@@ -74,13 +74,13 @@ public class ChessBoard {
         for(int i = 1; i <= BOUNDRIES; i++){
             for(int k = 1; k <= BOUNDRIES; k++){
 
-                ChessPosition check_pos = new ChessPosition(i,k);
-                ChessPiece check_king = getPiece(check_pos);
+                ChessPosition checkPos = new ChessPosition(i,k);
+                ChessPiece checKing = getPiece(checkPos);
 
-                if(check_king != EMPTY){
+                if(checKing != EMPTY){
                     // checks to see the piece and it's color
-                    if((check_king.getPieceType() == ChessPiece.PieceType.KING) && (check_king.getTeamColor() == color)){
-                        return check_pos;
+                    if((checKing.getPieceType() == ChessPiece.PieceType.KING) && (checKing.getTeamColor() == color)){
+                        return checkPos;
                     }
                 }
             }
@@ -122,8 +122,6 @@ public class ChessBoard {
     }
 
 
-
-
     /**
      * Sets the board to the default starting board
      * (How the game of chess normally starts)
@@ -131,39 +129,39 @@ public class ChessBoard {
 
     public void resetBoard() {
 
-        int WHITE_PAWN = 2;
-        int WHITE_BACK = 1;
-        int BLACK_PAWN = 7;
-        int BLACK_BACK = 8;
+        int whitePawn = 2;
+        int whiteBack = 1;
+        int blackPawn = 7;
+        int blackBack = 8;
 
         fillBoard();
 
-        fillTeam(ChessGame.TeamColor.WHITE,WHITE_PAWN,WHITE_BACK);
-        fillTeam(ChessGame.TeamColor.BLACK,BLACK_PAWN,BLACK_BACK);
+        fillTeam(ChessGame.TeamColor.WHITE,whitePawn,whiteBack);
+        fillTeam(ChessGame.TeamColor.BLACK,blackPawn,blackBack);
     }
 
-    private void fillTeam(ChessGame.TeamColor color, int pawn_row, int back_row){
+    private void fillTeam(ChessGame.TeamColor color, int pawnRow, int backRow){
 
         int col = 1;
         // mirrors all first pieces
-        mirrorSide(color, ChessPiece.PieceType.ROOK,back_row,col++);
-        mirrorSide(color, ChessPiece.PieceType.KNIGHT,back_row,col++);
-        mirrorSide(color, ChessPiece.PieceType.BISHOP,back_row,col++);
+        mirrorSide(color, ChessPiece.PieceType.ROOK,backRow,col++);
+        mirrorSide(color, ChessPiece.PieceType.KNIGHT,backRow,col++);
+        mirrorSide(color, ChessPiece.PieceType.BISHOP,backRow,col++);
 
         // creates queen
-        ChessPosition queen_pos = new ChessPosition(back_row,col++);
+        ChessPosition queenPos = new ChessPosition(backRow,col++);
         ChessPiece queen = new ChessPiece(color, ChessPiece.PieceType.QUEEN);
-        addPiece(queen_pos,queen);
+        addPiece(queenPos,queen);
 
         // creates king
-        ChessPosition king_pos = new ChessPosition(back_row,col);
+        ChessPosition kingPos = new ChessPosition(backRow,col);
         ChessPiece king = new ChessPiece(color, ChessPiece.PieceType.KING);
-        addPiece(king_pos,king);
+        addPiece(kingPos,king);
 
         for(int i = 1; i <= BOUNDRIES; i++){
-            ChessPosition pawn_pos = new ChessPosition(pawn_row,i);
+            ChessPosition pawnPos = new ChessPosition(pawnRow,i);
             ChessPiece pawn = new ChessPiece(color, ChessPiece.PieceType.PAWN);
-            addPiece(pawn_pos,pawn);
+            addPiece(pawnPos,pawn);
         }
     }
 
@@ -171,14 +169,14 @@ public class ChessBoard {
                             ChessPiece.PieceType type, int row, int col){
 
         ChessPosition pos = new ChessPosition(row,col);
-        ChessPiece new_piece = new ChessPiece(color,type);
-        addPiece(pos,new_piece);
+        ChessPiece newPiece = new ChessPiece(color,type);
+        addPiece(pos,newPiece);
 
         // mirrors other side
 
-        ChessPosition other_pos = new ChessPosition(row,(BOUNDRIES - (col - 1)));
-        ChessPiece other_piece = new ChessPiece(color,type);
-        addPiece(other_pos,other_piece);
+        ChessPosition otherPos = new ChessPosition(row,(BOUNDRIES - (col - 1)));
+        ChessPiece otherPiece = new ChessPiece(color,type);
+        addPiece(otherPos,otherPiece);
 
     }
 
