@@ -16,18 +16,6 @@ public abstract class Service {
         return authDAO.read(authToken);
     }
 
-    // given a username, will return a user object, if not found will print a message
-    protected User getUser(String username) throws DataAccessException{
-
-        try{
-            return userDAO.read(username);
-
-        }catch(DataAccessException error){
-            throw error;
-            // for right now, just keep try catch block in case you want to handle it in the future
-        }
-    }
-
     // checks to make sure you entered in the correct authToken
     protected User checkAuthToken(String authToken)throws DataAccessException{
 

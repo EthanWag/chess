@@ -26,7 +26,4 @@ public class AuthData {
         return authToken;
     }
 
-    public void setAuthToken(String authToken){
-        this.authToken = authToken;
-    }
 }

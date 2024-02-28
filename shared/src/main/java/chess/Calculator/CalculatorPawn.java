@@ -65,14 +65,9 @@ public class CalculatorPawn {
         for(ChessPosition pos : newPos){
 
             if(pos.getRow() == 8){
-                ChessMove newMove = new ChessMove(position,pos, ChessPiece.PieceType.QUEEN);
-                newMoves.add(newMove);
-                newMove = new ChessMove(position,pos, ChessPiece.PieceType.KNIGHT);
-                newMoves.add(newMove);
-                newMove = new ChessMove(position,pos, ChessPiece.PieceType.ROOK);
-                newMoves.add(newMove);
-                newMove = new ChessMove(position,pos, ChessPiece.PieceType.BISHOP);
-                newMoves.add(newMove);
+
+                promotionFill(newMoves,position,pos);
+
             }else{
                 ChessMove newMove = new ChessMove(position,pos, null);
                 newMoves.add(newMove);
@@ -125,18 +120,12 @@ public class CalculatorPawn {
             }
         }
 
-
         for(ChessPosition pos : newPos){
 
             if(pos.getRow() == 1){
-                ChessMove newMove = new ChessMove(position,pos, ChessPiece.PieceType.QUEEN);
-                newMoves.add(newMove);
-                newMove = new ChessMove(position,pos, ChessPiece.PieceType.KNIGHT);
-                newMoves.add(newMove);
-                newMove = new ChessMove(position,pos, ChessPiece.PieceType.ROOK);
-                newMoves.add(newMove);
-                newMove = new ChessMove(position,pos, ChessPiece.PieceType.BISHOP);
-                newMoves.add(newMove);
+
+                promotionFill(newMoves,position,pos);
+
             }else{
                 ChessMove chessMove = new ChessMove(position,pos, null);
                 newMoves.add(chessMove);
@@ -144,10 +133,6 @@ public class CalculatorPawn {
         }
         return newMoves;
     }
-
-
-
-
 
     private static boolean checkPawnStart(ChessPiece piece, ChessPosition position){
 
@@ -157,4 +142,19 @@ public class CalculatorPawn {
             return ((position.getRow() == 7) && piece.getFirstMove());
         }
     }
+
+    private static void promotionFill(ArrayList<ChessMove> newMoves, ChessPosition startPosition,
+                                                      ChessPosition endPosition){
+
+        ChessMove newMove = new ChessMove(startPosition,endPosition, ChessPiece.PieceType.QUEEN);
+        newMoves.add(newMove);
+        newMove = new ChessMove(startPosition,endPosition, ChessPiece.PieceType.KNIGHT);
+        newMoves.add(newMove);
+        newMove = new ChessMove(startPosition,endPosition, ChessPiece.PieceType.ROOK);
+        newMoves.add(newMove);
+        newMove = new ChessMove(startPosition,endPosition, ChessPiece.PieceType.BISHOP);
+        newMoves.add(newMove);
+
+    }
+
 }
