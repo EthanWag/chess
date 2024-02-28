@@ -19,14 +19,14 @@ public class GameDAO{
     public void create(Game newGame) throws DataAccessException {
         int newGameId = newGame.getGameID();
         // checks for if it is already taken
-        if(dbGames.containsKey(newGameId)){ throw new DataAccessException("[403] Already Taken");}
+        if(dbGames.containsKey(newGameId)){ throw new DataAccessException("[403](Used Game)(GameDAO) gameId already taken");}
 
         dbGames.put(newGameId,newGame);
     }
 
     public Game read(int gameId) throws DataAccessException{
 
-        if(!dbGames.containsKey(gameId)){ throw new DataAccessException("[404] Not found");}
+        if(!dbGames.containsKey(gameId)){ throw new DataAccessException("[400](Game Not Found)(GameDAO) Not Found");}
 
         return  dbGames.get(gameId);
     }
@@ -34,14 +34,14 @@ public class GameDAO{
     public void update(int gameId, Game updateGame) throws DataAccessException {
 
         // just throws an object error if it can't find anything
-        if(!dbGames.containsKey(gameId)) {throw new DataAccessException("[404] Not found");}
+        if(!dbGames.containsKey(gameId)) {throw new DataAccessException("[404](Game Not Found)(GameDAO) Not Found");}
 
         dbGames.put(gameId,updateGame);
     }
 
     public void delete(int gameId) throws DataAccessException {
 
-        if(!dbGames.containsKey(gameId)) {throw new DataAccessException("[404] Not found");}
+        if(!dbGames.containsKey(gameId)) {throw new DataAccessException("[404](Game Not Found)(GameDAO) Not Found");}
 
         dbGames.remove(gameId);
     }

@@ -4,29 +4,36 @@ import models.*;
 import dataAccess.DataAccessException;
 
 import javax.xml.crypto.Data;
+import java.util.Random;
 
 
 public class CreateGameService extends Service{
 
     public CreateGameService(){}
 
-    public CreateGamePackage completeJob(String authToken, String gameName)throws DataAccessException{
+
+    public gamePackage completeJob(String authToken, String gameName)throws DataAccessException{
 
         checkAuthToken(authToken); // throws exception in case if can't find authToken
 
-        // returns gameId and puts it into the package, which is then sent back
-        int gameID = createGame(gameName);
-        return new CreateGamePackage(gameID);
+        // returns gameId
+        int newGameID = createGame(gameName);
+
+        // finally returns the new object
+        return new gamePackage(newGameID);
     }
 
     // service functions
 
     private int createGame(String gameName)throws DataAccessException{
 
+        // this generates the random number generator
+        Random random = new Random();
+
         // creates all the new variables
-        int newGameId = 5; // generate int here
-        String black = "";
-        String white = "";
+        int newGameId = random.nextInt(10,100000);
+        String black = null;
+        String white = null;
 
         // creates game and adds it to the database
         Game newGame = new Game(newGameId,white,black,gameName);
@@ -35,12 +42,10 @@ public class CreateGameService extends Service{
         return newGameId;
     }
 
-    public static class CreateGamePackage{
+    public static class gamePackage{
         public int gameID;
-        public CreateGamePackage(int gameID){
+        public gamePackage(int gameID){
             this.gameID = gameID;
         }
     }
 }
-
-// complete for now

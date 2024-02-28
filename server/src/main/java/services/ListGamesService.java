@@ -9,12 +9,15 @@ public class ListGamesService extends Service{
 
     public ListGamesService() {}
 
-    public ListGamesPackage completeJob(String authtoken)throws DataAccessException{
+    public gamesPackage completeJob(String authtoken)throws DataAccessException{
 
         // Note: there is a return value of User but we ignore it because it is not important
         checkAuthToken(authtoken); // throws an exception in case it can't find it
 
-        return new ListGamesPackage(getAllGames());
+        Collection<Game> allGames = getAllGames();
+
+        // returns all the new games
+        return new gamesPackage(allGames);
     }
 
     // service functions
@@ -23,11 +26,10 @@ public class ListGamesService extends Service{
         return GameDAO.getAll();
     }
 
-    // check this data structure, I think this may cause serialization problems
-    public static class ListGamesPackage{
-        public Collection<Game> games;
 
-        public ListGamesPackage(Collection<Game> games){
+    public static class gamesPackage{
+        public Collection<Game> games;
+        public gamesPackage(Collection<Game> games){
             this.games = games;
         }
     }

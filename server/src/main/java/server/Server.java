@@ -1,5 +1,7 @@
 package server;
 
+import services.ClearApplicationService;
+import services.LoginService;
 import services.handlers.*;
 
 import spark.*;
@@ -28,31 +30,61 @@ public class Server {
     private void installEndPoints(){
 
         Spark.delete("/db", (request, response) -> { // deletes everything from the database
-            return "Clear application method\n";
+
+            ClearApplicationHandler clear = new ClearApplicationHandler();
+            return clear.clearApplicationHandler(response);
+
         });
+
         Spark.post("/user", (request, response) -> { // register a new user
 
-                // makes a new handler and sends it to the handler function
-                RegisterHandler registerUser = new RegisterHandler();
-                return registerUser.registerHandler(request,response);
+            // makes a new handler and sends it to the handler function
+            RegisterHandler registerUser = new RegisterHandler();
+            return registerUser.registerHandler(request,response);
 
         });
+
+
         Spark.post("/session", (request, response) -> { // logs a new user into a game
-            return "login method\n";
+
+            // does request and sends it back to the server
+            LoginHandler loginUser = new LoginHandler();
+            return loginUser.loginHandler(request,response);
+
         });
+
+
         Spark.delete("/session", (request, response) -> { // logout, logs out a user from the chessgame
-            return "logout method\n";
+
+            LogoutHandler logoutUser = new LogoutHandler();
+            return logoutUser.logoutHandler(request,response);
+
         });
+
+
         Spark.get("/game", (request, response) -> { // gives you a list of all games
-            return "list games method\n";
+
+            ListGamesHandler allGames = new ListGamesHandler();
+            return allGames.ListGamesHandler(request,response);
+
         });
+
+
         Spark.post("/game", (request, response) -> { // create game method
-            return "create game method\n";
+
+            CreateGameHandler createGame = new CreateGameHandler();
+            return createGame.createGameHandler(request,response);
+
         });
+
+
         Spark.put("/game", (request, response) -> {
-            return "join game method\n";
+            // this allows the user to join the game
+            JoinGameHandler joinGame = new JoinGameHandler();
+            return joinGame.joinGameHandler(request,response);
+
         });
-        Spark.notFound("<html><body>hello user, invalid response </body></html>");
+        Spark.notFound("{Invalid Page}");
     }
 
     private void installFilter(){
