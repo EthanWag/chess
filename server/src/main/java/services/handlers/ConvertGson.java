@@ -24,7 +24,7 @@ public class ConvertGson {
             return serializer.fromJson(jsonStr.body(), structure);
 
         }catch(Exception error){
-            throw new JsonSyntaxException("Error in Serialization");
+            throw new JsonSyntaxException("[400](Invalid input)(ConvertGson) invalid entry");
         }
     }
 
@@ -36,7 +36,7 @@ public class ConvertGson {
             return jsonString;
 
         }catch(Exception error){
-            throw new JsonSyntaxException("Error in Serialization");
+            throw new JsonSyntaxException("[400](Invalid input)(ConvertGson) invalid string");
         }
     }
 

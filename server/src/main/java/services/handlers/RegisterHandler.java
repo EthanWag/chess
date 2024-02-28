@@ -22,8 +22,14 @@ public class RegisterHandler {
         try {
 
             // Simply just creates a register object and casts it to a register object
+
+            System.out.println(request.body());
+
             var newObj = GsonConverter.RequestToObj(request, register.class);
             register newRegister = (register) newObj;
+
+            // checks to see if the user gave valid input
+
 
             // then runs the program through the services and returns the newly created authToken
             RegisterService.registerPackage newPackage = service.completeJob(newRegister.username, newRegister.password, newRegister.email);
@@ -47,7 +53,6 @@ public class RegisterHandler {
             this.password = password;
             this.email = email;
         }
-
     }
 
 }

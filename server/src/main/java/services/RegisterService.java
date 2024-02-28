@@ -11,6 +11,9 @@ public class RegisterService extends Service{
     public registerPackage completeJob(String username, String password, String email)throws DataAccessException{
 
 
+        // first checks to see valid input
+        checkRegister(username,password,email);
+
         // create user and adds it to the database
         createUser(username,password,email);
 
@@ -30,6 +33,12 @@ public class RegisterService extends Service{
     private void createUser(String username, String password, String email)throws DataAccessException{
         User newUser = new User(username,password,email);
         UserDAO.create(newUser);
+    }
+
+    private void checkRegister(String username, String password, String email)throws DataAccessException{
+        if((username == null) || (password == null) || (email == null)){
+            throw new DataAccessException("[400](bad request)(Register Service) invalid input");
+        }
     }
 
     public static class registerPackage{

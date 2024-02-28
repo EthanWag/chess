@@ -21,7 +21,7 @@ public class LoginService extends Service{
             return new loginPackage(newAuthData.getUsername(), newAuthData.getAuthToken());
         }else{
             // means that they entered the wrong password
-            throw new DataAccessException("[401] unauthorized (Invalid password)");
+            throw new DataAccessException("[401](Unauthorized) Invalid Password");
         }
     }
 

@@ -27,7 +27,7 @@ public class JoinGameHandler {
 
             // converts that string in to a response object and returns it
             response.status(200);
-            return GsonConverter.ObjToJson("Success!");
+            return "{}";
 
         }catch(Exception error) {
 

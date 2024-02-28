@@ -34,7 +34,7 @@ public class JoinGameService extends Service{
                 if(!joinGame.isWhiteTaken()){ // if white is not taken
                     joinGame.joinWhiteSide(username);
                 }else{
-                    throw new DataAccessException("[403] already taken");
+                    throw new DataAccessException("[403](User Color)(JoinGameService) Auth already taken");
                 }
                 break;
 
@@ -42,11 +42,17 @@ public class JoinGameService extends Service{
                 if(!joinGame.isBlackTaken()){ // if black is not taken
                     joinGame.joinBlackSide(username);
                 }else{
-                    throw new DataAccessException("[403] already taken");
+                    throw new DataAccessException("[403](User Color)(JoinGameService) Auth already taken");
                 }
                 break;
 
+            case null:
+                break; // they just want to wach the game
+
+
             default: // throws an error if they entered in a invalid team color
+
+                // right here you need to add functionality of watching a game
                 throw new DataAccessException("[400] bad request");
         }
     }

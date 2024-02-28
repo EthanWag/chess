@@ -31,8 +31,8 @@ public class CreateGameService extends Service{
 
         // creates all the new variables
         int newGameId = random.nextInt(10,100000);
-        String black = "";
-        String white = "";
+        String black = null;
+        String white = null;
 
         // creates game and adds it to the database
         Game newGame = new Game(newGameId,white,black,gameName);

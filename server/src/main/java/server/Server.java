@@ -85,7 +85,7 @@ public class Server {
             return joinGame.joinGameHandler(request,response);
 
         });
-        Spark.notFound("<html><body>hello user, invalid response </body></html>");
+        Spark.notFound("{Invalid Page}");
     }
 
     private void installFilter(){
