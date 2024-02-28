@@ -3,25 +3,24 @@ package services;
 import models.*;
 import dataAccess.*;
 
-import javax.xml.crypto.Data;
 import java.util.UUID;
 
 public abstract class Service {
 
-    protected static UserDAO UserDAO = new UserDAO();
-    protected static AuthDAO AuthDAO = new AuthDAO();
-    protected static GameDAO GameDAO = new GameDAO();
+    protected static UserDAO userDAO = new UserDAO();
+    protected static AuthDAO authDAO = new AuthDAO();
+    protected static GameDAO gameDAO = new GameDAO();
 
     protected AuthData getAuthData(String authToken) throws DataAccessException{
 
-        return AuthDAO.read(authToken);
+        return authDAO.read(authToken);
     }
 
     // given a username, will return a user object, if not found will print a message
     protected User getUser(String username) throws DataAccessException{
 
         try{
-            return UserDAO.read(username);
+            return userDAO.read(username);
 
         }catch(DataAccessException error){
             throw error;
@@ -34,10 +33,10 @@ public abstract class Service {
 
         // will throw an [404] not found exception if it can't find it
         try {
-            AuthData checkData = AuthDAO.read(authToken);
+            AuthData checkData = authDAO.read(authToken);
 
             // grabs current user with that authToken and returns user
-            return UserDAO.read(checkData.getUsername());
+            return userDAO.read(checkData.getUsername());
 
         }catch(DataAccessException invalid){ // throws an unauthorized execption in case it can't find it
             throw new DataAccessException("[401](unauthorized) not valid authToken");
@@ -56,7 +55,7 @@ public abstract class Service {
         // otherwise it makes an authToken and puts it in the database
         String authToken = UUID.randomUUID().toString(); // generate token here
         AuthData newAuth = new AuthData(authToken,username);
-        AuthDAO.create(newAuth);
+        authDAO.create(newAuth);
         return newAuth;
     }
 

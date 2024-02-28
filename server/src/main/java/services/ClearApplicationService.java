@@ -12,9 +12,9 @@ public class ClearApplicationService extends Service{
 
     private void clearApplication(){
 
-        AuthDAO.deleteAll();
-        UserDAO.deleteAll();
-        GameDAO.deleteAll();
+        authDAO.deleteAll();
+        userDAO.deleteAll();
+        gameDAO.deleteAll();
 
     }
 

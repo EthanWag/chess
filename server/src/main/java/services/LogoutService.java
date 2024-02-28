@@ -3,8 +3,6 @@ package services;
 import dataAccess.DataAccessException;
 import models.*;
 
-import javax.xml.crypto.Data;
-
 public class LogoutService extends Service{
 
     public LogoutService() {}
@@ -23,7 +21,7 @@ public class LogoutService extends Service{
     // service functions
 
     private void deleteAuthData(AuthData delAuthData)throws DataAccessException{
-        String AuthToken = delAuthData.getAuthToken();
-        AuthDAO.delete(AuthToken);
+        String authToken = delAuthData.getAuthToken();
+        authDAO.delete(authToken);
     }
 }

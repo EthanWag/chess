@@ -99,11 +99,11 @@ public class ChessGameSimulator {
     private boolean kingInDanger(ChessGame.TeamColor color){
 
         try {
-            ChessPosition king_pos = board.getKing(color);
+            ChessPosition kingPos = board.getKing(color);
             ArrayList<ChessMove> oppMoves = CalculatorTeam.findMoves(board, oppColor(color));
             LinkedHashSet<ChessPosition> opp_positions = moveToSetEnd(oppMoves,null);
 
-            return opp_positions.contains(king_pos);
+            return opp_positions.contains(kingPos);
 
         }catch(NullPointerException m){
             System.err.println(m.getMessage());

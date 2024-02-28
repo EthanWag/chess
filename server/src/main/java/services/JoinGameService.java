@@ -2,7 +2,6 @@ package services;
 
 import dataAccess.DataAccessException;
 import models.*;
-import org.eclipse.jetty.io.ssl.ALPNProcessor;
 
 public class JoinGameService extends Service{
 
@@ -24,7 +23,7 @@ public class JoinGameService extends Service{
     // Service functions
 
     private Game getGame(int gameID) throws DataAccessException{
-        return GameDAO.read(gameID);
+        return gameDAO.read(gameID);
     }
 
     private void addPlayer(Game joinGame, String username, String TeamColor)throws DataAccessException{

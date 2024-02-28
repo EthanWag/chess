@@ -87,35 +87,35 @@ public class ChessPiece {
      */
     public Collection<ChessMove> pieceMoves(ChessBoard board, ChessPosition myPosition) {
 
-        ArrayList<ChessMove> possible_moves;
+        ArrayList<ChessMove> possibleMoves;
 
 
         switch(myType){
 
             case QUEEN:
-                possible_moves = CalculatorQueen.findMoves(board,myColor,myPosition);
+                possibleMoves = CalculatorQueen.findMoves(board,myColor,myPosition);
                 break;
             case KING:
-                possible_moves = CalculatorKing.findMoves(board,myColor,myPosition);
+                possibleMoves = CalculatorKing.findMoves(board,myColor,myPosition);
                 break;
             case ROOK:
-                possible_moves = CalculatorRook.findMoves(board,myColor,myPosition);
+                possibleMoves = CalculatorRook.findMoves(board,myColor,myPosition);
                 break;
             case BISHOP:
-                possible_moves = CalculatorBishop.findMoves(board,myColor,myPosition);
+                possibleMoves = CalculatorBishop.findMoves(board,myColor,myPosition);
                 break;
             case KNIGHT:
-                possible_moves = CalculatorKnight.findMoves(board,myColor,myPosition);
+                possibleMoves = CalculatorKnight.findMoves(board,myColor,myPosition);
                 break;
             case PAWN:
-                possible_moves = CalculatorPawn.findMoves(board,myColor,myPosition,this);
+                possibleMoves = CalculatorPawn.findMoves(board,myColor,myPosition,this);
                 break;
             default:
-                possible_moves = new ArrayList<>();
+                possibleMoves = new ArrayList<>();
                 break;
         }
 
         firstMove = false;
-        return possible_moves;
+        return possibleMoves;
     }
 }

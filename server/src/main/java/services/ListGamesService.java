@@ -9,7 +9,7 @@ public class ListGamesService extends Service{
 
     public ListGamesService() {}
 
-    public gamesPackage completeJob(String authtoken)throws DataAccessException{
+    public GamesPackage completeJob(String authtoken)throws DataAccessException{
 
         // Note: there is a return value of User but we ignore it because it is not important
         checkAuthToken(authtoken); // throws an exception in case it can't find it
@@ -17,19 +17,19 @@ public class ListGamesService extends Service{
         Collection<Game> allGames = getAllGames();
 
         // returns all the new games
-        return new gamesPackage(allGames);
+        return new GamesPackage(allGames);
     }
 
     // service functions
 
     private Collection<Game> getAllGames(){
-        return GameDAO.getAll();
+        return gameDAO.getAll();
     }
 
 
-    public static class gamesPackage{
+    public static class GamesPackage {
         public Collection<Game> games;
-        public gamesPackage(Collection<Game> games){
+        public GamesPackage(Collection<Game> games){
             this.games = games;
         }
     }

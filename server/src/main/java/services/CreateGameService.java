@@ -3,7 +3,6 @@ package services;
 import models.*;
 import dataAccess.DataAccessException;
 
-import javax.xml.crypto.Data;
 import java.util.Random;
 
 
@@ -12,7 +11,7 @@ public class CreateGameService extends Service{
     public CreateGameService(){}
 
 
-    public gamePackage completeJob(String authToken, String gameName)throws DataAccessException{
+    public GamePackage completeJob(String authToken, String gameName)throws DataAccessException{
 
         checkAuthToken(authToken); // throws exception in case if can't find authToken
 
@@ -20,7 +19,7 @@ public class CreateGameService extends Service{
         int newGameID = createGame(gameName);
 
         // finally returns the new object
-        return new gamePackage(newGameID);
+        return new GamePackage(newGameID);
     }
 
     // service functions
@@ -37,14 +36,14 @@ public class CreateGameService extends Service{
 
         // creates game and adds it to the database
         Game newGame = new Game(newGameId,white,black,gameName);
-        GameDAO.create(newGame);
+        gameDAO.create(newGame);
 
         return newGameId;
     }
 
-    public static class gamePackage{
+    public static class GamePackage {
         public int gameID;
-        public gamePackage(int gameID){
+        public GamePackage(int gameID){
             this.gameID = gameID;
         }
     }

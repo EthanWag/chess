@@ -25,7 +25,7 @@ public class LogoutHandler {
         }catch(Exception error) {
 
             // catches error and returns that
-            return exceptionHandler.ExceptionHandler(error,response);
+            return exceptionHandler.handleException(error,response);
         }
     }
 }

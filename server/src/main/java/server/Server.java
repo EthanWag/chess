@@ -1,7 +1,5 @@
 package server;
 
-import services.ClearApplicationService;
-import services.LoginService;
 import services.handlers.*;
 
 import spark.*;
@@ -65,7 +63,7 @@ public class Server {
         Spark.get("/game", (request, response) -> { // gives you a list of all games
 
             ListGamesHandler allGames = new ListGamesHandler();
-            return allGames.ListGamesHandler(request,response);
+            return allGames.listGamesHandler(request,response);
 
         });
 

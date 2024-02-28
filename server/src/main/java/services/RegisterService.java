@@ -10,7 +10,7 @@ public class RegisterService extends Service{
     public RegisterService() {}
 
 
-    public registerPackage completeJob(String username, String password, String email)throws DataAccessException{
+    public RegisterPackage completeJob(String username, String password, String email)throws DataAccessException{
 
         // first checks to see valid input
         checkRegister(username,password,email);
@@ -25,7 +25,7 @@ public class RegisterService extends Service{
         String authUsername = newAuth.getUsername();
         String authToken = newAuth.getAuthToken();
 
-        return new registerPackage(authUsername,authToken);
+        return new RegisterPackage(authUsername,authToken);
     }
 
     // service functions
@@ -33,7 +33,7 @@ public class RegisterService extends Service{
     // simply just creates a new user and puts it in the database
     private void createUser(String username, String password, String email)throws DataAccessException{
         User newUser = new User(username,password,email);
-        UserDAO.create(newUser);
+        userDAO.create(newUser);
     }
 
     private void checkRegister(String username, String password, String email)throws DataAccessException{
@@ -42,9 +42,9 @@ public class RegisterService extends Service{
         }
     }
 
-    public static class registerPackage{
+    public static class RegisterPackage {
         public String username,authToken;
-        public registerPackage(String username, String newAuthToken){
+        public RegisterPackage(String username, String newAuthToken){
             this.username = username;
             this.authToken = newAuthToken;
         }
@@ -54,7 +54,7 @@ public class RegisterService extends Service{
         public boolean equals(Object o) {
             if (this == o) return true;
             if (o == null || getClass() != o.getClass()) return false;
-            registerPackage that = (registerPackage) o;
+            RegisterPackage that = (RegisterPackage) o;
             return Objects.equals(username, that.username) && Objects.equals(authToken, that.authToken);
         }
 

@@ -1,7 +1,6 @@
 package services.handlers;
 
 import services.ClearApplicationService;
-import spark.Request;
 import spark.Response;
 
 public class ClearApplicationHandler {
@@ -23,7 +22,7 @@ public class ClearApplicationHandler {
         }catch(Exception error) {
 
             // catches error and returns that
-            return exceptionHandler.ExceptionHandler(error,response);
+            return exceptionHandler.handleException(error,response);
         }
     }
 

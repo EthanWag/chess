@@ -41,7 +41,7 @@ class LoginServiceTest {
             testPassword = fakePassword;
 
 
-            RegisterService.registerPackage testPackage = registerService.completeJob(fakeUsername, fakePassword, fakeEmail);
+            RegisterService.RegisterPackage testPackage = registerService.completeJob(fakeUsername, fakePassword, fakeEmail);
             testToken = testPackage.authToken;
 
             logout.completeJob(testToken);

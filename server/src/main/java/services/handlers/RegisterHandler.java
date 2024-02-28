@@ -1,14 +1,14 @@
 package services.handlers;
 
 import services.RegisterService;
-import services.RegisterService.registerPackage;
+import services.RegisterService.RegisterPackage;
 
 import spark.*;
 
 public class RegisterHandler {
 
     private static RegisterService service = new RegisterService();
-    private static ConvertGson GsonConverter = new ConvertGson();
+    private static ConvertGson gsonConverter = new ConvertGson();
     private static ExceptionHandler exceptionHandler = new ExceptionHandler();
 
     public RegisterHandler(){}
@@ -21,30 +21,30 @@ public class RegisterHandler {
 
             System.out.println(request.body());
 
-            var newObj = GsonConverter.RequestToObj(request, register.class);
-            register newRegister = (register) newObj;
+            var newObj = gsonConverter.requestToObj(request, Register.class);
+            Register newRegister = (Register) newObj;
 
             // checks to see if the user gave valid input
 
 
             // then runs the program through the services and returns the newly created authToken
-            RegisterService.registerPackage newPackage = service.completeJob(newRegister.username, newRegister.password, newRegister.email);
+            RegisterPackage newPackage = service.completeJob(newRegister.username, newRegister.password, newRegister.email);
 
             // converts that string in to a response object and returns it
             response.status(200);
-            return GsonConverter.ObjToJson(newPackage);
+            return gsonConverter.objToJson(newPackage);
 
         }catch(Exception error) {
 
             // catches error and returns that
-            return exceptionHandler.ExceptionHandler(error,response);
+            return exceptionHandler.handleException(error,response);
         }
     }
 
     // this is my private class and it can only be used by my RegisterHandler
-    private static class register{
+    private static class Register {
         public String username,password,email;
-        public register(String username,String password, String email){
+        public Register(String username, String password, String email){
             this.username = username;
             this.password = password;
             this.email = email;

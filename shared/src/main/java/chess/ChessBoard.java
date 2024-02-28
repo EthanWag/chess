@@ -1,6 +1,5 @@
 package chess;
 
-import javax.management.relation.InvalidRoleInfoException;
 import java.util.Arrays;
 
 /**
@@ -49,7 +48,7 @@ public class ChessBoard {
         return board[row][col];
     }
 
-    public ChessPiece[][] __getBoard() {
+    public ChessPiece[][] getBoard() {
         return board;
     }
 
@@ -112,9 +111,9 @@ public class ChessBoard {
             for(int col = 0; col < BOUNDRIES; col++){
 
                 if(board[row][col] == EMPTY){
-                    newChessBoard.__getBoard()[row][col] = EMPTY;
+                    newChessBoard.getBoard()[row][col] = EMPTY;
                 }else {
-                    newChessBoard.__getBoard()[row][col] = new ChessPiece(board[row][col]);
+                    newChessBoard.getBoard()[row][col] = new ChessPiece(board[row][col]);
                 }
             }
         }

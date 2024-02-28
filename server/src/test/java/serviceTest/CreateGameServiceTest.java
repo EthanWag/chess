@@ -1,12 +1,10 @@
 package serviceTest;
 
 import dataAccess.DataAccessException;
-import models.AuthData;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import services.ClearApplicationService;
 import services.CreateGameService;
-import services.LogoutService;
 import services.RegisterService;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -37,7 +35,7 @@ class CreateGameServiceTest {
             String testPassword = "chimmysmmmmooo";
             String testEmail = "email.com";
 
-            RegisterService.registerPackage testPackage = registerService.completeJob(testUsername, testPassword, testEmail);
+            RegisterService.RegisterPackage testPackage = registerService.completeJob(testUsername, testPassword, testEmail);
             authToken = testPackage.authToken;
 
         }catch(DataAccessException error){

@@ -5,8 +5,6 @@ import spark.*;
 
 import com.google.gson.Gson;
 
-import models.User;
-
 public class ConvertGson {
     // simple constructor
 
@@ -17,7 +15,7 @@ public class ConvertGson {
     }
 
     // this would need to throw an error encase it couldn't make it
-    public Object RequestToObj(Request jsonStr, Class<?> structure) throws JsonSyntaxException {
+    public Object requestToObj(Request jsonStr, Class<?> structure) throws JsonSyntaxException {
 
         // throws an exception if it can't create the new object
         try {
@@ -28,12 +26,11 @@ public class ConvertGson {
         }
     }
 
-    public String ObjToJson(Object data){
+    public String objToJson(Object data){
 
         // throws an exception if it serializes object
         try {
-            String jsonString = serializer.toJson(data);
-            return jsonString;
+            return serializer.toJson(data);
 
         }catch(Exception error){
             throw new JsonSyntaxException("[400](Invalid input)(ConvertGson) invalid string");

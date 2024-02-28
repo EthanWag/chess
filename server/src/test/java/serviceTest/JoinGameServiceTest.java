@@ -36,10 +36,10 @@ class JoinGameServiceTest {
             String testPassword = "chimmysmmmmooo";
             String testEmail = "email.com";
 
-            RegisterService.registerPackage testPackage = registerService.completeJob(testUsername, testPassword, testEmail);
+            RegisterService.RegisterPackage testPackage = registerService.completeJob(testUsername, testPassword, testEmail);
             authToken = testPackage.authToken;
 
-            CreateGameService.gamePackage gamePackage = createGameService.completeJob(authToken,"newGame");
+            CreateGameService.GamePackage gamePackage = createGameService.completeJob(authToken,"newGame");
             gameId = gamePackage.gameID;
 
         }catch(DataAccessException error){
