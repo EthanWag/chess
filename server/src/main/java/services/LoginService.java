@@ -31,7 +31,7 @@ public class LoginService extends Service{
     }
 
     public static class loginPackage{
-        String username,authToken;
+        public String username,authToken;
         public loginPackage(String username,String authToken){
             this.username = username;
             this.authToken = authToken;

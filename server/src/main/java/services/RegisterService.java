@@ -3,6 +3,8 @@ package services;
 import dataAccess.DataAccessException;
 import models.*;
 
+import java.util.Objects;
+
 public class RegisterService extends Service{
 
     public RegisterService() {}
@@ -46,6 +48,20 @@ public class RegisterService extends Service{
         public registerPackage(String username, String newAuthToken){
             this.username = username;
             this.authToken = newAuthToken;
+        }
+
+        // simple getters and setters for testing
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) return true;
+            if (o == null || getClass() != o.getClass()) return false;
+            registerPackage that = (registerPackage) o;
+            return Objects.equals(username, that.username) && Objects.equals(authToken, that.authToken);
+        }
+
+        @Override
+        public int hashCode() {
+            return Objects.hash(username, authToken);
         }
     }
 }

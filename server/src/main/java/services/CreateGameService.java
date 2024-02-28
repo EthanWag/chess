@@ -42,7 +42,7 @@ public class CreateGameService extends Service{
     }
 
     public static class gamePackage{
-        int gameID;
+        public int gameID;
         public gamePackage(int gameID){
             this.gameID = gameID;
         }
