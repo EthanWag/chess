@@ -7,7 +7,7 @@ public class JoinGameService extends Service{
 
     public JoinGameService() {}
 
-    public void completeJob(String authToken, String ClientColor, int gameId) throws DataAccessException{
+    public void completeJob(String authToken, String clientColor, int gameId) throws DataAccessException{
 
         // gets user and game, throws exceptions if it can't find it
         User currentUser = checkAuthToken(authToken);
@@ -17,7 +17,7 @@ public class JoinGameService extends Service{
         String username = currentUser.getUsername();
 
         // adds the player to the game if they are
-        addPlayer(currentGame,username,ClientColor);
+        addPlayer(currentGame,username,clientColor);
     }
 
     // Service functions
@@ -26,9 +26,9 @@ public class JoinGameService extends Service{
         return gameDAO.read(gameID);
     }
 
-    private void addPlayer(Game joinGame, String username, String TeamColor)throws DataAccessException{
+    private void addPlayer(Game joinGame, String username, String teamColor)throws DataAccessException{
 
-        switch(TeamColor){ //checks to see what team they entered
+        switch(teamColor){ //checks to see what team they entered
             case "WHITE":
                 if(!joinGame.isWhiteTaken()){ // if white is not taken
                     joinGame.joinWhiteSide(username);

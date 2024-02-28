@@ -47,11 +47,6 @@ public abstract class Service {
     // Generates AuthTokens and adds them to the Database. used in multiple services
     protected AuthData createAuthData(String username)throws DataAccessException{
 
-        // checks to see if there is already an authToken made
-        // if(AuthDAO.findAuth(username)){
-            // throw new DataAccessException("[403](Used Auth)(Service.java) already logged in");
-        // }
-
         // otherwise it makes an authToken and puts it in the database
         String authToken = UUID.randomUUID().toString(); // generate token here
         AuthData newAuth = new AuthData(authToken,username);

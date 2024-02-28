@@ -101,9 +101,9 @@ public class ChessGameSimulator {
         try {
             ChessPosition kingPos = board.getKing(color);
             ArrayList<ChessMove> oppMoves = CalculatorTeam.findMoves(board, oppColor(color));
-            LinkedHashSet<ChessPosition> opp_positions = moveToSetEnd(oppMoves,null);
+            LinkedHashSet<ChessPosition> oppPositions = moveToSetEnd(oppMoves,null);
 
-            return opp_positions.contains(kingPos);
+            return oppPositions.contains(kingPos);
 
         }catch(NullPointerException m){
             System.err.println(m.getMessage());

@@ -31,21 +31,6 @@ public class GameDAO{
         return  dbGames.get(gameId);
     }
 
-    public void update(int gameId, Game updateGame) throws DataAccessException {
-
-        // just throws an object error if it can't find anything
-        if(!dbGames.containsKey(gameId)) {throw new DataAccessException("[404](Game Not Found)(GameDAO) Not Found");}
-
-        dbGames.put(gameId,updateGame);
-    }
-
-    public void delete(int gameId) throws DataAccessException {
-
-        if(!dbGames.containsKey(gameId)) {throw new DataAccessException("[404](Game Not Found)(GameDAO) Not Found");}
-
-        dbGames.remove(gameId);
-    }
-
     public Collection<Game> getAll(){
         // simply just returns all the games
         return dbGames.values();

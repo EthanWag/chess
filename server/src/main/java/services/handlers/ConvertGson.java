@@ -37,15 +37,4 @@ public class ConvertGson {
         }
     }
 
-
-
-
-    // TODO:
-    // add some more classes that that tackle more complex objects
-    // also if you need to grab users, or need to specify objects, create some more methods useful for that
-    // check to see if the http request even made any seanse
-
-    // needs to be a json string which would be created in the handler
-    // maybe split code into seprate classes
-
 }
