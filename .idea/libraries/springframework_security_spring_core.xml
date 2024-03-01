@@ -1,0 +1,19 @@
+<component name="libraryTable">
+  <library name="springframework.security.spring.core" type="repository">
+    <properties maven-id="org.springframework.security:spring-security-core:6.2.1" />
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/server/spring-security-core-6.2.1.jar!/" />
+      <root url="jar://$PROJECT_DIR$/server/spring-security-crypto-6.2.1.jar!/" />
+      <root url="jar://$PROJECT_DIR$/server/spring-aop-6.1.2.jar!/" />
+      <root url="jar://$PROJECT_DIR$/server/spring-beans-6.1.2.jar!/" />
+      <root url="jar://$PROJECT_DIR$/server/spring-context-6.1.2.jar!/" />
+      <root url="jar://$PROJECT_DIR$/server/spring-core-6.1.2.jar!/" />
+      <root url="jar://$PROJECT_DIR$/server/spring-jcl-6.1.2.jar!/" />
+      <root url="jar://$PROJECT_DIR$/server/spring-expression-6.1.2.jar!/" />
+      <root url="jar://$PROJECT_DIR$/server/micrometer-observation-1.12.1.jar!/" />
+      <root url="jar://$PROJECT_DIR$/server/micrometer-commons-1.12.1.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>
