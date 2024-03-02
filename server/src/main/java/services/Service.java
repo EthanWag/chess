@@ -7,9 +7,9 @@ import java.util.UUID;
 
 public abstract class Service {
 
-    protected static UserDAO userDAO = new UserDAO();
-    protected static AuthDAO authDAO = new AuthDAO();
-    protected static GameDAO gameDAO = new GameDAO();
+    protected static MemoryUserDAO userDAO = new MemoryUserDAO();
+    protected static MemoryAuthDAO authDAO = new MemoryAuthDAO();
+    protected static MemoryGameDAO gameDAO = new MemoryGameDAO();
 
     protected AuthData getAuthData(String authToken) throws DataAccessException{
 
