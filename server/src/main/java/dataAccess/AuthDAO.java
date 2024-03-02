@@ -4,7 +4,7 @@ import java.util.HashMap;
 
 import models.AuthData;
 
-public class AuthDAO{
+public class AuthDAO implements AuthDAOInterface{
 
     HashMap<String,AuthData> allAuths;
 

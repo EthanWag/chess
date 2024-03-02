@@ -5,7 +5,7 @@ import java.util.HashMap;
 import models.User;
 
 
-public class UserDAO{
+public class UserDAO implements UserDAOInterface{
 
     // string is username and User is an actual user object
     HashMap<String,User> users;

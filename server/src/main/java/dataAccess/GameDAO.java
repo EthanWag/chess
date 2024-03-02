@@ -6,7 +6,7 @@ import java.util.Collection;
 import java.lang.Integer;
 import java.util.HashMap;
 
-public class GameDAO{
+public class GameDAO implements GameDAOInterface{
 
     // Data structures: that keeps track of the user and all of their games
     HashMap<Integer,Game> dbGames;
