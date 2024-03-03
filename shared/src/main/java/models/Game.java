@@ -11,9 +11,7 @@ public class Game {
     private String blackUsername;
     private String gameName;
     private final ChessGame game;
-
     private boolean whiteTaken = false;
-
     private boolean blackTaken = false;
 
     public Game(int myGameID, String myWhiteUser, String myBlackUser, String myGameName){
