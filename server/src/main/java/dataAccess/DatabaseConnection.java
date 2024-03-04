@@ -9,7 +9,7 @@ import java.util.ArrayList;
 import java.util.stream.Stream;
 import static java.lang.System.exit;
 
-public abstract class DatabaseConnection<LinkedHash> {
+public class DatabaseConnection {
 
     private static String UserDAO;
     private static String AuthDAO;

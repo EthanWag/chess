@@ -21,7 +21,6 @@ public class ListGamesService extends Service{
     }
 
     // service functions
-
     private Collection<Game> getAllGames(){
         return gameDAO.getAll();
     }

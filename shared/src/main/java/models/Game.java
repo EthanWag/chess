@@ -14,7 +14,7 @@ public class Game {
     private boolean whiteTaken = false;
     private boolean blackTaken = false;
 
-    public Game(int myGameID, String myWhiteUser, String myBlackUser, String myGameName){
+    public Game(int myGameID, String myWhiteUser, String myBlackUser, String myGameName){ // possibly get rid of Id
 
         gameID = myGameID;
         whiteUsername = myWhiteUser;
@@ -36,8 +36,19 @@ public class Game {
     public int getGameID() {
         return gameID;
     }
+    public void setGameID(int newGameId){
+        gameID = newGameId;
+    }
+
     public ChessGame getGame() {
         return game;
+    }
+
+    public String getWhiteUsername(){
+        return whiteUsername;
+    }
+    public String getBlackUsername(){
+        return blackUsername;
     }
 
     // getters for checkers

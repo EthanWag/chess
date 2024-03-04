@@ -1,0 +1,18 @@
+    // tests if you can make a connection
+    public static void main(String [] args){
+
+
+        try(Connection connDb = connectToDb()){
+
+
+            // just a simple test to see if I can send commands
+            String statement = "create table test(test int null);";
+
+
+
+        }catch(Exception e){
+
+            System.out.println(e.getMessage());
+
+        }
+    }
