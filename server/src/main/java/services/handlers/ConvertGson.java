@@ -26,6 +26,17 @@ public class ConvertGson {
         }
     }
 
+    public Object strToObj(String str, Class<?> structure) throws JsonSyntaxException {
+
+        // throws an exception if it can't create the new object
+        try {
+            return serializer.fromJson(str, structure);
+
+        }catch(Exception error){
+            throw new JsonSyntaxException("[500](Invalid input)(ConvertGson) invalid entry");
+        }
+    }
+
     public String objToJson(Object data){
 
         // throws an exception if it serializes object

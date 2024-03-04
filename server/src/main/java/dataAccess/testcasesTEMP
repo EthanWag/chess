@@ -1,4 +1,5 @@
-    // tests if you can make a connection
+    1 GameDAO
+    tests if you can make a connection
     public static void main(String [] args){
 
 
@@ -16,3 +17,22 @@
 
         }
     }
+
+    2 Game DAO
+    test for testing if the computer generates auto keys correctly
+            try {
+
+
+                Game newGame = new Game("","","davids game");
+
+
+                SqlGameDAO myData = new SqlGameDAO();
+                myData.deleteAll();
+
+                System.out.println(newGame.getGameID());
+
+            }catch(Exception error){
+                System.out.println("error");
+            }
+        }
+

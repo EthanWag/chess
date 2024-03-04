@@ -6,17 +6,17 @@ import java.util.Objects;
 
 public class Game {
 
-    private int gameID;
+    private int gameID; // this is a temp value, this will change as they are added to the database
     private String whiteUsername;
     private String blackUsername;
     private String gameName;
-    private final ChessGame game;
+    private ChessGame game;
     private boolean whiteTaken = false;
     private boolean blackTaken = false;
 
-    public Game(int myGameID, String myWhiteUser, String myBlackUser, String myGameName){ // possibly get rid of Id
+    public Game(int myGameId, String myWhiteUser, String myBlackUser, String myGameName, boolean myWhiteTaken, boolean myBlackTaken){ // possibly get rid of Id
 
-        gameID = myGameID;
+        gameID = myGameId;
         whiteUsername = myWhiteUser;
         blackUsername = myBlackUser;
         gameName = myGameName;
@@ -39,9 +39,15 @@ public class Game {
     public void setGameID(int newGameId){
         gameID = newGameId;
     }
-
+    public void setGame(ChessGame newGame){
+        game = newGame;
+    }
     public ChessGame getGame() {
         return game;
+    }
+
+    public String getGameName(){
+        return gameName;
     }
 
     public String getWhiteUsername(){
