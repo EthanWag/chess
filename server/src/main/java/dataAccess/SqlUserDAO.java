@@ -3,7 +3,6 @@ package dataAccess;
 import models.User;
 
 import java.sql.*;
-import java.util.Collection;
 
 public class SqlUserDAO implements UserDAO{
 
@@ -19,14 +18,10 @@ public class SqlUserDAO implements UserDAO{
 
     public void create(User newUser) throws DataAccessException{
 
-
         // build the command
         StringBuilder strBuilder = new StringBuilder();
         strBuilder.append("INSERT INTO UserDAO(username,password,email)\n");
         strBuilder.append("VALUES(?,?,?);");
-        // NOTE: please note here, when a game is created, it assumes nobody has logged in yet
-
-
 
         String sqlCreate = strBuilder.toString();
 
@@ -115,11 +110,11 @@ public class SqlUserDAO implements UserDAO{
 
             SqlUserDAO myData = new SqlUserDAO();
 
-            // User newUser = new User("Ethan","ballz", "ethanwag@outlook.com");
+            User newUser = new User("Ethan","ballz", "ethanwag@outlook.com");
 
-            // myData.create(newUser);
+            myData.create(newUser);
 
-            User readUser = myData.read("Ethan");
+            //User readUser = myData.read("Ethan");
 
             // myData.deleteAll();
             System.out.println("Success");
