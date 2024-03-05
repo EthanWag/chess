@@ -36,3 +36,30 @@
             }
         }
 
+
+    3 Game DAO
+    tests to see if it can grab all the games in the GameDAO
+            try {
+
+                SqlGameDAO myData = new SqlGameDAO();
+
+                Game newGame1 = new Game(-1,"Timmy","Tommy","CHESS EXTRANGVZA",false,false);
+                Game newGame2 = new Game(-1,"Jack","","the best game",false,false);
+                Game newGame3 = new Game(-1,"Ethan","David","game1",false,false);
+                Game newGame4 = new Game(-1,"wales","England07","pizzapizzapizza",false,false);
+
+                myData.create(newGame1);
+                myData.create(newGame2);
+                myData.create(newGame3);
+                myData.create(newGame4);
+
+                Collection<Game> games = myData.getAll();
+
+                myData.deleteAll();
+                System.out.println("Success");
+
+
+            }catch(Exception error){
+                System.out.println(error.getMessage());
+            }
+        }

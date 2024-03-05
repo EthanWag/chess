@@ -6,6 +6,7 @@ import services.handlers.ConvertGson;
 
 import java.sql.*;
 import java.util.Collection;
+import java.util.ArrayList;
 
 public class SqlGameDAO implements GameDAO{
 
@@ -21,7 +22,7 @@ public class SqlGameDAO implements GameDAO{
         }
     }
 
-    public void create(Game newGame) throws DataAccessException{
+    public int create(Game newGame) throws DataAccessException{
 
         // converts game object to a string
         String gameStr = serializer.objToJson(newGame.getGame());
@@ -44,13 +45,16 @@ public class SqlGameDAO implements GameDAO{
             var key = statement.getGeneratedKeys();
 
             if(key.first()) {
-                newGame.setGameID(key.getInt(1));
+                int gameId = key.getInt(1);
+                newGame.setGameID(gameId);
+                return gameId;
             }else{
                 throw new DataAccessException("[501](auto-generate failed)your game failed generate an id");
             }
 
         }catch(Exception error){
             throwConnectError(); // throws an error it couldn't connect to the database
+            return -1;
         }
 
     }
@@ -71,26 +75,8 @@ public class SqlGameDAO implements GameDAO{
 
             // if the statement returns true, then it finds all info about this object and returns a new one
             if(resultItems.first()){
-
-                int myGameId = resultItems.getInt("gameId");
-                String myWhiteUser = resultItems.getString("whiteUsername");
-                String myBlackUser = resultItems.getString("blackUsername");
-                String myGameName = resultItems.getString("gameName");
-                boolean myWhiteCheck = resultItems.getBoolean("whiteTaken");
-                boolean myBlackCheck = resultItems.getBoolean("blackTaken");
-
-                // finally gets the game from the database
-                String game = resultItems.getString("game");
-                Object myGameObj = serializer.strToObj(game,ChessGame.class);
-
-                // should be a game object, so it converts it
-                ChessGame myGame = (ChessGame) myGameObj;
-
-                // finally build the object and returns it
-                Game foundGame = new Game(myGameId,myWhiteUser,myBlackUser,myGameName,myWhiteCheck,myBlackCheck);
-                foundGame.setGame(myGame); // sets the gameboard to the new one
-
-                return foundGame;
+                // returns the object if it found it
+                return convertGame(resultItems);
 
             }else{
                 // tells the user it could not find it, if it comes to that
@@ -103,7 +89,26 @@ public class SqlGameDAO implements GameDAO{
         return null;
     }
     public Collection<Game> getAll(){
-        return null;
+
+        Collection<Game> allGames = new ArrayList<>();
+
+        try {
+
+            var statement = myConnection.prepareStatement("SELECT * FROM GameDAO");
+            ResultSet resultItems = statement.executeQuery();
+
+            while(resultItems.next()){
+                Game listGame = convertGame(resultItems);
+                allGames.add(listGame);
+            }
+
+            // returns all the new games that it found
+            return allGames;
+
+        }catch(Exception error){
+            System.out.println("error");
+            return allGames; // temp solution, come here to fix
+        }
     }
 
     public void deleteAll(){
@@ -124,6 +129,30 @@ public class SqlGameDAO implements GameDAO{
     }
 
 
+    // private functions that help with the collection of objects
+    private Game convertGame(ResultSet sqlSet) throws SQLException{
+
+        int myGameId = sqlSet.getInt("gameId");
+        String myWhiteUser = sqlSet.getString("whiteUsername");
+        String myBlackUser = sqlSet.getString("blackUsername");
+        String myGameName = sqlSet.getString("gameName");
+        boolean myWhiteCheck = sqlSet.getBoolean("whiteTaken");
+        boolean myBlackCheck = sqlSet.getBoolean("blackTaken");
+
+        // finally gets the game from the database
+        String game = sqlSet.getString("game");
+        Object myGameObj = serializer.strToObj(game,ChessGame.class);
+
+        // should be a game object, so it converts it
+        ChessGame myGame = (ChessGame) myGameObj;
+
+        // finally build the object and returns it
+        Game foundGame = new Game(myGameId,myWhiteUser,myBlackUser,myGameName,myWhiteCheck,myBlackCheck);
+        foundGame.setGame(myGame); // sets the gameboard to the new one
+
+        return foundGame;
+
+    }
 
 
 
@@ -133,16 +162,15 @@ public class SqlGameDAO implements GameDAO{
 
             SqlGameDAO myData = new SqlGameDAO();
 
-            Game newGame = new Game(-1,"Timmy","Tommy","CHESS EXTRANGVZA",false,false);
+            Game newGame = new Game(-1,"Jack","","the best game",false,false);
 
-            myData.create(newGame);
+            int index = myData.create(newGame);
 
-            Game getGame = myData.read(1);
+            Game foundGame = myData.read(index);
+
 
             myData.deleteAll();
             System.out.println("Success");
-
-
 
 
         }catch(Exception error){

@@ -16,12 +16,13 @@ public class MemoryGameDAO implements GameDAO {
         dbGames = new HashMap<>();
     }
 
-    public void create(Game newGame) throws DataAccessException {
+    public int create(Game newGame) throws DataAccessException {
         int newGameId = newGame.getGameID();
         // checks for if it is already taken
         if(dbGames.containsKey(newGameId)){ throw new DataAccessException("[403](Used Game)(GameDAO) gameId already taken");}
 
         dbGames.put(newGameId,newGame);
+        return newGameId;
     }
 
     public Game read(int gameId) throws DataAccessException{
