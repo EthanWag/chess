@@ -110,7 +110,6 @@ public class SqlGameDAO implements GameDAO{
             return allGames; // temp solution, come here to fix
         }
     }
-
     public void deleteAll(){
 
         try {
@@ -124,12 +123,10 @@ public class SqlGameDAO implements GameDAO{
 
     }
 
+    // private functions that help with the collection of objects
     private void throwConnectError() throws DataAccessException{
         throw new DataAccessException("[500](Connection) Unable to connect to database");
     }
-
-
-    // private functions that help with the collection of objects
     private Game convertGame(ResultSet sqlSet) throws SQLException{
 
         int myGameId = sqlSet.getInt("gameId");
@@ -153,6 +150,11 @@ public class SqlGameDAO implements GameDAO{
         return foundGame;
 
     }
+
+
+
+
+
 
 
 
