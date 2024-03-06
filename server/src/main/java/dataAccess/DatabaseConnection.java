@@ -42,7 +42,7 @@ public class DatabaseConnection {
     }
 
     // simply just preps the database so other functions can use it
-    public static Connection connectToDb() throws Exception {
+    public static Connection connectToDb() throws DataAccessException,SQLException {
 
         // creates a database, tables and returns a connection if it set up properly
         // otherwise it throws an error

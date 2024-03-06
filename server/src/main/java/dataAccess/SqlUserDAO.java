@@ -9,13 +9,13 @@ public class SqlUserDAO implements UserDAO{
     private Connection myConnection;
 
     public SqlUserDAO() throws DataAccessException{
-        try{ // opens a connection if it is successful
+        try{
             myConnection = DatabaseConnection.connectToDb();
-        }catch(Exception error){
-            throwConnectError(); // throws errors otherwise
+            myConnection.setAutoCommit(false);
+        }catch(Exception connError){ // can be SQL or dataAccess exceptions
+            connectionDestroyedError();
         }
     }
-
     public void create(User newUser) throws DataAccessException{
 
         // build the command
@@ -36,11 +36,16 @@ public class SqlUserDAO implements UserDAO{
 
             statement.executeUpdate();
 
-        }catch(Exception error){
-            throwConnectError(); // throws an error it couldn't connect to the database
-            // error, what happens if it couldn't connect vs already used username
-        }
+        }catch(SQLException sqlException){
+            // grabs the error code of the sqlException
+            int statusCode = sqlException.getErrorCode();
 
+            if(statusCode == 1062){ // 1062 is the error code for already taken, handles accordingly
+                throw new DataAccessException("[403](Used User)(UserDAO) User already taken");
+            }else{ // this is if the connection broke
+                connectionDestroyedError();
+            }
+        }
     }
     public User read(String username) throws DataAccessException{
 
@@ -54,10 +59,8 @@ public class SqlUserDAO implements UserDAO{
 
             // var statement = myConnection.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE,ResultSet.CONCUR_READ_ONLY);
             var statement = myConnection.prepareStatement(sqlRead,ResultSet.TYPE_SCROLL_INSENSITIVE,ResultSet.CONCUR_READ_ONLY);
-
             statement.setString(1,username);
 
-            // double check syntax here
             ResultSet resultItems = statement.executeQuery();
 
             // if the statement returns true, then it finds all info about this object and returns a new one
@@ -68,7 +71,6 @@ public class SqlUserDAO implements UserDAO{
                 String foundPassword = resultItems.getString("password");
                 String foundEmail = resultItems.getString("email");
 
-                // returns the new user if it found it
                 return new User(foundUsername,foundPassword,foundEmail);
 
             }else{
@@ -77,7 +79,7 @@ public class SqlUserDAO implements UserDAO{
             }
 
         }catch(Exception error){
-            throwConnectError();
+            connectionDestroyedError();
         }
         return null;
 
@@ -92,9 +94,11 @@ public class SqlUserDAO implements UserDAO{
             // handler directly
         }
     }
-
+    public void commit()throws SQLException{
+        myConnection.commit();
+    }
     // private helper functions that are used with the database
-    private void throwConnectError() throws DataAccessException{
+    private void connectionDestroyedError() throws DataAccessException{
         throw new DataAccessException("[500](Connection) Unable to connect to database");
     }
 
@@ -102,7 +106,6 @@ public class SqlUserDAO implements UserDAO{
 
 
 
-    // main just for testing
 
     public static void main(String [] args){
 
@@ -112,9 +115,11 @@ public class SqlUserDAO implements UserDAO{
 
             User newUser = new User("Ethan","ballz", "ethanwag@outlook.com");
 
-            myData.create(newUser);
+            // myData.create(newUser);
 
-            //User readUser = myData.read("Ethan");
+            User readUser = myData.read("Ethan");
+
+            myData.commit();
 
             // myData.deleteAll();
             System.out.println("Success");
