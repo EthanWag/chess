@@ -94,8 +94,12 @@ public class SqlUserDAO implements UserDAO{
             // handler directly
         }
     }
-    public void commit()throws SQLException{
-        myConnection.commit();
+    public void commit()throws DataAccessException{
+        try {
+            myConnection.commit();
+        }catch(SQLException error){
+            connectionDestroyedError();
+        }
     }
     // private helper functions that are used with the database
     private void connectionDestroyedError() throws DataAccessException{

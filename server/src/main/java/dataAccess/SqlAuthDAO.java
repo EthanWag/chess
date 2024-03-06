@@ -104,8 +104,12 @@ public class SqlAuthDAO implements AuthDAO{
             // handler directly
         }
     }
-    public void commit()throws SQLException{
-        myConnection.commit();
+    public void commit()throws DataAccessException{
+        try {
+            myConnection.commit();
+        }catch(SQLException error){
+            connectionDestroyedError();
+        }
     }
     private void connectionDestroyedError() throws DataAccessException{
         throw new DataAccessException("[500](Connection) Unable to connect to database");

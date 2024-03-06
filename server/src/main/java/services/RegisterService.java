@@ -1,5 +1,6 @@
 package services;
 
+import dataAccess.SqlUserDAO;
 import dataAccess.DataAccessException;
 import models.*;
 
@@ -16,24 +17,33 @@ public class RegisterService extends Service{
         checkRegister(username,password,email);
 
         // create user and adds it to the database
-        createUser(username,password,email);
+        AuthData authorization = createUser(username,password,email);
 
         // create an authToken and return it
-        AuthData newAuth = createAuthData(username);
-
-        // grabs user data
-        String authUsername = newAuth.getUsername();
-        String authToken = newAuth.getAuthToken();
-
-        return new RegisterPackage(authUsername,authToken);
+        return new RegisterPackage(authorization.getAuthToken(),authorization.getUsername());
     }
 
     // service functions
 
-    // simply just creates a new user and puts it in the database
-    private void createUser(String username, String password, String email)throws DataAccessException{
+    // creates user and authData, returns the authData
+    private AuthData createUser(String username, String password, String email)throws DataAccessException{
+
+        // put password shuffle here
+
+
+
+
         User newUser = new User(username,password,email);
-        userDAO.create(newUser);
+
+        // create DataAccess objects
+        SqlUserDAO userAccess = new SqlUserDAO();
+
+
+        userAccess.create(newUser);
+        userAccess.commit();
+
+        // creates new authData and returns that object
+        return createAuthData(username);
     }
 
     private void checkRegister(String username, String password, String email)throws DataAccessException{

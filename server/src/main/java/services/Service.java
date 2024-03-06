@@ -38,7 +38,13 @@ public abstract class Service {
         // otherwise it makes an authToken and puts it in the database
         String authToken = UUID.randomUUID().toString(); // generate token here
         AuthData newAuth = new AuthData(authToken,username);
-        authDAO.create(newAuth);
+
+        SqlAuthDAO authAccess = new SqlAuthDAO();
+        authAccess.create(newAuth);
+        authAccess.commit();
+
+        // possibly put a commit here
+
         return newAuth;
     }
 
