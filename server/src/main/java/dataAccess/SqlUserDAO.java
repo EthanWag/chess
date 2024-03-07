@@ -11,6 +11,9 @@ public class SqlUserDAO implements UserDAO{
     public SqlUserDAO() throws DataAccessException{
         try{
             myConnection = DatabaseConnection.connectToDb();
+
+            // System.out.println("open");
+
             myConnection.setAutoCommit(false);
         }catch(Exception connError){ // can be SQL or dataAccess exceptions
             connectionDestroyedError();
@@ -41,6 +44,7 @@ public class SqlUserDAO implements UserDAO{
             int statusCode = sqlException.getErrorCode();
 
             if(statusCode == 1062){ // 1062 is the error code for already taken, handles accordingly
+                closeConnection();
                 throw new DataAccessException("[403](Used User)(UserDAO) User already taken");
             }else{ // this is if the connection broke
                 connectionDestroyedError();
@@ -75,10 +79,11 @@ public class SqlUserDAO implements UserDAO{
 
             }else{
                 // tells the user it could not find it, if it comes to that
-                throw new DataAccessException("[400](Game Not Found)(GameDAO) Not Found");
+                closeConnection();
+                throw new DataAccessException("[401](Game Not Found)(GameDAO) Not Found");
             }
 
-        }catch(Exception error){
+        }catch(SQLException error){
             connectionDestroyedError();
         }
         return null;
@@ -97,12 +102,27 @@ public class SqlUserDAO implements UserDAO{
     public void commit()throws DataAccessException{
         try {
             myConnection.commit();
+            closeConnection();
+
         }catch(SQLException error){
             connectionDestroyedError();
         }
     }
+
+    public void closeConnection() throws DataAccessException{
+        try{
+            if(!myConnection.isClosed()){
+                myConnection.close();
+                // System.out.println("closed");
+            }
+        }catch(SQLException error){
+            throw new DataAccessException("[503] unable to close");
+        }
+    }
+
     // private helper functions that are used with the database
     private void connectionDestroyedError() throws DataAccessException{
+        closeConnection();
         throw new DataAccessException("[500](Connection) Unable to connect to database");
     }
 

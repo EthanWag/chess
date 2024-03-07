@@ -24,7 +24,10 @@ public class ListGamesService extends Service{
     // service functions
     private Collection<Game> getAllGames() throws DataAccessException{
         var gameAccess = new SqlGameDAO();
-        return gameAccess.getAll();
+        Collection<Game> allGames = gameAccess.getAll();
+
+        gameAccess.closeConnection();
+        return allGames;
     }
 
 

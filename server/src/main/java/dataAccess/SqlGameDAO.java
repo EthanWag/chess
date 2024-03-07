@@ -16,6 +16,9 @@ public class SqlGameDAO implements GameDAO{
     public SqlGameDAO() throws DataAccessException{
         try{
             myConnection = DatabaseConnection.connectToDb();
+
+            // System.out.println("open");
+
             myConnection.setAutoCommit(false);
         }catch(Exception connError){ // can be SQL or dataAccess exceptions
             connectionDestroyedError();
@@ -55,6 +58,7 @@ public class SqlGameDAO implements GameDAO{
                 newGame.setGameID(gameId);
                 return gameId;
             }else{
+                closeConnection();
                 throw new DataAccessException("[501](auto-generate failed)your game failed generate an id");
             }
 
@@ -86,6 +90,7 @@ public class SqlGameDAO implements GameDAO{
 
             }else{
                 // tells the user it could not find it, if it comes to that
+                closeConnection();
                 throw new DataAccessException("[400](Game Not Found)(GameDAO) Not Found");
             }
 
@@ -161,10 +166,25 @@ public class SqlGameDAO implements GameDAO{
     public void commit()throws DataAccessException{
         try {
             myConnection.commit();
+            closeConnection();
+
         }catch(SQLException error){
             connectionDestroyedError();
         }
     }
+
+    // just simply closes the connection
+    public void closeConnection() throws DataAccessException{
+        try{
+            if(!myConnection.isClosed()){
+                myConnection.close();
+                // System.out.println("closed");
+            }
+        }catch(SQLException error){
+            connectionDestroyedError();
+        }
+    }
+
 
     // private functions that help with the collection of objects
     private Game convertGame(ResultSet sqlSet) throws SQLException{
@@ -191,6 +211,7 @@ public class SqlGameDAO implements GameDAO{
 
     }
     private void connectionDestroyedError() throws DataAccessException{
+        closeConnection();
         throw new DataAccessException("[500](Connection) Unable to connect to database");
     }
 

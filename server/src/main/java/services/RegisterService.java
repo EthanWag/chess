@@ -14,7 +14,10 @@ public class RegisterService extends Service{
     public RegisterPackage completeJob(String username, String password, String email)throws DataAccessException{
 
         // first checks to see valid input
-        checkRegister(username,password,email);
+        if(!checkRegister(username,password,email)){
+            throw new DataAccessException("[400] bad request");
+        }
+
 
         // create user and adds it to the database
         AuthData authorization = createUser(username,password,email);
@@ -44,10 +47,8 @@ public class RegisterService extends Service{
         return createAuthData(username);
     }
 
-    private void checkRegister(String username, String password, String email)throws DataAccessException{
-        if((username == null) || (password == null) || (email == null)){
-            throw new DataAccessException("[400](bad request)(Register Service) invalid input");
-        }
+    private boolean checkRegister(String username, String password, String email){
+        return !((username == null) || (password == null) || (email == null));
     }
 
     public static class RegisterPackage {

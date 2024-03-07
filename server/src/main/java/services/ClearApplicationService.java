@@ -30,8 +30,6 @@ public class ClearApplicationService extends Service{
         authAccess.commit();
         userAccess.commit();
 
-
-
     }
 
 }

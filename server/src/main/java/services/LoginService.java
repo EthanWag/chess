@@ -13,6 +13,8 @@ public class LoginService extends Service{
 
         var userAccess = new SqlUserDAO();
         User loginUser = userAccess.read(username);
+        userAccess.closeConnection();
+
 
         // compares the two passwords
         if(comparePasswords(password,loginUser.getPassword())){

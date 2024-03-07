@@ -11,6 +11,9 @@ public class SqlAuthDAO implements AuthDAO{
     public SqlAuthDAO() throws DataAccessException{
         try{
             myConnection = DatabaseConnection.connectToDb();
+
+            // System.out.println("open");
+
             myConnection.setAutoCommit(false);
         }catch(Exception connError){ // can be SQL or dataAccess exceptions
             connectionDestroyedError();
@@ -63,10 +66,11 @@ public class SqlAuthDAO implements AuthDAO{
 
             }else{
                 // tells the user it could not find it, if it comes to that
+                closeConnection();
                 throw new DataAccessException("[401](Auth Not Found)(AuthDAO) Not Found");
             }
 
-        }catch(Exception error){
+        }catch(SQLException error){
             connectionDestroyedError();
             return null;
         }
@@ -126,16 +130,29 @@ public class SqlAuthDAO implements AuthDAO{
         }
     }
 
-
-
     public void commit()throws DataAccessException{
         try {
             myConnection.commit();
+            closeConnection();
+
         }catch(SQLException error){
             connectionDestroyedError();
         }
     }
+
+    public void closeConnection() throws DataAccessException{
+        try{
+            if(!myConnection.isClosed()){
+                // System.out.println("closed");
+                myConnection.close();
+            }
+        }catch(SQLException error){
+            throw new DataAccessException("[503] unable to close");
+        }
+    }
+
     private void connectionDestroyedError() throws DataAccessException{
+        closeConnection();
         throw new DataAccessException("[500](Connection) Unable to connect to database");
     }
 

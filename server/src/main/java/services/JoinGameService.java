@@ -25,7 +25,11 @@ public class JoinGameService extends Service{
 
     private Game getGame(int gameID) throws DataAccessException{
         var gameAccess = new SqlGameDAO();
-        return gameAccess.read(gameID);
+        Game foundGame = gameAccess.read(gameID);
+
+        gameAccess.closeConnection();
+        return foundGame;
+
     }
 
     private void addPlayer(Game joinGame, String username, String teamColor)throws DataAccessException{

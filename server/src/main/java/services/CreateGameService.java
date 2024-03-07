@@ -4,8 +4,6 @@ import dataAccess.SqlGameDAO;
 import models.*;
 import dataAccess.DataAccessException;
 
-import java.util.Random;
-
 
 public class CreateGameService extends Service{
 
@@ -33,7 +31,6 @@ public class CreateGameService extends Service{
 
         // creates game and adds it to the database
         Game newGame = new Game(-1,white,black,gameName,false,false);
-        // FIXME: in the future your going to want to put -1 in the myGameId slot
 
         // creates game and then commits changes
         var gameAccess = new SqlGameDAO();
