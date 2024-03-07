@@ -1,5 +1,6 @@
 package services;
 
+import dataAccess.SqlGameDAO;
 import models.*;
 import dataAccess.DataAccessException;
 
@@ -21,8 +22,9 @@ public class ListGamesService extends Service{
     }
 
     // service functions
-    private Collection<Game> getAllGames(){
-        return gameDAO.getAll();
+    private Collection<Game> getAllGames() throws DataAccessException{
+        var gameAccess = new SqlGameDAO();
+        return gameAccess.getAll();
     }
 
 

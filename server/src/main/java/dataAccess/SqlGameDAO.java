@@ -129,8 +129,41 @@ public class SqlGameDAO implements GameDAO{
 
     }
 
-    public void commit()throws SQLException{
-        myConnection.commit();
+    public void updatePlayer(int gameId,String username, String color) throws DataAccessException{
+
+        // first builds the string we are going to send to the database
+        StringBuilder strBuilder = new StringBuilder();
+        strBuilder.append("UPDATE GameDAO ");
+
+        if(color.equals("WHITE")){
+            strBuilder.append("SET whiteUsername = ?, whiteTaken = true ");
+        }else{
+            strBuilder.append("SET blackUsername = ?, blackTaken = true ");
+        }
+
+        strBuilder.append("WHERE gameId = ?");
+        String sqlUpdate = strBuilder.toString();
+
+        try{
+            // grabs the connection and then tries the execute the program
+            var statement = myConnection.prepareStatement(sqlUpdate);
+            statement.setString(1,username);
+            statement.setInt(2,gameId);
+            statement.executeUpdate();
+
+
+        }catch(SQLException error){ // this tackles more the case that the connection was bad
+            connectionDestroyedError();
+        }
+
+    }
+
+    public void commit()throws DataAccessException{
+        try {
+            myConnection.commit();
+        }catch(SQLException error){
+            connectionDestroyedError();
+        }
     }
 
     // private functions that help with the collection of objects
@@ -159,35 +192,6 @@ public class SqlGameDAO implements GameDAO{
     }
     private void connectionDestroyedError() throws DataAccessException{
         throw new DataAccessException("[500](Connection) Unable to connect to database");
-    }
-
-
-
-
-
-
-    public static void main(String [] args){
-
-        try {
-
-            SqlGameDAO myData = new SqlGameDAO();
-
-            Game newGame = new Game(-1,"davy","","the best game",false,false);
-
-            int index = myData.create(newGame);
-
-            Game foundGame = myData.read(index);
-
-            myData.commit();
-
-            // myData.deleteAll();
-            System.out.println("Success");
-
-
-        }catch(Exception error){
-            System.out.println(error.getMessage());
-            System.out.println("error\n");
-        }
     }
 
 }

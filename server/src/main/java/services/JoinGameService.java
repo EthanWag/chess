@@ -1,6 +1,7 @@
 package services;
 
 import dataAccess.DataAccessException;
+import dataAccess.SqlGameDAO;
 import models.*;
 
 public class JoinGameService extends Service{
@@ -23,7 +24,8 @@ public class JoinGameService extends Service{
     // Service functions
 
     private Game getGame(int gameID) throws DataAccessException{
-        return gameDAO.read(gameID);
+        var gameAccess = new SqlGameDAO();
+        return gameAccess.read(gameID);
     }
 
     private void addPlayer(Game joinGame, String username, String teamColor)throws DataAccessException{
@@ -32,6 +34,12 @@ public class JoinGameService extends Service{
             case "WHITE":
                 if(!joinGame.isWhiteTaken()){ // if white is not taken
                     joinGame.joinWhiteSide(username);
+
+                    var accessGame = new SqlGameDAO();
+                    accessGame.updatePlayer(joinGame.getGameID(),username,"WHITE");
+                    accessGame.commit();
+
+
                 }else{
                     throw new DataAccessException("[403](User Color)(JoinGameService) Auth already taken");
                 }
@@ -39,14 +47,18 @@ public class JoinGameService extends Service{
 
             case "BLACK":
                 if(!joinGame.isBlackTaken()){ // if black is not taken
-                    joinGame.joinBlackSide(username);
+
+                    var accessGame = new SqlGameDAO();
+                    accessGame.updatePlayer(joinGame.getGameID(),username,"BLACK");
+                    accessGame.commit();
+
                 }else{
                     throw new DataAccessException("[403](User Color)(JoinGameService) Auth already taken");
                 }
                 break;
 
             case null:
-                break; // they just want to wach the game
+                break; // they just want to watch the game
 
 
             default: // throws an error if they entered in a invalid team color

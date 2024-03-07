@@ -1,6 +1,7 @@
 package services;
 
 import dataAccess.DataAccessException;
+import dataAccess.SqlAuthDAO;
 import models.*;
 
 public class LogoutService extends Service{
@@ -21,7 +22,13 @@ public class LogoutService extends Service{
     // service functions
 
     private void deleteAuthData(AuthData delAuthData)throws DataAccessException{
+
+        // grabs authToken from the object
         String authToken = delAuthData.getAuthToken();
-        authDAO.delete(authToken);
+
+        // selects it from the database and commits changes
+        var authAccess = new SqlAuthDAO();
+        authAccess.delete(authToken);
+        authAccess.commit();
     }
 }

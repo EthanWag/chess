@@ -1,43 +1,54 @@
 package dataAccess;
 
-import java.io.*;
 import java.sql.*;
 import java.util.Iterator;
-import java.util.List;
-import java.util.Objects;
 import java.util.ArrayList;
-import java.util.stream.Stream;
-import static java.lang.System.exit;
 
 public class DatabaseConnection {
 
-    private static String UserDAO;
-    private static String AuthDAO;
-    private static String GameDAO;
+    private static String userDAO;
+    private static String authDAO;
+    private static String gameDAO;
 
 
     // sets up for the different string
     static {
 
-        try (FileReader in = new FileReader("server/src/main/java/dataAccess/DAOstring")) {
+        StringBuilder userDAOBuilder = new StringBuilder();
+        StringBuilder authDAOBuilder = new StringBuilder();
+        StringBuilder gameDAOBuilder = new StringBuilder();
 
-            // So what this code does is break this down into a compact ArrayList we can use
-            BufferedReader reader = new BufferedReader(in);
-            Stream<String> file = reader.lines();
-            Stream<String> filtFile = file.filter(n -> !Objects.equals(n, "\n"));
-            List<String> inputList = filtFile.toList();
-            ArrayList<String> input = new ArrayList<>(inputList);
+        userDAOBuilder.append("CREATE TABLE IF NOT EXISTS chess.UserDAO");
+        userDAOBuilder.append("(");
+        userDAOBuilder.append("username VARCHAR(50) PRIMARY KEY UNIQUE,");
+        userDAOBuilder.append("password VARCHAR(40) NOT NULL,");
+        userDAOBuilder.append("email VARCHAR(40) NOT NULL");
+        userDAOBuilder.append(");");
 
-            UserDAO = parseInput(input);
-            AuthDAO = parseInput(input);
-            GameDAO = parseInput(input);
+        userDAO = userDAOBuilder.toString();
 
+        authDAOBuilder.append("CREATE TABLE IF NOT EXISTS chess.AuthDAO");
+        authDAOBuilder.append("(");
+        authDAOBuilder.append("authId INT PRIMARY KEY AUTO_INCREMENT,");
+        authDAOBuilder.append("authToken VARCHAR(40) NOT NULL UNIQUE,");
+        authDAOBuilder.append("username VARCHAR(50) NOT NULL,");
+        authDAOBuilder.append("FOREIGN KEY (username) REFERENCES chess.UserDAO(username)");
+        authDAOBuilder.append(");");
 
-        } catch (Exception error) {
-            System.err.println("ERROR: DAOstring does not exist");
-            System.err.println("Exiting");
-            exit(0); // not permanent, but seriously though, need to have that file
-        }
+        authDAO = authDAOBuilder.toString();
+
+        gameDAOBuilder.append("CREATE TABLE IF NOT EXISTS chess.GameDAO");
+        gameDAOBuilder.append("(");
+        gameDAOBuilder.append("gameId INT PRIMARY KEY AUTO_INCREMENT,");
+        gameDAOBuilder.append("whiteUsername VARCHAR(50) NULL,");
+        gameDAOBuilder.append("blackUsername VARCHAR(50) NULL,");
+        gameDAOBuilder.append("gameName VARCHAR(40) NOT NULL,");
+        gameDAOBuilder.append("game LONGTEXT,");
+        gameDAOBuilder.append("whiteTaken BIT NOT NULL,");
+        gameDAOBuilder.append("blackTaken BIT NOT NULL");
+        gameDAOBuilder.append(");");
+
+        gameDAO = gameDAOBuilder.toString();
 
     }
 
@@ -57,11 +68,11 @@ public class DatabaseConnection {
     // helper functions for these classes
     private static void generateTables(Connection connection) throws SQLException{
         // if you pass in a connection, it will generate the tables for you if you don't have them
-        var userStatement = connection.prepareStatement(UserDAO);
+        var userStatement = connection.prepareStatement(userDAO);
         userStatement.execute();
-        var authStatement = connection.prepareStatement(AuthDAO);
+        var authStatement = connection.prepareStatement(authDAO);
         authStatement.execute();
-        var gameStatement = connection.prepareStatement(GameDAO);
+        var gameStatement = connection.prepareStatement(gameDAO);
         gameStatement.execute();
     }
 

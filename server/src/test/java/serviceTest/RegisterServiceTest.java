@@ -25,7 +25,11 @@ class RegisterServiceTest {
     @BeforeEach
     public void reset(){
 
-        clearService.completeJob();
+        try {
+            clearService.completeJob();
+        }catch(Exception error){
+            System.err.println("error in building tests");
+        }
 
     }
 

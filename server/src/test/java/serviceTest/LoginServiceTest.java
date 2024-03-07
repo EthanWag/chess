@@ -29,9 +29,8 @@ class LoginServiceTest {
     @BeforeEach
     public void reset(){
 
-        clearService.completeJob();
-
         try {
+            clearService.completeJob();
 
             String fakeUsername = "chadwin";
             String fakePassword = "mypassword";

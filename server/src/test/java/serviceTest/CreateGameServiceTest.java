@@ -27,9 +27,9 @@ class CreateGameServiceTest {
     @BeforeEach
     public void reset(){
 
-        clearService.completeJob();
-
         try {
+
+            clearService.completeJob();
 
             String testUsername = "brad";
             String testPassword = "chimmysmmmmooo";

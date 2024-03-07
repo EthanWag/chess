@@ -1,5 +1,6 @@
 package services;
 
+import dataAccess.SqlGameDAO;
 import models.*;
 import dataAccess.DataAccessException;
 
@@ -26,19 +27,18 @@ public class CreateGameService extends Service{
 
     private int createGame(String gameName)throws DataAccessException{
 
-        Random random = new Random();
-
         // creates all the new variables
-        int gameID = random.nextInt(100000,200000);
         String black = null;
         String white = null;
 
         // creates game and adds it to the database
-        Game newGame = new Game(gameID,white,black,gameName,false,false);
+        Game newGame = new Game(-1,white,black,gameName,false,false);
         // FIXME: in the future your going to want to put -1 in the myGameId slot
 
-
-        gameDAO.create(newGame);
+        // creates game and then commits changes
+        var gameAccess = new SqlGameDAO();
+        gameAccess.create(newGame);
+        gameAccess.commit();
 
         return newGame.getGameID();
     }

@@ -106,33 +106,4 @@ public class SqlUserDAO implements UserDAO{
         throw new DataAccessException("[500](Connection) Unable to connect to database");
     }
 
-
-
-
-
-
-    public static void main(String [] args){
-
-        try {
-
-            SqlUserDAO myData = new SqlUserDAO();
-
-            User newUser = new User("Ethan","ballz", "ethanwag@outlook.com");
-
-            // myData.create(newUser);
-
-            User readUser = myData.read("Ethan");
-
-            myData.commit();
-
-            // myData.deleteAll();
-            System.out.println("Success");
-
-        }catch(Exception error){
-            System.out.println(error.getMessage());
-            System.out.println("Error");
-
-        }
-    }
-
 }

@@ -1,6 +1,8 @@
 package services;
 
 import dataAccess.DataAccessException;
+import dataAccess.SqlAuthDAO;
+import dataAccess.SqlUserDAO;
 import models.*;
 
 public class LoginService extends Service{
@@ -9,10 +11,12 @@ public class LoginService extends Service{
 
     public LoginPackage completeJob(String username, String password) throws DataAccessException {
 
-        User loginUser = userDAO.read(username);
+        var userAccess = new SqlUserDAO();
+        User loginUser = userAccess.read(username);
 
         // compares the two passwords
         if(comparePasswords(password,loginUser.getPassword())){
+
             // creates a authToken using the username
             AuthData newAuthData = createAuthData(loginUser.getUsername());
 

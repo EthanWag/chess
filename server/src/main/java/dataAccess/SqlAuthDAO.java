@@ -45,11 +45,11 @@ public class SqlAuthDAO implements AuthDAO{
         String sqlRead = strBuilder.toString();
 
         try{
-
+            // preps statement
             var statement = myConnection.prepareStatement(sqlRead,ResultSet.TYPE_SCROLL_INSENSITIVE,ResultSet.CONCUR_READ_ONLY);
 
             statement.setString(1,authToken);
-           ResultSet resultItems = statement.executeQuery();
+            ResultSet resultItems = statement.executeQuery();
 
             // if the statement returns true, then it finds all info about this object and returns a new one
             if(resultItems.first()){
@@ -68,8 +68,8 @@ public class SqlAuthDAO implements AuthDAO{
 
         }catch(Exception error){
             connectionDestroyedError();
+            return null;
         }
-        return null;
 
     }
     public void delete(String authToken) throws DataAccessException{
@@ -104,6 +104,30 @@ public class SqlAuthDAO implements AuthDAO{
             // handler directly
         }
     }
+    // really only used for one thing, checks to see if an authToken has been created for a user already
+    public boolean authCreated(String username) throws DataAccessException{
+        // first builds the string we are going to send to the database
+        StringBuilder strBuilder = new StringBuilder();
+        strBuilder.append("SELECT * FROM AuthDAO WHERE username= ?");
+        String sqlRead = strBuilder.toString();
+
+        try{
+            // preps statement
+            var statement = myConnection.prepareStatement(sqlRead,ResultSet.TYPE_SCROLL_INSENSITIVE,ResultSet.CONCUR_READ_ONLY);
+
+            statement.setString(1,username);
+            ResultSet resultItems = statement.executeQuery();
+
+            return resultItems.first();
+
+        }catch(Exception error){
+            connectionDestroyedError();
+            return false;
+        }
+    }
+
+
+
     public void commit()throws DataAccessException{
         try {
             myConnection.commit();
@@ -113,29 +137,6 @@ public class SqlAuthDAO implements AuthDAO{
     }
     private void connectionDestroyedError() throws DataAccessException{
         throw new DataAccessException("[500](Connection) Unable to connect to database");
-    }
-
-
-
-
-
-    public static void main(String [] args){
-        try{
-
-            SqlAuthDAO myData = new SqlAuthDAO();
-
-            // AuthData newAuth = new AuthData("sdajlflksjflksjf;lskdj","Ethan");
-
-            // myData.create(newAuth);
-
-            myData.delete("sdajlflksjflksjf;lskdj");
-
-            System.out.println("success!");
-
-        }catch(Exception error){
-            System.out.println(error.getMessage());
-            System.out.println("error");
-        }
     }
 
 }

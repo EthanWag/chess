@@ -24,9 +24,9 @@ class LogoutServiceTest{
     @BeforeEach
     public void reset(){
 
-        clearService.completeJob();
-
         try {
+
+            clearService.completeJob();
 
             String testUsername = "brad";
             String testPassword = "123456";

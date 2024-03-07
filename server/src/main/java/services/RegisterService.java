@@ -20,7 +20,7 @@ public class RegisterService extends Service{
         AuthData authorization = createUser(username,password,email);
 
         // create an authToken and return it
-        return new RegisterPackage(authorization.getAuthToken(),authorization.getUsername());
+        return new RegisterPackage(authorization.getUsername(),authorization.getAuthToken());
     }
 
     // service functions
@@ -35,10 +35,8 @@ public class RegisterService extends Service{
 
         User newUser = new User(username,password,email);
 
-        // create DataAccess objects
-        SqlUserDAO userAccess = new SqlUserDAO();
-
-
+        // creates data Access object and commits
+        var userAccess = new SqlUserDAO();
         userAccess.create(newUser);
         userAccess.commit();
 

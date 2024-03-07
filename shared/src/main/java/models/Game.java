@@ -11,8 +11,8 @@ public class Game {
     private String blackUsername;
     private String gameName;
     private ChessGame game;
-    private boolean whiteTaken = false;
-    private boolean blackTaken = false;
+    private boolean whiteTaken;
+    private boolean blackTaken;
 
     public Game(int myGameId, String myWhiteUser, String myBlackUser, String myGameName, boolean myWhiteTaken, boolean myBlackTaken){ // possibly get rid of Id
 
@@ -20,6 +20,8 @@ public class Game {
         whiteUsername = myWhiteUser;
         blackUsername = myBlackUser;
         gameName = myGameName;
+        whiteTaken = myWhiteTaken;
+        blackTaken = myBlackTaken;
         game = new ChessGame(); // makes a new game
 
     }
