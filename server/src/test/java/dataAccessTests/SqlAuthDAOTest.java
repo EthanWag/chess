@@ -71,27 +71,6 @@ class SqlAuthDAOTest {
 
     }
 
-    /*
-    @Test
-    void createInvalidUsername() {
-
-        AuthData newAuth = new AuthData("Auth-to-no-user", "Fisher");
-
-        try{
-
-            SqlAuthDAO authTest = new SqlAuthDAO();
-            authTest.create(newAuth);
-            authTest.commit();
-
-            fail("Error: user does not exist");
-
-        }catch(Exception error){
-            System.out.println("Successful creation");
-        }
-
-    }
-     */
-
     @Test
     void readNormal() {
 
