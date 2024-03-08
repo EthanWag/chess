@@ -18,7 +18,7 @@ public class DatabaseConnection {
         StringBuilder authDAOBuilder = new StringBuilder();
         StringBuilder gameDAOBuilder = new StringBuilder();
 
-        userDAOBuilder.append("CREATE TABLE IF NOT EXISTS chess.UserDAO");
+        userDAOBuilder.append("CREATE TABLE IF NOT EXISTS UserDAO");
         userDAOBuilder.append("(");
         userDAOBuilder.append("username VARCHAR(50) PRIMARY KEY UNIQUE,");
         userDAOBuilder.append("password VARCHAR(80) NOT NULL,");
@@ -27,17 +27,17 @@ public class DatabaseConnection {
 
         userDAO = userDAOBuilder.toString();
 
-        authDAOBuilder.append("CREATE TABLE IF NOT EXISTS chess.AuthDAO");
+        authDAOBuilder.append("CREATE TABLE IF NOT EXISTS AuthDAO");
         authDAOBuilder.append("(");
         authDAOBuilder.append("authId INT PRIMARY KEY AUTO_INCREMENT,");
         authDAOBuilder.append("authToken VARCHAR(40) NOT NULL UNIQUE,");
-        authDAOBuilder.append("username VARCHAR(50) NOT NULL,");
-        authDAOBuilder.append("FOREIGN KEY (username) REFERENCES chess.UserDAO(username)");
+        authDAOBuilder.append("username VARCHAR(50) NOT NULL");
+        // authDAOBuilder.append("FOREIGN KEY (username) REFERENCES UserDAO(username)");
         authDAOBuilder.append(");");
 
         authDAO = authDAOBuilder.toString();
 
-        gameDAOBuilder.append("CREATE TABLE IF NOT EXISTS chess.GameDAO");
+        gameDAOBuilder.append("CREATE TABLE IF NOT EXISTS GameDAO");
         gameDAOBuilder.append("(");
         gameDAOBuilder.append("gameId INT PRIMARY KEY AUTO_INCREMENT,");
         gameDAOBuilder.append("whiteUsername VARCHAR(50) NULL,");

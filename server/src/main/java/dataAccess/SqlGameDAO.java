@@ -124,7 +124,7 @@ public class SqlGameDAO implements GameDAO{
     public void deleteAll(){
 
         try {
-            var statement = myConnection.prepareStatement("DROP TABLE GameDAO");
+            var statement = myConnection.prepareStatement("TRUNCATE TABLE GameDAO");
             statement.execute();
 
         } catch (Exception error){

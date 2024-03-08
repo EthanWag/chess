@@ -104,7 +104,7 @@ public class SqlAuthDAO implements AuthDAO{
     }
     public void deleteAll(){
         try {
-            var statement = myConnection.prepareStatement("DROP TABLE IF EXISTS AuthDAO");
+            var statement = myConnection.prepareStatement("TRUNCATE TABLE AuthDAO");
             statement.execute();
 
         } catch (Exception error){

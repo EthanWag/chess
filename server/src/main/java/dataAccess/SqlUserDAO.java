@@ -91,11 +91,11 @@ public class SqlUserDAO implements UserDAO{
     }
     public void deleteAll(){
         try {
-            var statement = myConnection.prepareStatement("DROP TABLE IF EXISTS AuthDAO, UserDAO");
+            var statement = myConnection.prepareStatement("TRUNCATE TABLE UserDAO");
             statement.execute();
 
         } catch (Exception error){
-            System.err.println("error"); // what actually might be worth doing is making it so it calls the exception
+            System.err.println(error.getMessage()); // what actually might be worth doing is making it so it calls the exception
             // handler directly
         }
     }
