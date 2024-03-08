@@ -18,7 +18,6 @@ public class LogoutService extends Service{
 
     }
 
-
     // service functions
 
     private void deleteAuthData(AuthData delAuthData)throws DataAccessException{

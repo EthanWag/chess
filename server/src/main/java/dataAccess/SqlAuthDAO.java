@@ -97,7 +97,7 @@ public class SqlAuthDAO implements AuthDAO{
             }
 
 
-        }catch(Exception error){ //FIXME: may cause problems, come back here
+        }catch(Exception error){
             connectionDestroyedError();
         }
 
