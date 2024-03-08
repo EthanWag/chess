@@ -3,6 +3,7 @@ package services;
 import dataAccess.SqlUserDAO;
 import dataAccess.DataAccessException;
 import models.*;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 import java.util.Objects;
 
@@ -26,17 +27,15 @@ public class RegisterService extends Service{
         return new RegisterPackage(authorization.getUsername(),authorization.getAuthToken());
     }
 
-    // service functions
-
     // creates user and authData, returns the authData
     private AuthData createUser(String username, String password, String email)throws DataAccessException{
 
         // put password shuffle here
 
+        BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
+        String hashedPassword = encoder.encode(password);
 
-
-
-        User newUser = new User(username,password,email);
+        User newUser = new User(username,hashedPassword,email);
 
         // creates data Access object and commits
         var userAccess = new SqlUserDAO();

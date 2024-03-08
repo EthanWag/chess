@@ -21,7 +21,7 @@ public class DatabaseConnection {
         userDAOBuilder.append("CREATE TABLE IF NOT EXISTS chess.UserDAO");
         userDAOBuilder.append("(");
         userDAOBuilder.append("username VARCHAR(50) PRIMARY KEY UNIQUE,");
-        userDAOBuilder.append("password VARCHAR(40) NOT NULL,");
+        userDAOBuilder.append("password VARCHAR(80) NOT NULL,");
         userDAOBuilder.append("email VARCHAR(40) NOT NULL");
         userDAOBuilder.append(");");
 
@@ -75,46 +75,4 @@ public class DatabaseConnection {
         var gameStatement = connection.prepareStatement(gameDAO);
         gameStatement.execute();
     }
-
-    // given a bunch of SQL input, returns one of the single command, used in initialization
-    private static String parseInput(ArrayList<String> input){
-
-        Iterator<String> iterator = input.iterator();
-        StringBuilder builder = new StringBuilder();
-
-        while(iterator.hasNext()){
-
-            String line = iterator.next();
-            iterator.remove();
-
-            // adds stuff to the output as it runs
-            builder.append(line);
-            builder.append("\n");
-            if(line.equals(");")){break;}
-
-        }
-        return builder.toString();
-    }
-
-    // this is just for testing purposes
-
-    public static void main(String [] args){
-
-
-        try(Connection connDb = connectToDb()){
-
-
-            // just a simple test to see if I can send commands
-            String statement = "create table test(test int null);";
-
-
-
-        }catch(Exception e){
-
-            System.out.println(e.getMessage());
-
-        }
-    }
-
-
 }

@@ -76,7 +76,7 @@ class RegisterServiceTest {
 
         }catch(DataAccessException error){
 
-            String errorMessage = "[400](bad request)(Register Service) invalid input";
+            String errorMessage = "[400] bad request";
             assertEquals(errorMessage,error.getMessage());
 
         }

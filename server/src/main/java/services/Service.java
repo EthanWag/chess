@@ -41,14 +41,6 @@ public abstract class Service {
     // Generates AuthTokens and adds them to the Database. used in multiple services
     protected AuthData createAuthData(String username)throws DataAccessException {
 
-        // checks to see if an authToken has already been created
-        /*
-        var authAccess = new SqlAuthDAO();
-        if (authAccess.authCreated(username)) {
-            authAccess.closeConnection();
-            throw new DataAccessException("[400] bad request");
-        }
-         */
         var authAccess = new SqlAuthDAO();
 
 

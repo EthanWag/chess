@@ -4,6 +4,7 @@ import dataAccess.DataAccessException;
 import dataAccess.SqlAuthDAO;
 import dataAccess.SqlUserDAO;
 import models.*;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 public class LoginService extends Service{
 
@@ -32,7 +33,8 @@ public class LoginService extends Service{
 
     // service functions
     private boolean comparePasswords(String enteredPassword,String userPassword){
-        return enteredPassword.equals(userPassword);
+        BCryptPasswordEncoder decoder = new BCryptPasswordEncoder();
+        return decoder.matches(enteredPassword,userPassword);
     }
 
     public static class LoginPackage {

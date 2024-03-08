@@ -18,7 +18,7 @@ public class LoginHandler {
 
             // Simply just creates a register object and casts it to a register object
             var newObj = gsonConverter.requestToObj(request, Login.class);
-            Login newLogin = (Login) newObj;
+            Login newLogin = (Login)newObj;
 
             // then runs the program through the services and returns the newly created authToken
             LoginPackage newPackage = service.completeJob(newLogin.username, newLogin.password);

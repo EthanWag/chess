@@ -72,5 +72,3 @@ public class JoinGameService extends Service{
         }
     }
 }
-
-// complete for now

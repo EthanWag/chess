@@ -43,6 +43,10 @@ public class ExceptionHandler {
                     response.status(400);
                     return gsonConverter.objToJson(Map.of("message",message));
 
+                }else if(error.getMessage().contains("5")){
+                    message = "Error: Database access error";
+                    response.status(500);
+                    return gsonConverter.objToJson(Map.of("message",message));
                 }
 
             case "com.google.gson.JsonSyntaxException":

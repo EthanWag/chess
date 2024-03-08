@@ -94,7 +94,7 @@ public class SqlGameDAO implements GameDAO{
                 throw new DataAccessException("[400](Game Not Found)(GameDAO) Not Found");
             }
 
-        }catch(Exception error){ // this tackles more the case that the connection was bad
+        }catch(SQLException error){ // this tackles more the case that the connection was bad
             connectionDestroyedError();
             return null;
         }
@@ -178,7 +178,6 @@ public class SqlGameDAO implements GameDAO{
         try{
             if(!myConnection.isClosed()){
                 myConnection.close();
-                // System.out.println("closed");
             }
         }catch(SQLException error){
             connectionDestroyedError();

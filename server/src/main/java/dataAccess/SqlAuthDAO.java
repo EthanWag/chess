@@ -90,7 +90,11 @@ public class SqlAuthDAO implements AuthDAO{
             statement.setString(1,authToken);
 
             // If this code executes, than that means it was successful in deleteing my authtoken
-            statement.executeUpdate();
+            var result = statement.executeUpdate();
+
+            if(result == 0){
+                throw new DataAccessException("[401] Unauthorized delete");
+            }
 
 
         }catch(Exception error){ //FIXME: may cause problems, come back here
@@ -106,27 +110,6 @@ public class SqlAuthDAO implements AuthDAO{
         } catch (Exception error){
             System.err.println("error"); // what actually might be worth doing is making it so it calls the exception
             // handler directly
-        }
-    }
-    // really only used for one thing, checks to see if an authToken has been created for a user already
-    public boolean authCreated(String username) throws DataAccessException{
-        // first builds the string we are going to send to the database
-        StringBuilder strBuilder = new StringBuilder();
-        strBuilder.append("SELECT * FROM AuthDAO WHERE username= ?");
-        String sqlRead = strBuilder.toString();
-
-        try{
-            // preps statement
-            var statement = myConnection.prepareStatement(sqlRead,ResultSet.TYPE_SCROLL_INSENSITIVE,ResultSet.CONCUR_READ_ONLY);
-
-            statement.setString(1,username);
-            ResultSet resultItems = statement.executeQuery();
-
-            return resultItems.first();
-
-        }catch(Exception error){
-            connectionDestroyedError();
-            return false;
         }
     }
 
