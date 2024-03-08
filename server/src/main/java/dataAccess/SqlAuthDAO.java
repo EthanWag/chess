@@ -34,6 +34,7 @@ public class SqlAuthDAO implements AuthDAO{
             statement.setString(1,newAuthData.getAuthToken());
             statement.setString(2,newAuthData.getUsername());
 
+
             statement.executeUpdate();
 
         }catch(Exception error){

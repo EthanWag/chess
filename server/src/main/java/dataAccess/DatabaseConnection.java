@@ -32,7 +32,6 @@ public class DatabaseConnection {
         authDAOBuilder.append("authId INT PRIMARY KEY AUTO_INCREMENT,");
         authDAOBuilder.append("authToken VARCHAR(40) NOT NULL UNIQUE,");
         authDAOBuilder.append("username VARCHAR(50) NOT NULL");
-        // authDAOBuilder.append("FOREIGN KEY (username) REFERENCES UserDAO(username)");
         authDAOBuilder.append(");");
 
         authDAO = authDAOBuilder.toString();

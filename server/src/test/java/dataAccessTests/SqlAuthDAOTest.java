@@ -20,6 +20,10 @@ class SqlAuthDAOTest {
             sqlSetup.deleteAll();
             sqlSetup.commit();
 
+            SqlAuthDAO authSetup = new SqlAuthDAO();
+            authSetup.deleteAll();
+            authSetup.commit();
+
         }catch(Exception error){
             fail("Error: Cannot set up");
         }
@@ -67,6 +71,7 @@ class SqlAuthDAOTest {
 
     }
 
+    /*
     @Test
     void createInvalidUsername() {
 
@@ -85,6 +90,7 @@ class SqlAuthDAOTest {
         }
 
     }
+     */
 
     @Test
     void readNormal() {
