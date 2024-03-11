@@ -26,14 +26,6 @@ public class Game {
 
     }
 
-    public Game(Game other){
-        gameID = other.gameID;
-        whiteUsername = other.whiteUsername;
-        blackUsername = other.blackUsername;
-        gameName = other.gameName;
-        game = new ChessGame(other.game);
-    }
-
     // getters and setters
     public int getGameID() {
         return gameID;

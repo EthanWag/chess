@@ -33,9 +33,9 @@ public class SqlUserDAO implements UserDAO{
             var statement = myConnection.prepareStatement(sqlCreate);
 
             // fills in parameters and executes the code
-            statement.setString(1,newUser.getUsername());
-            statement.setString(2,newUser.getPassword());
-            statement.setString(3,newUser.getEmail());
+            statement.setString(1,newUser.username());
+            statement.setString(2,newUser.password());
+            statement.setString(3,newUser.email());
 
             statement.executeUpdate();
 

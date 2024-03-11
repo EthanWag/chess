@@ -15,7 +15,7 @@ public class JoinGameService extends Service{
         Game currentGame = getGame(gameId);
 
         // gets the username of the player
-        String username = currentUser.getUsername();
+        String username = currentUser.username();
 
         // adds the player to the game if they are
         addPlayer(currentGame,username,clientColor);

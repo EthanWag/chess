@@ -15,7 +15,7 @@ public class MemoryUserDAO implements UserDAO {
     }
 
     public void create(User newUser) throws DataAccessException {
-        String username = newUser.getUsername();
+        String username = newUser.username();
         // throws an exception if it is already taken
         if(users.containsKey(username)){ throw new DataAccessException("[403](Used User)(UserDAO) User already taken",403);}
 

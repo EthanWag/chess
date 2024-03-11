@@ -23,7 +23,7 @@ public class LogoutService extends Service{
     private void deleteAuthData(AuthData delAuthData)throws DataAccessException{
 
         // grabs authToken from the object
-        String authToken = delAuthData.getAuthToken();
+        String authToken = delAuthData.authToken();
 
         // selects it from the database and commits changes
         var authAccess = new SqlAuthDAO();

@@ -80,7 +80,7 @@ class SqlAuthDAOTest {
             AuthData newData = authTest.read("testing-auth-token");
             authTest.commit();
 
-            assertEquals("Ethan", newData.getUsername());
+            assertEquals("Ethan", newData.username());
 
         }catch(Exception error){
             fail("Error: AuthToken was included");

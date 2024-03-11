@@ -14,7 +14,7 @@ public class MemoryAuthDAO implements AuthDAO {
 
     public void create(AuthData newAuthData) throws DataAccessException {
 
-        String authToken = newAuthData.getAuthToken();
+        String authToken = newAuthData.authToken();
         // maybe put some sort of code here to catch errors
 
         // makes sure that you already haven't made that token

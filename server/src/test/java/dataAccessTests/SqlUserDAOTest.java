@@ -91,7 +91,7 @@ class SqlUserDAOTest {
             User myUser = testRead.read("Ethan");
             testRead.commit();
 
-            assertTrue(myUser.getEmail().equals("123email.com"));
+            assertTrue(myUser.email().equals("123email.com"));
 
         }catch(Exception error){
             fail("Error: userExists!");

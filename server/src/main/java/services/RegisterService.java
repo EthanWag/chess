@@ -22,7 +22,7 @@ public class RegisterService extends Service{
         AuthData authorization = createUser(username,password,email);
 
         // create an authToken and return it
-        return new RegisterPackage(authorization.getUsername(),authorization.getAuthToken());
+        return new RegisterPackage(authorization.username(),authorization.authToken());
     }
 
     // creates user and authData, returns the authData

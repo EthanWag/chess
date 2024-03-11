@@ -28,7 +28,7 @@ public abstract class Service {
 
             // checks to see if the authToken is assigned to that user
             var userAccess = new SqlUserDAO();
-            User foundUser = userAccess.read(checkData.getUsername());
+            User foundUser = userAccess.read(checkData.username());
             userAccess.close();
 
             return foundUser;

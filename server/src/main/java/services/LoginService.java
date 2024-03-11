@@ -18,13 +18,13 @@ public class LoginService extends Service{
 
 
         // compares the two passwords
-        if(comparePasswords(password,loginUser.getPassword())){
+        if(comparePasswords(password,loginUser.password())){
 
             // creates a authToken using the username
-            AuthData newAuthData = createAuthData(loginUser.getUsername());
+            AuthData newAuthData = createAuthData(loginUser.username());
 
             // returns the new user and token
-            return new LoginPackage(newAuthData.getUsername(), newAuthData.getAuthToken());
+            return new LoginPackage(newAuthData.username(), newAuthData.authToken());
         }else{
             // means that they entered the wrong password
             throw new DataAccessException("ERROR:Invalid Password", 401);

@@ -30,8 +30,8 @@ public class SqlAuthDAO implements AuthDAO{
             var statement = myConnection.prepareStatement(sqlCreate);
 
             // fills in parameters and executes the code
-            statement.setString(1,newAuthData.getAuthToken());
-            statement.setString(2,newAuthData.getUsername());
+            statement.setString(1,newAuthData.authToken());
+            statement.setString(2,newAuthData.username());
 
             statement.executeUpdate();
 
