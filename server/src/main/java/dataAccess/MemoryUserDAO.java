@@ -17,14 +17,14 @@ public class MemoryUserDAO implements UserDAO {
     public void create(User newUser) throws DataAccessException {
         String username = newUser.getUsername();
         // throws an exception if it is already taken
-        if(users.containsKey(username)){ throw new DataAccessException("[403](Used User)(UserDAO) User already taken");}
+        if(users.containsKey(username)){ throw new DataAccessException("[403](Used User)(UserDAO) User already taken",403);}
 
         users.put(username,newUser);
     }
 
     public User read(String username) throws DataAccessException {
 
-        if(!users.containsKey(username)){throw new DataAccessException("[401](Unauthorized)(UserDAO) Invalid username");}
+        if(!users.containsKey(username)){throw new DataAccessException("[401](Unauthorized)(UserDAO) Invalid username",401);}
 
         // returns the user if can find it
         return users.get(username);

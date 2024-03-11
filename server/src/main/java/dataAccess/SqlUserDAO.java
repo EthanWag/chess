@@ -1,7 +1,6 @@
 package dataAccess;
 
 import models.User;
-
 import java.sql.*;
 
 public class SqlUserDAO implements UserDAO{
@@ -10,13 +9,14 @@ public class SqlUserDAO implements UserDAO{
 
     public SqlUserDAO() throws DataAccessException{
         try{
+
             myConnection = DatabaseConnection.connectToDb();
-
-            // System.out.println("open");
-
             myConnection.setAutoCommit(false);
-        }catch(Exception connError){ // can be SQL or dataAccess exceptions
-            connectionDestroyedError();
+
+        }catch(Exception dbConnection){ // unable to connect for some reason
+
+            DatabaseConnection.closeConnection(myConnection);
+            throw new DataAccessException("ERROR: Database connection lost",500);
         }
     }
     public void create(User newUser) throws DataAccessException{
@@ -39,20 +39,20 @@ public class SqlUserDAO implements UserDAO{
 
             statement.executeUpdate();
 
-        }catch(SQLException sqlException){
+        }catch(SQLException sqlErr){
             // grabs the error code of the sqlException
-            int statusCode = sqlException.getErrorCode();
+            int statusCode = sqlErr.getErrorCode();
 
             if(statusCode == 1062){ // 1062 is the error code for already taken, handles accordingly
-                closeConnection();
-                throw new DataAccessException("[403](Used User)(UserDAO) User already taken");
+                DatabaseConnection.closeConnection(myConnection);
+                throw new DataAccessException("ERROR: Username is Taken",403);
             }else{ // this is if the connection broke
-                connectionDestroyedError();
+                DatabaseConnection.closeConnection(myConnection);
+                throw new DataAccessException("ERROR: Database connection lost",500);
             }
         }
     }
     public User read(String username) throws DataAccessException{
-
 
         // first builds the string we are going to send to the database
         StringBuilder strBuilder = new StringBuilder();
@@ -61,7 +61,6 @@ public class SqlUserDAO implements UserDAO{
 
         try{
 
-            // var statement = myConnection.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE,ResultSet.CONCUR_READ_ONLY);
             var statement = myConnection.prepareStatement(sqlRead,ResultSet.TYPE_SCROLL_INSENSITIVE,ResultSet.CONCUR_READ_ONLY);
             statement.setString(1,username);
 
@@ -69,7 +68,6 @@ public class SqlUserDAO implements UserDAO{
 
             // if the statement returns true, then it finds all info about this object and returns a new one
             if(resultItems.first()){
-                // returns the object if it found it
 
                 String foundUsername = resultItems.getString("username");
                 String foundPassword = resultItems.getString("password");
@@ -78,18 +76,16 @@ public class SqlUserDAO implements UserDAO{
                 return new User(foundUsername,foundPassword,foundEmail);
 
             }else{
-                // tells the user it could not find it, if it comes to that
-                closeConnection();
-                throw new DataAccessException("[401](Game Not Found)(GameDAO) Not Found");
+                DatabaseConnection.closeConnection(myConnection);
+                throw new DataAccessException("ERROR: Game Not Found",401);
             }
 
-        }catch(SQLException error){
-            connectionDestroyedError();
+        }catch(SQLException sqlErr){
+            DatabaseConnection.closeConnection(myConnection);
+            throw new DataAccessException("ERROR: Database connection lost",500);
         }
-        return null;
-
     }
-    public void deleteAll(){
+    public void deleteAll(){ // come here and add some code
         try {
             var statement = myConnection.prepareStatement("TRUNCATE TABLE UserDAO");
             statement.execute();
@@ -99,31 +95,12 @@ public class SqlUserDAO implements UserDAO{
             // handler directly
         }
     }
-    public void commit()throws DataAccessException{
-        try {
-            myConnection.commit();
-            closeConnection();
 
-        }catch(SQLException error){
-            connectionDestroyedError();
-        }
+    public void close() throws DataAccessException {
+        DatabaseConnection.closeConnection(myConnection);
     }
-
-    public void closeConnection() throws DataAccessException{
-        try{
-            if(!myConnection.isClosed()){
-                myConnection.close();
-                // System.out.println("closed");
-            }
-        }catch(SQLException error){
-            throw new DataAccessException("[503] unable to close");
-        }
-    }
-
-    // private helper functions that are used with the database
-    private void connectionDestroyedError() throws DataAccessException{
-        closeConnection();
-        throw new DataAccessException("[500](Connection) Unable to connect to database");
+    public void commit() throws DataAccessException {
+        DatabaseConnection.commit(myConnection);
     }
 
 }

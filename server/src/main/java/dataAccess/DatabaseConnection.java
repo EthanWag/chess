@@ -52,7 +52,7 @@ public class DatabaseConnection {
     }
 
     // simply just preps the database so other functions can use it
-    public static Connection connectToDb() throws DataAccessException,SQLException {
+    public static Connection connectToDb() throws DataAccessException {
 
         // creates a database, tables and returns a connection if it set up properly
         // otherwise it throws an error
@@ -65,13 +65,51 @@ public class DatabaseConnection {
     }
 
     // helper functions for these classes
-    private static void generateTables(Connection connection) throws SQLException{
+    private static void generateTables(Connection connection) throws DataAccessException{
         // if you pass in a connection, it will generate the tables for you if you don't have them
-        var userStatement = connection.prepareStatement(userDAO);
-        userStatement.execute();
-        var authStatement = connection.prepareStatement(authDAO);
-        authStatement.execute();
-        var gameStatement = connection.prepareStatement(gameDAO);
-        gameStatement.execute();
+
+        try {
+            var userStatement = connection.prepareStatement(userDAO);
+            userStatement.execute();
+            var authStatement = connection.prepareStatement(authDAO);
+            authStatement.execute();
+            var gameStatement = connection.prepareStatement(gameDAO);
+            gameStatement.execute();
+        }catch(SQLException genError){
+            throw new DataAccessException("ERROR: Failure to generate tables",500);
+        }
+
     }
+
+    // simply tries to reconnect to the database, otherwise throws an error
+    public static Connection reconnect() throws DataAccessException{
+        try{
+            return DatabaseManager.getConnection();
+        }catch(DataAccessException connectError){
+            throw new DataAccessException("ERROR: Database connection lost",500);
+        }
+    }
+
+
+
+    public static void commit(Connection connection)throws DataAccessException{
+        try {
+            connection.commit();
+            closeConnection(connection);
+
+        }catch(SQLException error){
+            throw new DataAccessException("ERROR: Unable to connect to database",500);
+        }
+    }
+
+    public static void closeConnection(Connection connection) throws DataAccessException{
+        try{
+            if(!connection.isClosed()){
+                connection.close();
+            }
+        }catch(SQLException error){
+            throw new DataAccessException("ERROR: Unable to close", 501);
+        }
+    }
+
 }

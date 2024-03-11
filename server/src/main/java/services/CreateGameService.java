@@ -34,10 +34,11 @@ public class CreateGameService extends Service{
 
         // creates game and then commits changes
         var gameAccess = new SqlGameDAO();
-        gameAccess.create(newGame);
+        int newGameId = gameAccess.create(newGame);
         gameAccess.commit();
 
-        return newGame.getGameID();
+        newGame.setGameID(newGameId); // sets the new game ID
+        return newGameId;
     }
 
     public static class GamePackage {

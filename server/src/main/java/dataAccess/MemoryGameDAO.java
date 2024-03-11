@@ -19,7 +19,7 @@ public class MemoryGameDAO implements GameDAO {
     public int create(Game newGame) throws DataAccessException {
         int newGameId = newGame.getGameID();
         // checks for if it is already taken
-        if(dbGames.containsKey(newGameId)){ throw new DataAccessException("[403](Used Game)(GameDAO) gameId already taken");}
+        if(dbGames.containsKey(newGameId)){ throw new DataAccessException("[403](Used Game)(GameDAO) gameId already taken",403);}
 
         dbGames.put(newGameId,newGame);
         return newGameId;
@@ -27,7 +27,7 @@ public class MemoryGameDAO implements GameDAO {
 
     public Game read(int gameId) throws DataAccessException{
 
-        if(!dbGames.containsKey(gameId)){ throw new DataAccessException("[400](Game Not Found)(GameDAO) Not Found");}
+        if(!dbGames.containsKey(gameId)){ throw new DataAccessException("[400](Game Not Found)(GameDAO) Not Found",404);}
 
         return  dbGames.get(gameId);
     }

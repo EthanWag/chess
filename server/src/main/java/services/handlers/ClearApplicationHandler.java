@@ -1,5 +1,7 @@
 package services.handlers;
 
+import com.google.gson.JsonSyntaxException;
+import dataAccess.DataAccessException;
 import services.ClearApplicationService;
 import spark.Response;
 
@@ -19,13 +21,10 @@ public class ClearApplicationHandler {
             response.status(200);
             return "{}"; // returns an empty Json object
 
-        }catch(Exception error) {
-
-            // catches error and returns that
-            return exceptionHandler.handleException(error,response);
+        }catch(JsonSyntaxException err){
+            return exceptionHandler.jsonException(response);
+        }catch(DataAccessException err){
+            return exceptionHandler.handleException(err,response);
         }
     }
-
-
-
 }

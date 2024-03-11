@@ -131,6 +131,7 @@ class SqlAuthDAOTest {
             fail("Error: should have failed, no auth");
 
         }catch(Exception error){
+
             System.out.println("Auth does not exist");
             assertTrue(true);
         }

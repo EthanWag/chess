@@ -139,9 +139,9 @@ class SqlGameDAOTest {
 
             fail("Error: There is no game at index 2");
 
-        }catch(Exception error){
-            boolean isError = error.getMessage().contains("400");
-            assertTrue(isError);
+        }catch(DataAccessException error){
+
+            assertEquals(400,error.getErrorCode());
         }
 
     }

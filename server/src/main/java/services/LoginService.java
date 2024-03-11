@@ -14,7 +14,7 @@ public class LoginService extends Service{
 
         var userAccess = new SqlUserDAO();
         User loginUser = userAccess.read(username);
-        userAccess.closeConnection();
+        userAccess.close();
 
 
         // compares the two passwords
@@ -27,7 +27,7 @@ public class LoginService extends Service{
             return new LoginPackage(newAuthData.getUsername(), newAuthData.getAuthToken());
         }else{
             // means that they entered the wrong password
-            throw new DataAccessException("[401](Unauthorized) Invalid Password");
+            throw new DataAccessException("ERROR:Invalid Password", 401);
         }
     }
 

@@ -1,5 +1,7 @@
 package services.handlers;
 
+import com.google.gson.JsonSyntaxException;
+import dataAccess.DataAccessException;
 import spark.Response;
 
 import java.util.Map;
@@ -10,61 +12,73 @@ public class ExceptionHandler {
 
     public ExceptionHandler() {}
 
-    public String handleException(Exception error, Response response){
+    public String handleException(DataAccessException error, Response response){
 
-        String errorType = error.getClass().getName();
         String message;
 
-        switch(errorType){
+        try {
 
-            case "dataAccess.DataAccessException":
+            switch (error.getErrorCode()) {
 
-                if(error.getMessage().contains("404")){
+                case 404:
 
                     message = "Error: data not found";
                     response.status(404);
-                    return gsonConverter.objToJson(Map.of("message",message));
+                    return gsonConverter.objToJson(Map.of("message", message));
 
-                }else if(error.getMessage().contains("403")){
+                case 403:
 
                     message = "Error: already taken";
                     response.status(403);
-                    return gsonConverter.objToJson(Map.of("message",message));
+                    return gsonConverter.objToJson(Map.of("message", message));
 
-                }else if(error.getMessage().contains("401")){
+                case 401:
 
                     message = "Error: unauthorized";
                     response.status(401);
-                    return gsonConverter.objToJson(Map.of("message",message));
+                    return gsonConverter.objToJson(Map.of("message", message));
 
-                }else if(error.getMessage().contains("400")){
+                case 400:
 
                     message = "Error: bad request";
                     response.status(400);
-                    return gsonConverter.objToJson(Map.of("message",message));
+                    return gsonConverter.objToJson(Map.of("message", message));
 
-                }else if(error.getMessage().contains("5")){
+                case 500:
                     message = "Error: Database access error";
                     response.status(500);
-                    return gsonConverter.objToJson(Map.of("message",message));
-                }
+                    return gsonConverter.objToJson(Map.of("message", message));
 
-            case "com.google.gson.JsonSyntaxException":
+                default:
+                    // should never get here but just in case
+                    System.out.println(error.getMessage());
+                    System.out.println("unknown error");
 
-                // you should only be getting 400's here
-                message = "Error: bad request";
-                response.status(400);
-                return gsonConverter.objToJson(Map.of("message",message)); // returns 400 if it didn't work
+                    message = "Error: Unknown error";
+                    response.status(500);
+                    return gsonConverter.objToJson(Map.of("message", message)); // returns 400 if it didn't work
+            }
 
-            default:
-                // should never get here but just in case
-                System.out.println(error.getMessage());
-                System.out.println(errorType);
-                System.out.println("unknown error");
+        }catch(JsonSyntaxException jsonErr){
 
-                message = "Error: Unknown error";
-                response.status(405);
-                return gsonConverter.objToJson(Map.of("message",message)); // returns 400 if it didn't work
+            return jsonException(response);
+
+
+        }catch(Exception err){
+
+            response.status(500);
+            return "{ Error: Unknown Server error }";
+
         }
     }
+
+    // handles JsonSyntaxException errors
+    public String jsonException(Response response){
+
+        String message = "Error: bad request";
+        response.status(400);
+        return gsonConverter.objToJson(Map.of("message", message));
+
+    }
+
 }

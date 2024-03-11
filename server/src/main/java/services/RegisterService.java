@@ -16,11 +16,9 @@ public class RegisterService extends Service{
 
         // first checks to see valid input
         if(!checkRegister(username,password,email)){
-            throw new DataAccessException("[400] bad request");
+            throw new DataAccessException("ERROR:Bad request", 400);
         }
 
-
-        // create user and adds it to the database
         AuthData authorization = createUser(username,password,email);
 
         // create an authToken and return it
@@ -40,7 +38,7 @@ public class RegisterService extends Service{
         // creates data Access object and commits
         var userAccess = new SqlUserDAO();
         userAccess.create(newUser);
-        userAccess.commit();
+        userAccess.commit(); // possibly make it so you have to commit and then close the connection???
 
         // creates new authData and returns that object
         return createAuthData(username);

@@ -27,7 +27,7 @@ public class JoinGameService extends Service{
         var gameAccess = new SqlGameDAO();
         Game foundGame = gameAccess.read(gameID);
 
-        gameAccess.closeConnection();
+        gameAccess.close();
         return foundGame;
 
     }
@@ -45,7 +45,7 @@ public class JoinGameService extends Service{
 
 
                 }else{
-                    throw new DataAccessException("[403](User Color)(JoinGameService) Auth already taken");
+                    throw new DataAccessException("ERROR: User already taken",403);
                 }
                 break;
 
@@ -57,7 +57,7 @@ public class JoinGameService extends Service{
                     accessGame.commit();
 
                 }else{
-                    throw new DataAccessException("[403](User Color)(JoinGameService) Auth already taken");
+                    throw new DataAccessException("ERROR: User already taken",403);
                 }
                 break;
 
@@ -68,7 +68,7 @@ public class JoinGameService extends Service{
             default: // throws an error if they entered in a invalid team color
 
                 // right here you need to add functionality of watching a game
-                throw new DataAccessException("[400] bad request");
+                throw new DataAccessException("ERROR: Bad request",400);
         }
     }
 }

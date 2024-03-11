@@ -1,5 +1,7 @@
 package services.handlers;
 
+import com.google.gson.JsonSyntaxException;
+import dataAccess.DataAccessException;
 import services.LogoutService;
 import spark.Request;
 import spark.Response;
@@ -22,10 +24,10 @@ public class LogoutHandler {
             response.status(200);
             return "{}";
 
-        }catch(Exception error) {
-
-            // catches error and returns that
-            return exceptionHandler.handleException(error,response);
+        }catch(JsonSyntaxException err){
+            return exceptionHandler.jsonException(response);
+        }catch(DataAccessException err) {
+            return exceptionHandler.handleException(err,response);
         }
     }
 }

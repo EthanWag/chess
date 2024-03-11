@@ -16,12 +16,11 @@ public class SqlGameDAO implements GameDAO{
     public SqlGameDAO() throws DataAccessException{
         try{
             myConnection = DatabaseConnection.connectToDb();
-
-            // System.out.println("open");
-
             myConnection.setAutoCommit(false);
-        }catch(Exception connError){ // can be SQL or dataAccess exceptions
-            connectionDestroyedError();
+
+        }catch(Exception dbConnection){ // catches errors in connections
+            DatabaseConnection.closeConnection(myConnection);
+            throw new DataAccessException("ERROR: Database connection lost",500);
         }
     }
 
@@ -30,13 +29,11 @@ public class SqlGameDAO implements GameDAO{
         // converts game object to a string
         String gameStr = serializer.objToJson(newGame.getGame());
 
-        // build the command
         StringBuilder strBuilder = new StringBuilder();
         strBuilder.append("INSERT INTO GameDAO(whiteUsername,blackUsername,gameName,game,whiteTaken,blackTaken)\n");
         strBuilder.append("VALUES(?,?,?,?,?,?);");
         String sqlCreate = strBuilder.toString();
 
-        // then execute the command
         try {
 
             var statement = myConnection.prepareStatement(sqlCreate, Statement.RETURN_GENERATED_KEYS);
@@ -54,20 +51,20 @@ public class SqlGameDAO implements GameDAO{
             var key = statement.getGeneratedKeys();
 
             if(key.first()) {
-                int gameId = key.getInt(1);
-                newGame.setGameID(gameId);
-                return gameId;
+                return key.getInt(1);
+                //newGame.setGameID(gameId);
+                //return gameId;
             }else{
-                closeConnection();
-                throw new DataAccessException("[501](auto-generate failed)your game failed generate an id");
+                DatabaseConnection.closeConnection(myConnection);
+                throw new DataAccessException("ERROR:Auto generation failed",500);
             }
 
-        }catch(Exception error){ // because of auto increment, we will never get an invalid entry. Always [500]
-            connectionDestroyedError();
-            return 0;
+        }catch(SQLException sqlErr){
+            DatabaseConnection.closeConnection(myConnection);
+            throw new DataAccessException("ERROR: Database connection lost",500);
         }
-
     }
+
     public Game read(int gameId) throws DataAccessException{
 
         // first builds the string we are going to send to the database
@@ -76,7 +73,6 @@ public class SqlGameDAO implements GameDAO{
         String sqlRead = strBuilder.toString();
 
         try{
-
             // grabs the connection and then tries the execute the program
             var statement = myConnection.prepareStatement(sqlRead,ResultSet.TYPE_SCROLL_INSENSITIVE,
                                                                     ResultSet.CONCUR_READ_ONLY);
@@ -85,18 +81,15 @@ public class SqlGameDAO implements GameDAO{
 
             // if the statement returns true, then it finds all info about this object and returns a new one
             if(resultItems.first()){
-                // returns the object if it found it
                 return convertGame(resultItems);
-
             }else{
-                // tells the user it could not find it, if it comes to that
-                closeConnection();
-                throw new DataAccessException("[400](Game Not Found)(GameDAO) Not Found");
+                DatabaseConnection.closeConnection(myConnection);
+                throw new DataAccessException("ERROR:Bad Request",400);
             }
 
         }catch(SQLException error){ // this tackles more the case that the connection was bad
-            connectionDestroyedError();
-            return null;
+            DatabaseConnection.closeConnection(myConnection);
+            throw new DataAccessException("ERROR: Database connection lost",500);
         }
     }
     public Collection<Game> getAll(){
@@ -104,7 +97,6 @@ public class SqlGameDAO implements GameDAO{
         Collection<Game> allGames = new ArrayList<>();
 
         try {
-
             var statement = myConnection.prepareStatement("SELECT * FROM GameDAO");
             ResultSet resultItems = statement.executeQuery();
 
@@ -113,25 +105,12 @@ public class SqlGameDAO implements GameDAO{
                 allGames.add(listGame);
             }
 
-            // returns all the new games that it found
             return allGames;
 
         }catch(Exception error){
             System.out.println("error");
             return allGames; // temp solution, come here to fix
         }
-    }
-    public void deleteAll(){
-
-        try {
-            var statement = myConnection.prepareStatement("TRUNCATE TABLE GameDAO");
-            statement.execute();
-
-        } catch (Exception error){
-            System.err.println("error"); // what actually might be worth doing is making it so it calls the exception
-            // handler directly
-        }
-
     }
 
     public void updatePlayer(int gameId,String username, String color) throws DataAccessException{
@@ -156,36 +135,34 @@ public class SqlGameDAO implements GameDAO{
             statement.setInt(2,gameId);
             statement.executeUpdate();
 
-
-        }catch(SQLException error){ // this tackles more the case that the connection was bad
-            connectionDestroyedError();
+        }catch(SQLException sqlErr){ // this tackles more the case that the connection was bad
+            DatabaseConnection.closeConnection(myConnection);
+            throw new DataAccessException("ERROR: Database connection lost",500);
         }
 
+    }
+
+    public void deleteAll(){
+        try {
+            var statement = myConnection.prepareStatement("TRUNCATE TABLE GameDAO");
+            statement.execute();
+
+        } catch (Exception error){
+            System.err.println("error"); // what actually might be worth doing is making it so it calls the exception
+            // handler directly
+        }
     }
 
     public void commit()throws DataAccessException{
-        try {
-            myConnection.commit();
-            closeConnection();
-
-        }catch(SQLException error){
-            connectionDestroyedError();
-        }
+        DatabaseConnection.commit(myConnection);
     }
 
     // just simply closes the connection
-    public void closeConnection() throws DataAccessException{
-        try{
-            if(!myConnection.isClosed()){
-                myConnection.close();
-            }
-        }catch(SQLException error){
-            connectionDestroyedError();
-        }
+    public void close() throws DataAccessException{
+        DatabaseConnection.commit(myConnection);
     }
 
-
-    // private functions that help with the collection of objects
+    // converts a result set item into a Game
     private Game convertGame(ResultSet sqlSet) throws SQLException{
 
         int myGameId = sqlSet.getInt("gameId");
@@ -207,11 +184,5 @@ public class SqlGameDAO implements GameDAO{
         foundGame.setGame(myGame); // sets the gameboard to the new one
 
         return foundGame;
-
     }
-    private void connectionDestroyedError() throws DataAccessException{
-        closeConnection();
-        throw new DataAccessException("[500](Connection) Unable to connect to database");
-    }
-
 }

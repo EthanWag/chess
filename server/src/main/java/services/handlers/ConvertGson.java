@@ -1,6 +1,7 @@
 package services.handlers;
 
 import com.google.gson.JsonSyntaxException;
+import dataAccess.DataAccessException;
 import spark.*;
 
 import com.google.gson.Gson;
@@ -21,8 +22,8 @@ public class ConvertGson {
         try {
             return serializer.fromJson(jsonStr.body(), structure);
 
-        }catch(Exception error){
-            throw new JsonSyntaxException("[400](Invalid input)(ConvertGson) invalid entry");
+        }catch(JsonSyntaxException gsonErr){
+            throw new JsonSyntaxException("ERROR:Invalid entry");
         }
     }
 
@@ -32,19 +33,19 @@ public class ConvertGson {
         try {
             return serializer.fromJson(str, structure);
 
-        }catch(Exception error){
-            throw new JsonSyntaxException("[500](Invalid input)(ConvertGson) invalid entry");
+        }catch(JsonSyntaxException gsonErr){
+            throw new JsonSyntaxException("ERROR:Invalid entry");
         }
     }
 
-    public String objToJson(Object data){
+    public String objToJson(Object data) throws JsonSyntaxException{
 
         // throws an exception if it serializes object
         try {
             return serializer.toJson(data);
 
-        }catch(Exception error){
-            throw new JsonSyntaxException("[400](Invalid input)(ConvertGson) invalid string");
+        }catch(JsonSyntaxException gsonErr){
+            throw new JsonSyntaxException("ERROR:Invalid entry");
         }
     }
 

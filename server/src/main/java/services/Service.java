@@ -7,12 +7,13 @@ import java.util.UUID;
 
 public abstract class Service {
 
+    // gets an authData object, given a authToken
     protected AuthData getAuthData(String authToken) throws DataAccessException{
 
         var authAccess = new SqlAuthDAO();
         AuthData foundAuth = authAccess.read(authToken);
 
-        authAccess.closeConnection();
+        authAccess.close();
         return foundAuth;
     }
 
@@ -20,30 +21,28 @@ public abstract class Service {
     protected User checkAuthToken(String authToken)throws DataAccessException{
 
         try {
-
+            // checks to see if the authToken is in the database
             var authAccess = new SqlAuthDAO();
             AuthData checkData = authAccess.read(authToken);
-            authAccess.closeConnection();
+            authAccess.close();
 
-            // grabs current user with that authToken and returns user
+            // checks to see if the authToken is assigned to that user
             var userAccess = new SqlUserDAO();
             User foundUser = userAccess.read(checkData.getUsername());
-            userAccess.closeConnection();
+            userAccess.close();
 
             return foundUser;
 
         }catch(DataAccessException invalid){ // throws an unauthorized execption in case it can't find it
-            throw new DataAccessException("[401](unauthorized) not valid authToken");
+            throw new DataAccessException("ERROR:Invalid authToken",401);
         }
     }
 
 
-    // Generates AuthTokens and adds them to the Database. used in multiple services
+    // Generates AuthTokens and adds them to the Database. Used in multiple services
     protected AuthData createAuthData(String username)throws DataAccessException {
 
         var authAccess = new SqlAuthDAO();
-
-
 
         // otherwise it makes an authToken and puts it in the database
         String authToken = UUID.randomUUID().toString(); // generate token here

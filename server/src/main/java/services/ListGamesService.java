@@ -26,7 +26,7 @@ public class ListGamesService extends Service{
         var gameAccess = new SqlGameDAO();
         Collection<Game> allGames = gameAccess.getAll();
 
-        gameAccess.closeConnection();
+        gameAccess.close();
         return allGames;
     }
 
