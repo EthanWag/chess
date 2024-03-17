@@ -54,6 +54,8 @@ public class Server {
 
         Spark.delete("/session", (request, response) -> { // logout, logs out a user from the chessgame
 
+            var value = request.url().toString();
+
             LogoutHandler logoutUser = new LogoutHandler();
             return logoutUser.logoutHandler(request,response);
 

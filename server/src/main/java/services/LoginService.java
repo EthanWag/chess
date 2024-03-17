@@ -3,13 +3,14 @@ package services;
 import dataAccess.DataAccessException;
 import dataAccess.SqlUserDAO;
 import models.*;
+import models.resModels.ResponseLoginPackage;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 public class LoginService extends Service{
 
     public LoginService() {}
 
-    public LoginPackage completeJob(String username, String password) throws DataAccessException {
+    public ResponseLoginPackage completeJob(String username, String password) throws DataAccessException {
 
         var userAccess = new SqlUserDAO();
         User loginUser = userAccess.read(username);
@@ -23,7 +24,7 @@ public class LoginService extends Service{
             AuthData newAuthData = createAuthData(loginUser.username());
 
             // returns the new user and token
-            return new LoginPackage(newAuthData.username(), newAuthData.authToken());
+            return new ResponseLoginPackage(newAuthData.username(), newAuthData.authToken());
         }else{
             // means that they entered the wrong password
             throw new DataAccessException("ERROR:Invalid Password", 401);
@@ -36,6 +37,7 @@ public class LoginService extends Service{
         return decoder.matches(enteredPassword,userPassword);
     }
 
+    /*
     public static class LoginPackage {
         public String username,authToken;
         public LoginPackage(String username, String authToken){
@@ -43,4 +45,5 @@ public class LoginService extends Service{
             this.authToken = authToken;
         }
     }
+    */
 }

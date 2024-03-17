@@ -1,6 +1,7 @@
 package serviceTest;
 
 import dataAccess.DataAccessException;
+import models.resModels.ResponseRegisterPackage;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import services.ClearApplicationService;
@@ -32,8 +33,8 @@ class LogoutServiceTest{
             String testPassword = "123456";
             String testEmail = "email.com";
 
-            RegisterService.RegisterPackage testPackage = registerService.completeJob(testUsername, testPassword, testEmail);
-            testToken = testPackage.authToken;
+            ResponseRegisterPackage testPackage = registerService.completeJob(testUsername, testPassword, testEmail);
+            testToken = testPackage.newAuthToken();
 
 
         }catch(DataAccessException error){

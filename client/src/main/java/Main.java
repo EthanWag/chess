@@ -8,7 +8,7 @@ public class Main {
         String myURL = "http://localhost:8080";
         ServerFacade server = new ServerFacade(myURL);
 
-        server.register();
+
 
 
     }

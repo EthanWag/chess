@@ -4,6 +4,7 @@ import dataAccess.DataAccessException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import services.ClearApplicationService;
+import models.resModels.ResponseRegisterPackage;
 import services.*;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -40,8 +41,8 @@ class LoginServiceTest {
             testPassword = fakePassword;
 
 
-            RegisterService.RegisterPackage testPackage = registerService.completeJob(fakeUsername, fakePassword, fakeEmail);
-            testToken = testPackage.authToken;
+            ResponseRegisterPackage testPackage = registerService.completeJob(fakeUsername, fakePassword, fakeEmail);
+            testToken = testPackage.newAuthToken();
 
             logout.completeJob(testToken);
 

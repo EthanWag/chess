@@ -3,7 +3,9 @@ package services;
 import dataAccess.SqlUserDAO;
 import dataAccess.DataAccessException;
 import models.*;
+import models.resModels.ResponseRegisterPackage;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+
 
 import java.util.Objects;
 
@@ -12,7 +14,7 @@ public class RegisterService extends Service{
     public RegisterService() {}
 
 
-    public RegisterPackage completeJob(String username, String password, String email)throws DataAccessException{
+    public ResponseRegisterPackage completeJob(String username, String password, String email)throws DataAccessException{
 
         // first checks to see valid input
         if(!checkRegister(username,password,email)){
@@ -22,7 +24,7 @@ public class RegisterService extends Service{
         AuthData authorization = createUser(username,password,email);
 
         // create an authToken and return it
-        return new RegisterPackage(authorization.username(),authorization.authToken());
+        return new ResponseRegisterPackage(authorization.username(),authorization.authToken());
     }
 
     // creates user and authData, returns the authData

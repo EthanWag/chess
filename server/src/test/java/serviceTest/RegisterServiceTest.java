@@ -6,7 +6,7 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 
 import dataAccess.*;
-import services.RegisterService.RegisterPackage;
+import models.resModels.ResponseRegisterPackage;
 import services.*;
 
 
@@ -42,10 +42,10 @@ class RegisterServiceTest {
 
         try {
 
-            RegisterPackage testPackage = testRegister.completeJob(testUsername, testPassword, testEmail);
+            ResponseRegisterPackage testPackage = testRegister.completeJob(testUsername, testPassword, testEmail);
 
-            String testAuth = testPackage.authToken;
-            RegisterPackage expectedPackage = new RegisterPackage(testUsername,testAuth);
+            String testAuth = testPackage.newAuthToken();
+            ResponseRegisterPackage expectedPackage = new ResponseRegisterPackage(testUsername,testAuth);
 
 
             assertEquals(expectedPackage,testPackage);
@@ -66,10 +66,10 @@ class RegisterServiceTest {
 
         try {
 
-            RegisterPackage testPackage = testRegister.completeJob(testUsername, testPassword, testEmail);
+            ResponseRegisterPackage testPackage = testRegister.completeJob(testUsername, testPassword, testEmail);
 
-            String testAuth = testPackage.authToken;
-            RegisterPackage expectedPackage = new RegisterPackage(testUsername,testAuth);
+            String testAuth = testPackage.newAuthToken();
+            ResponseRegisterPackage expectedPackage = new ResponseRegisterPackage(testUsername,testAuth);
 
             // should not be able to do that, should throw an error
             fail();

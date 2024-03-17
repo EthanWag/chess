@@ -2,8 +2,8 @@ package services.handlers;
 
 import com.google.gson.JsonSyntaxException;
 import dataAccess.DataAccessException;
+import models.resModels.ResponseLoginPackage;
 import services.LoginService;
-import services.LoginService.LoginPackage;
 
 import spark.Request;
 import spark.Response;
@@ -23,7 +23,7 @@ public class LoginHandler {
             Login newLogin = (Login)newObj;
 
             // then runs the program through the services and returns the newly created authToken
-            LoginPackage newPackage = service.completeJob(newLogin.username, newLogin.password);
+            ResponseLoginPackage newPackage = service.completeJob(newLogin.username, newLogin.password);
 
             // converts that string in to a response object and returns it
             response.status(200);
