@@ -34,7 +34,7 @@ class LogoutServiceTest{
             String testEmail = "email.com";
 
             ResponseRegisterPackage testPackage = registerService.completeJob(testUsername, testPassword, testEmail);
-            testToken = testPackage.newAuthToken();
+            testToken = testPackage.authToken();
 
 
         }catch(DataAccessException error){

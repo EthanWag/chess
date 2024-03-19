@@ -38,7 +38,7 @@ class JoinGameServiceTest {
             String testEmail = "email.com";
 
             ResponseRegisterPackage testPackage = registerService.completeJob(testUsername, testPassword, testEmail);
-            authToken = testPackage.newAuthToken();
+            authToken = testPackage.authToken();
 
             CreateGameService.GamePackage gamePackage = createGameService.completeJob(authToken,"newGame");
             gameId = gamePackage.gameID;

@@ -36,14 +36,4 @@ public class LoginService extends Service{
         BCryptPasswordEncoder decoder = new BCryptPasswordEncoder();
         return decoder.matches(enteredPassword,userPassword);
     }
-
-    /*
-    public static class LoginPackage {
-        public String username,authToken;
-        public LoginPackage(String username, String authToken){
-            this.username = username;
-            this.authToken = authToken;
-        }
-    }
-    */
 }

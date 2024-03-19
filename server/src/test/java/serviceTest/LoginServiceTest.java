@@ -42,7 +42,7 @@ class LoginServiceTest {
 
 
             ResponseRegisterPackage testPackage = registerService.completeJob(fakeUsername, fakePassword, fakeEmail);
-            testToken = testPackage.newAuthToken();
+            testToken = testPackage.authToken();
 
             logout.completeJob(testToken);
 

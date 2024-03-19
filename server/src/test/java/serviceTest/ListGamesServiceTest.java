@@ -40,7 +40,7 @@ class ListGamesServiceTest {
             String testEmail = "email.com";
 
             ResponseRegisterPackage testPackage = registerService.completeJob(testUsername, testPassword, testEmail);
-            authToken = testPackage.newAuthToken();
+            authToken = testPackage.authToken();
 
             createGameService.completeJob(authToken,"newGame1");
             createGameService.completeJob(authToken,"newGame2");

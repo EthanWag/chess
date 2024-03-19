@@ -37,7 +37,7 @@ class CreateGameServiceTest {
             String testEmail = "email.com";
 
             ResponseRegisterPackage testPackage = registerService.completeJob(testUsername, testPassword, testEmail);
-            authToken = testPackage.newAuthToken();
+            authToken = testPackage.authToken();
 
         }catch(DataAccessException error){
             System.out.println("Failure in building test");

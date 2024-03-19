@@ -44,7 +44,7 @@ class RegisterServiceTest {
 
             ResponseRegisterPackage testPackage = testRegister.completeJob(testUsername, testPassword, testEmail);
 
-            String testAuth = testPackage.newAuthToken();
+            String testAuth = testPackage.authToken();
             ResponseRegisterPackage expectedPackage = new ResponseRegisterPackage(testUsername,testAuth);
 
 
@@ -68,7 +68,7 @@ class RegisterServiceTest {
 
             ResponseRegisterPackage testPackage = testRegister.completeJob(testUsername, testPassword, testEmail);
 
-            String testAuth = testPackage.newAuthToken();
+            String testAuth = testPackage.authToken();
             ResponseRegisterPackage expectedPackage = new ResponseRegisterPackage(testUsername,testAuth);
 
             // should not be able to do that, should throw an error
