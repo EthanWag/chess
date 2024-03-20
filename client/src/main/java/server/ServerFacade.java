@@ -10,6 +10,8 @@ import ClientValues.*;
 import models.resModels.*;
 import models.reqModels.*;
 
+import server.Server;
+
 public class ServerFacade {
 
     private final String serverUrl;
@@ -18,6 +20,7 @@ public class ServerFacade {
 
     public ServerFacade(String myUrl){
         serverUrl = myUrl;
+
     }
 
     // methods for all of the end points

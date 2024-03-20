@@ -1,12 +1,17 @@
-import server.ServerFacade;
+import server.Server;
+import ui.LoginUI;
 
 public class Main {
     public static void main(String[] args) {
 
-        // we want to grab the correct arguement from here and then pass it to
+        // starts the server
+        Server server = new Server();
+        server.run(8080); // runs server when it starts
 
-        String myURL = "http://localhost:8080";
-        ServerFacade server = new ServerFacade(myURL);
+        LoginUI start = new LoginUI();
+        start.run();
+
+        server.stop();
 
 
 
