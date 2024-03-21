@@ -1,5 +1,6 @@
 package clientTests;
 
+import models.Game;
 import models.reqModels.*;
 import org.junit.jupiter.api.*;
 
@@ -335,7 +336,71 @@ public class ServerFacadeTests {
     }
 
     @Test
+    public void createGameInvalidAuth() {
+
+        ServerFacade server = null;
+        String myAuthorization = null;
+
+        try{
+
+            String myURL = "http://localhost:8080";
+            server = new ServerFacade(myURL);
+
+            RequestRegisterPackage newUser = new RequestRegisterPackage("Steve", "abcd555", "wowzar.net");
+            var testValue = server.register(newUser);
+
+            myAuthorization = testValue.authToken();
+
+        }catch(InvalidRequestException error){
+            fail("unable to set up request");
+        }
+
+        if((server == null) || (myAuthorization == null))
+            fail("unable to set up");
+
+        try {
+
+            RequestCreatePackage newGame = new RequestCreatePackage("Steve's new game");
+            server.createGame(newGame, "fake authToken");
+
+            fail("Invalid AuthToken, should have failed");
+
+        }catch(InvalidRequestException error){
+            assertEquals(401,error.getErrorCode());
+        }
+    }
+
+    @Test
     public void listGameSuccess() {
+
+        try {
+
+            String myURL = "http://localhost:8080";
+            ServerFacade server = new ServerFacade(myURL);
+
+            RequestRegisterPackage newUser = new RequestRegisterPackage("timmy", "booboo", "myEmail.com");
+            var testValue = server.register(newUser);
+
+            String authToken = testValue.authToken();
+
+            var package1 = new RequestCreatePackage("gg gamer");
+            var package2 = new RequestCreatePackage("nozo");
+
+            server.createGame(package1,authToken);
+            server.createGame(package2,authToken);
+
+            var test = server.listGame(authToken);
+
+            // for right now I just want it to be an empty game
+            assertEquals(2,test.games().size());
+
+        }catch(InvalidRequestException error){
+            fail("did not list two games"); // invalid request
+        }
+    }
+
+    @Test
+    public void listGameInvalidAuth() {
 
         try {
 
@@ -355,7 +420,6 @@ public class ServerFacadeTests {
         }catch(InvalidRequestException error){
             fail(); // invalid request
         }
-
     }
 
 
@@ -385,5 +449,34 @@ public class ServerFacadeTests {
             fail();
         }
     }
+
+    // test to make sure that
+    @Test
+    public void joinGameInvalidID() {
+
+        try {
+            String myURL = "http://localhost:8080";
+            ServerFacade server = new ServerFacade(myURL);
+
+            RequestRegisterPackage newUser = new RequestRegisterPackage("timmy", "booboo", "myEmail.com");
+            var testValue = server.register(newUser);
+
+            String authToken = testValue.authToken();
+
+            // makes the game
+            RequestCreatePackage newGame = new RequestCreatePackage("my new game!!!''''' ");
+            var test = server.createGame(newGame, authToken);
+
+            // joins the game
+            RequestJoinPackage joinGame = new RequestJoinPackage("WHITE", -1);
+            server.joinGame(joinGame, authToken);
+
+            fail("-1 is a bad game ID");
+
+        }catch(InvalidRequestException error){
+            assertEquals(400,error.getErrorCode());
+        }
+    }
+
 
 }
