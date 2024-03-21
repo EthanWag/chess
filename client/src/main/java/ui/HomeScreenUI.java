@@ -1,5 +1,6 @@
 package ui;
 
+import java.util.HashMap;
 import models.Game;
 import models.reqModels.*;
 import models.resModels.*;
@@ -12,6 +13,8 @@ public class HomeScreenUI extends ChessUI{
     private boolean runtimeUser = true;
     private final String authorization;
     private final String username;
+
+    private final HashMap<String,Game> gameList = new HashMap<>();
     public HomeScreenUI(String newAuthToken, String myUsername){
         authorization = newAuthToken;
         username = myUsername;
@@ -20,6 +23,8 @@ public class HomeScreenUI extends ChessUI{
 
     public void run(){
         String input;
+
+        intro();
 
         do{
             // gets simple input from the user
@@ -30,8 +35,8 @@ public class HomeScreenUI extends ChessUI{
             switch(input){
                 case "list games":
                     try{
-                        var gamesList = server.listGame(authorization);
-                        listGames(gamesList);
+                        loadGames(authorization);
+                        listGames();
 
                     }catch(InvalidRequestException error){
                         handleError(error.getErrorCode());
@@ -43,10 +48,7 @@ public class HomeScreenUI extends ChessUI{
                     var newGame = createGame();
 
                     try{
-                        var game = server.createGame(newGame,authorization);
-
-                        System.out.println("Game name: " + newGame.gameName());
-                        System.out.println("Game Id: " + game.gameID());
+                        server.createGame(newGame,authorization);
                     }catch(InvalidRequestException error){
                         handleError(error.getErrorCode());
                     }
@@ -56,7 +58,6 @@ public class HomeScreenUI extends ChessUI{
 
                     RequestJoinPackage joinPackage;
 
-                    // makes sure they enter a valid number
                     while(true) {
                         try {
                             joinPackage = joinGame();
@@ -65,15 +66,26 @@ public class HomeScreenUI extends ChessUI{
                             System.out.println("Invalid game ID, please enter again");
                         }
                     }
-                    System.out.println("Joining Game...");
 
                     try{
                         server.joinGame(joinPackage,authorization);
-                    }catch(InvalidRequestException error){
-                        handleError(error.getErrorCode());
-                    }
+                        System.out.println("Joining Game...");
 
-                    // write code here that will join the game
+                        //FIXME: this is a temp solution, change this as needed
+                        Game newPlayerGame = new Game(-1,"","","",false,false);
+
+                        GameScreenUI playChess = new GameScreenUI(newPlayerGame,playerWhite(joinPackage),authorization);
+                        playChess.run();
+
+                    }catch(InvalidRequestException error){
+                        if(error.getErrorCode() == 400) {
+                            System.out.println("\nInvalid ID or Invalid team color, try again");
+                        }else if(error.getErrorCode() == 403){
+                            System.out.println("\nColor already taken, try again");
+                        }else{
+                            handleError(error.getErrorCode());
+                        }
+                    }
 
                     break;
 
@@ -93,6 +105,8 @@ public class HomeScreenUI extends ChessUI{
                     break;
             }
         }while(runtimeUser);
+
+        System.out.println("\n Please login to play Chess!");
     }
 
     private RequestCreatePackage createGame(){
@@ -101,65 +115,119 @@ public class HomeScreenUI extends ChessUI{
         System.out.print("Enter a new game name: ");
         String gameName = createScanner.nextLine();
 
+        // calls again until they enter valid info
+        if(gameList.containsKey(gameName)){
+            System.out.println("Game already named " + gameName);
+            System.out.println(".Please enter a new game");
+            return createGame();
+        }
+
         return new RequestCreatePackage(gameName);
     }
 
     private RequestJoinPackage joinGame() throws InvalidRequestException{
+
+        // first loads all changes
+        loadGames(authorization);
+
         Scanner joinGameScanner = new Scanner(System.in);
 
-        System.out.print("Please enter a game ID: ");
-        String strInt = joinGameScanner.nextLine();
+        System.out.print("Please enter a game name: ");
+        String gameName = joinGameScanner.nextLine();
 
-        int gameID = strToInt(strInt);
+
+        // checks to make sure that that gave even exsists
+        int myGameId = -1;
+        if(gameList.get(gameName) != null){
+            myGameId = gameList.get(gameName).getGameID();
+        }
 
         System.out.print("Please enter team color: ");
         String teamColor = joinGameScanner.nextLine();
 
-        teamColor = teamColor.toUpperCase();
-        return new RequestJoinPackage(teamColor,gameID);
+        if (teamColor.equalsIgnoreCase("WATCH")) {
+            teamColor = null;
+        }else{
+            teamColor = teamColor.toUpperCase();
+        }
+        return new RequestJoinPackage(teamColor,myGameId);
     }
 
-    private void listGames(ResponseListPackage resList){
+    private void listGames(){
 
-        var allGames = resList.games();
-        if(allGames.isEmpty()){
-            System.out.println("No games available!!");
+        if(gameList.isEmpty()){
+            System.out.println("\nNo games available!!");
+            return;
         }
 
         System.out.println("Games you can currently play\n");
-        for(Game oneGame : allGames){
+        for(String gameName : gameList.keySet()){
+
+            // gets the game that we are going to use
+            var oneGame = gameList.get(gameName);
 
             StringBuilder gameInfo = new StringBuilder();
 
             gameInfo.append("\tChess Game: ");
-            gameInfo.append(oneGame.getGameName());
-            gameInfo.append(" | Game ID: ");
-            gameInfo.append(oneGame.getGameID());
+            gameInfo.append(gameName);
+
+            // writes different players and their usernames
+            gameInfo.append("\n\t  - White Player: ");
+
+            // prints white player
+            String whitePlayer = oneGame.getWhiteUsername();
+            if((whitePlayer == null) || (whitePlayer.isEmpty())){
+                gameInfo.append("Empty Player");
+            }else{
+                gameInfo.append(whitePlayer);
+            }
+
+            gameInfo.append("\n\t  - Black Player: ");
+
+            // prints black player
+            String blackPlayer = oneGame.getBlackUsername();
+            if((blackPlayer == null) || (blackPlayer.isEmpty())){
+                gameInfo.append("Empty Player");
+            }else{
+                gameInfo.append(blackPlayer);
+            }
+
+            gameInfo.append("\n");
 
             System.out.println(gameInfo);
         }
-
-        System.out.println();
     }
 
-    private int strToInt(String userVal) throws InvalidRequestException{
-        try{
-            return Integer.parseInt(userVal);
-        }catch(NumberFormatException error){
-            throw new InvalidRequestException("Not a number", 400);
+    private void intro(){
+        clearScreen();
+        System.out.println("\nWelcome " + username + "!");
+        System.out.println("Please select a game you would like to join or create a new game");
+    }
+
+    private boolean playerWhite(RequestJoinPackage joinPackage){
+        switch(joinPackage.playerColor()){
+            case "WHITE" -> {
+                return true;
+            }
+            case null -> {
+                return true;
+            }
+            default -> {
+                return false;
+            }
+        }
+    }
+
+    // loads all the games the are currently on the database
+    private void loadGames(String authToken)throws InvalidRequestException{
+        var allGames = server.listGame(authToken);
+
+        for (Game oneGame : allGames.games()){
+            gameList.put(oneGame.getGameName(),oneGame);
         }
     }
 
     // helper functions that help tell the user what they need to do to navigate this website
-    private void handleError(int errorCode){
-        switch(errorCode){
-            case 400 -> System.out.println("400");
-            case 401 -> System.out.println("401");
-            case 403 -> System.out.println("403");
-            case 404 -> System.out.println("404");
-            case 500 -> System.out.println("500");
-        }
-    }
 
     private void help(){
         System.out.println("Welcome " + username + "!\n");
@@ -176,7 +244,7 @@ public class HomeScreenUI extends ChessUI{
         System.out.println("options:");
         System.out.println("\t - help (description of page)");
         System.out.println("\t - options (quick description)");
-        System.out.println("\t - join (gameID) (join that game with that ID)");
+        System.out.println("\t - join (join that game with that ID)");
         System.out.println("\t - list games (lists all possible games to can join)");
         System.out.println("\t - new game (create a new game)");
         System.out.println("\t - logout (logout of your account)\n");

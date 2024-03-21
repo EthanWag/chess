@@ -18,6 +18,8 @@ public class LoginUI extends ChessUI{
     public void run(){
         String input;
 
+        intro();
+
         do{
             // gets simple input from the user
             printPrompt();
@@ -29,6 +31,13 @@ public class LoginUI extends ChessUI{
                 case "register":
 
                     var newUser = registerUser();
+
+                    // a simple check to make sure they are not entering new lines as username or password
+                    if(!checkPackage(newUser)){
+                        System.out.println("\nBad username or password, please enter something else");
+                        continue;
+                    }
+
                     try{
                         var user = server.register(newUser);
 
@@ -37,7 +46,12 @@ public class LoginUI extends ChessUI{
                         home.run();
 
                     }catch(InvalidRequestException error){
-                        handleError(error.getErrorCode());
+
+                        if(error.getErrorCode() == 403) {
+                            System.out.println("\nUsername is already taken, please try again");
+                        }else{
+                            handleError(error.getErrorCode());
+                        }
                     }
 
                     break;
@@ -53,7 +67,12 @@ public class LoginUI extends ChessUI{
                         home.run();
 
                     }catch(InvalidRequestException error){
-                        handleError(error.getErrorCode());
+
+                        if(error.getErrorCode() == 401){
+                            System.out.println("\nInvalid username or password");
+                        }else {
+                            handleError(error.getErrorCode());
+                        }
                     }
                     break;
                 case "help":
@@ -104,18 +123,20 @@ public class LoginUI extends ChessUI{
         return new RequestLoginPackage(username,password);
     }
 
-    private void handleError(int errorCode){
-        switch(errorCode){
-            case 400 -> System.out.println("400");
-            case 401 -> System.out.println("401");
-            case 403 -> System.out.println("403");
-            case 404 -> System.out.println("404");
-            case 500 -> System.out.println("500");
-        }
+    private boolean checkPackage(RequestRegisterPackage registerPackage){
+        return !(registerPackage.username().isEmpty() || registerPackage.password().isEmpty());
     }
 
     // helper functions just for printing
-    private void help(){
+
+    private void intro(){
+        clearScreen();
+        System.out.println("Welcome to Chess!");
+        System.out.println("Please login or register a new account\n");
+        System.out.println("Type options for more help");
+    }
+
+    private static void help(){
         System.out.println("This is the 240 chess login page!\n");
         System.out.println("To log in, type \"login\" and click enter. At");
         System.out.println("it will then ask for your username and password.\n");
@@ -129,7 +150,7 @@ public class LoginUI extends ChessUI{
         System.out.println("Finally, typing \"quit\" exits the program for you\n");
     }
 
-    private void options(){
+    private static void options(){
         System.out.println("options:");
         System.out.println("\t - help (description of website)");
         System.out.println("\t - options (quick description)");

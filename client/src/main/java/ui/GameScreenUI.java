@@ -36,18 +36,9 @@ public class GameScreenUI extends ChessUI{
 
     public void run(){
 
-
+        clearScreen();
         drawBoard(isWhite,game.getGame().getBoard());
-
-
-
-
-
-
-        // draws the board and then starts the loop
-        //drawBoard();
-
-        exit(0);
+        setBackNormal();
 
         String input;
 
@@ -81,21 +72,52 @@ public class GameScreenUI extends ChessUI{
 
 
         drawChessBoard(isWhite,chessboard,out);
+        drawBottomHeaders(isWhite,out);
 
 
     }
 
     // functions for drawing the board ----------------------------------------------------------------------------
 
+    private static void drawBottomHeaders(boolean isWhite,PrintStream out){
+        setWhiteLetters(out);
+
+        char val;
+        if(isWhite){
+            val = 'a';
+        }else{
+            val = 'h';
+        }
+
+        for(int i = 0; i < BOARD_SIZE_IN_SQUARES; i++){
+            if(isWhite) {
+                out.print("    " + val++ + "    ");
+            }else{
+                out.print("    " + val-- + "    ");
+            }
+        }
+        out.println();
+    }
+
     private static void drawChessBoard(boolean isWhite,ChessBoard board, PrintStream out){
 
         for(int row = 0; row < BOARD_SIZE_IN_SQUARES; row++){
+
+
             int offset = row % 2;
-            drawRowOfSquares(isWhite,offset,board,out,row);
+
+            int index;
+            if(isWhite){
+                index = BOARD_SIZE_IN_SQUARES - row;
+            }else{
+                index = row + 1;
+            }
+
+            drawRowOfSquares(isWhite,offset,board,out,row,index);
         }
     }
 
-    private static void drawRowOfSquares(boolean isWhite,int offset,ChessBoard board, PrintStream out,int boardRow){
+    private static void drawRowOfSquares(boolean isWhite,int offset,ChessBoard board, PrintStream out,int boardRow,int index){
         for (int squareRow = 0; squareRow < SQUARE_SIZE_IN_CHARS; ++squareRow) {
             for (int boardCol = 0; boardCol < BOARD_SIZE_IN_SQUARES; ++boardCol) {
 
@@ -134,6 +156,12 @@ public class GameScreenUI extends ChessUI{
                 setScreenBlack(out);
             }
 
+            // prints out the numbers for the indexes
+            if(squareRow == SQUARE_SIZE_IN_CHARS / 2){
+                setWhiteLetters(out);
+                out.print(" " + index);
+
+            }
             out.println();
         }
     }
@@ -182,6 +210,11 @@ public class GameScreenUI extends ChessUI{
         }
     }
 
+    private static void setBackNormal(){
+        System.out.print("\u001B[0m");
+        System.out.print("\u001B[49m");
+    }
+
     private static void setWhiteSquare(PrintStream out) {
         out.print(SET_BG_COLOR_WHITE);
         out.print(SET_TEXT_COLOR_WHITE);
@@ -197,13 +230,21 @@ public class GameScreenUI extends ChessUI{
         out.print(SET_TEXT_COLOR_BLACK);
     }
 
-    public static void main(String[]args){
-
-        Game newGame = new Game(555,"","","toad",false,false);
-
-        GameScreenUI screen = new GameScreenUI(newGame,true,"lkjd");
-
-        screen.run();
-
+    private static void setWhiteLetters(PrintStream out){
+        out.print(SET_BG_COLOR_BLACK);
+        out.print(SET_TEXT_BOLD);
+        out.print(SET_TEXT_COLOR_WHITE);
     }
+
+
+
+    public static void main(String[] args){
+
+        Game newGame = new Game(-1,"user1","user2","game",false,false);
+
+        GameScreenUI newScreen = new GameScreenUI(newGame,false,"123");
+        newScreen.run();
+    }
+
 }
+
