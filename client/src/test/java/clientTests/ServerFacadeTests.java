@@ -16,11 +16,15 @@ import static org.junit.jupiter.api.Assertions.*;
 public class ServerFacadeTests {
 
     private static Server server;
+    private static int myPort;
 
     @BeforeAll
     public static void init() {
         server = new Server();
-        var port = server.run(8080);
+        var port = server.run(0);
+
+        myPort = port;
+
         System.out.println("Started test HTTP server on " + port);
 
     }
@@ -47,7 +51,7 @@ public class ServerFacadeTests {
     public void registerRequestSuccess() {
 
         try {
-            String myURL = "http://localhost:8080";
+            String myURL = "http://localhost:" + myPort;
             ServerFacade server = new ServerFacade(myURL);
 
             // makes two users and then checks to see if both tests pass
@@ -79,7 +83,7 @@ public class ServerFacadeTests {
     public void RegisterTwiceFail() {
 
         try {
-            String myURL = "http://localhost:8080";
+            String myURL = "http://localhost:" + myPort;
             ServerFacade server = new ServerFacade(myURL);
 
             // makes two users and then checks to see if both tests pass
@@ -106,7 +110,7 @@ public class ServerFacadeTests {
 
         try{
 
-            String myURL = "http://localhost:8080";
+            String myURL = "http://localhost:" + myPort;
             server = new ServerFacade(myURL);
 
             // registers a simple user
@@ -141,7 +145,7 @@ public class ServerFacadeTests {
 
         try{
 
-            String myURL = "http://localhost:8080";
+            String myURL = "http://localhost:" + myPort;
             server = new ServerFacade(myURL);
 
             // registers a simple user
@@ -173,7 +177,7 @@ public class ServerFacadeTests {
 
         try{
 
-            String myURL = "http://localhost:8080";
+            String myURL = "http://localhost:" + myPort;
             server = new ServerFacade(myURL);
 
             // registers a simple user
@@ -205,7 +209,7 @@ public class ServerFacadeTests {
 
         try{
 
-            String myURL = "http://localhost:8080";
+            String myURL = "http://localhost:" + myPort;
             server = new ServerFacade(myURL);
 
             // registers a simple user
@@ -238,7 +242,7 @@ public class ServerFacadeTests {
 
         try{
 
-            String myURL = "http://localhost:8080";
+            String myURL = "http://localhost:" + myPort;
             server = new ServerFacade(myURL);
 
             // registers a simple user
@@ -272,7 +276,7 @@ public class ServerFacadeTests {
 
         try{
 
-            String myURL = "http://localhost:8080";
+            String myURL = "http://localhost:" + myPort;
             server = new ServerFacade(myURL);
 
             // registers a simple user
@@ -305,7 +309,7 @@ public class ServerFacadeTests {
 
         try{
 
-            String myURL = "http://localhost:8080";
+            String myURL = "http://localhost:" + myPort;
             server = new ServerFacade(myURL);
 
             RequestRegisterPackage newUser = new RequestRegisterPackage("Steve", "abcd555", "wowzar.net");
@@ -343,7 +347,7 @@ public class ServerFacadeTests {
 
         try{
 
-            String myURL = "http://localhost:8080";
+            String myURL = "http://localhost:" + myPort;
             server = new ServerFacade(myURL);
 
             RequestRegisterPackage newUser = new RequestRegisterPackage("Steve", "abcd555", "wowzar.net");
@@ -375,7 +379,7 @@ public class ServerFacadeTests {
 
         try {
 
-            String myURL = "http://localhost:8080";
+            String myURL = "http://localhost:" + myPort;
             ServerFacade server = new ServerFacade(myURL);
 
             RequestRegisterPackage newUser = new RequestRegisterPackage("timmy", "booboo", "myEmail.com");
@@ -404,7 +408,7 @@ public class ServerFacadeTests {
 
         try {
 
-            String myURL = "http://localhost:8080";
+            String myURL = "http://localhost:" + myPort;
             ServerFacade server = new ServerFacade(myURL);
 
             RequestRegisterPackage newUser = new RequestRegisterPackage("timmy", "booboo", "myEmail.com");
@@ -427,7 +431,7 @@ public class ServerFacadeTests {
     public void joinGameSuccess() {
 
         try {
-            String myURL = "http://localhost:8080";
+            String myURL = "http://localhost:" + myPort;
             ServerFacade server = new ServerFacade(myURL);
 
             RequestRegisterPackage newUser = new RequestRegisterPackage("timmy", "booboo", "myEmail.com");
@@ -455,7 +459,7 @@ public class ServerFacadeTests {
     public void joinGameInvalidID() {
 
         try {
-            String myURL = "http://localhost:8080";
+            String myURL = "http://localhost:" + myPort;
             ServerFacade server = new ServerFacade(myURL);
 
             RequestRegisterPackage newUser = new RequestRegisterPackage("timmy", "booboo", "myEmail.com");
