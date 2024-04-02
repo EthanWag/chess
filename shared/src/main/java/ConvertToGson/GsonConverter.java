@@ -1,11 +1,11 @@
-package server;
+package ConvertToGson;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonSyntaxException;
 
 public class GsonConverter {
 
-    private final Gson serializer = new Gson();
+    protected final Gson serializer = new Gson();
 
     public GsonConverter(){}
 
@@ -28,5 +28,4 @@ public class GsonConverter {
             throw new JsonSyntaxException("ERROR:Invalid entry");
         }
     }
-
 }

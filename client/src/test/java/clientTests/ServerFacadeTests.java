@@ -289,7 +289,7 @@ public class ServerFacadeTests {
             fail("Error: Cannot register, check register function");
         }
 
-        if((server == null)||(testAuth == null))
+        if(testAuth == null)
             fail("Error: cannot set up");
 
         try {
@@ -359,7 +359,7 @@ public class ServerFacadeTests {
             fail("unable to set up request");
         }
 
-        if((server == null) || (myAuthorization == null))
+        if(myAuthorization == null)
             fail("unable to set up");
 
         try {

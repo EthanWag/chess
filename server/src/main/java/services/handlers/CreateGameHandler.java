@@ -10,7 +10,7 @@ import spark.Response;
 
 public class CreateGameHandler {
     private static CreateGameService service = new CreateGameService();
-    private static ConvertGson gsonConverter = new ConvertGson();
+    private static GsonConverterReq gsonConverter = new GsonConverterReq();
     private static ExceptionHandler exceptionHandler = new ExceptionHandler();
 
     public CreateGameHandler(){}

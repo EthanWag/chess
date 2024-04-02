@@ -8,7 +8,7 @@ import java.util.Map;
 
 public class ExceptionHandler {
 
-    private static ConvertGson gsonConverter = new ConvertGson();
+    private static GsonConverterReq gsonConverter = new GsonConverterReq();
 
     public ExceptionHandler() {}
 

@@ -9,7 +9,7 @@ import spark.Response;
 public class JoinGameHandler {
 
     private static JoinGameService service = new JoinGameService();
-    private static ConvertGson gsonConverter = new ConvertGson();
+    private static GsonConverterReq gsonConverter = new GsonConverterReq();
     private static ExceptionHandler exceptionHandler = new ExceptionHandler();
 
     public JoinGameHandler(){}

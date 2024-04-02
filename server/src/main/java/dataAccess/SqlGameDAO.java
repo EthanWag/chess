@@ -2,7 +2,7 @@ package dataAccess;
 
 import models.Game;
 import chess.ChessGame;
-import services.handlers.ConvertGson;
+import services.handlers.GsonConverterReq;
 
 import java.sql.*;
 import java.util.Collection;
@@ -11,7 +11,7 @@ import java.util.ArrayList;
 public class SqlGameDAO implements GameDAO{
 
     private Connection myConnection;
-    private static final ConvertGson serializer = new ConvertGson();
+    private static final GsonConverterReq serializer = new GsonConverterReq();
 
     public SqlGameDAO() throws DataAccessException{
         try{
@@ -174,7 +174,7 @@ public class SqlGameDAO implements GameDAO{
 
         // finally gets the game from the database
         String game = sqlSet.getString("game");
-        Object myGameObj = serializer.strToObj(game,ChessGame.class);
+        Object myGameObj = serializer.jsonToObj(game,ChessGame.class);
 
         // should be a game object, so it converts it
         ChessGame myGame = (ChessGame) myGameObj;

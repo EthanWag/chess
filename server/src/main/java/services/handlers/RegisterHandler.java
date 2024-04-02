@@ -10,7 +10,7 @@ import spark.*;
 public class RegisterHandler {
 
     private static RegisterService service = new RegisterService();
-    private static ConvertGson gsonConverter = new ConvertGson();
+    private static GsonConverterReq gsonConverter = new GsonConverterReq();
     private static ExceptionHandler exceptionHandler = new ExceptionHandler();
 
     public RegisterHandler(){}

@@ -11,7 +11,7 @@ import spark.Response;
 public class LoginHandler {
 
     private static LoginService service = new LoginService();
-    private static ConvertGson gsonConverter = new ConvertGson();
+    private static GsonConverterReq gsonConverter = new GsonConverterReq();
     private static ExceptionHandler exceptionHandler = new ExceptionHandler();
 
     public String loginHandler(Request request,Response response){

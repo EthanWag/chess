@@ -1,13 +1,22 @@
 package server;
 
 import services.handlers.*;
+import server.WebSocketServer.WebSocketHandler;
 
+import org.eclipse.jetty.websocket.api.annotations.*;
+import org.eclipse.jetty.websocket.api.*;
 import spark.*;
 
+@WebSocket
 public class Server {
+
+
 
     public int run(int desiredPort) {
         Spark.port(desiredPort);
+
+
+
 
         Spark.staticFiles.location("web");
 
@@ -82,6 +91,10 @@ public class Server {
             return joinGame.joinGameHandler(request,response);
 
         });
+
+        // connects to the websocket FIXME: MIGHT HAVE SOME ERRORS
+        Spark.webSocket("/connect", WebSocketHandler.class);
+
         Spark.notFound("{Invalid Page}");
     }
 

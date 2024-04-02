@@ -9,8 +9,7 @@ import java.util.stream.Stream;
 import ClientValues.*;
 import models.resModels.*;
 import models.reqModels.*;
-
-import server.Server;
+import ConvertToGson.GsonConverter;
 
 public class ServerFacade {
 
