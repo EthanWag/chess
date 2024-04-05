@@ -1,16 +1,14 @@
 package server.WebSocketServer;
 
-import com.google.gson.JsonSyntaxException;
 import org.eclipse.jetty.websocket.api.annotations.*;
 import org.eclipse.jetty.websocket.api.*;
-import webSocketMessages.userCommands.UserGameCommand;
 
-import ConvertToGson.GsonConverter;
-
-import webSocketMessages.ServerMessages.ServerMessage;
 import webSocketMessages.userCommands.UserGameCommand;
 import webSocketMessages.userCommands.UserGameCommand.CommandType;
+import ConvertToGson.GsonConverter;
+import com.google.gson.JsonSyntaxException;
 
+@WebSocket
 public class WebSocketHandler {
 
     private final ConnectionManager connections = new ConnectionManager();
@@ -39,12 +37,22 @@ public class WebSocketHandler {
 
         }catch(JsonSyntaxException error){
             System.err.println("Broken");
-            return;
         }
     }
 
     private void joinGame(){
         System.out.println("joining game");
+
+        /**
+         * TODO
+         * when a player joins a game, it needs to first update the game and database and put the user into the game.
+         * your going to want to have authTokens and usernames and plan for what happens if it is invalid or a bad username
+         * - throw errors when it does not make sense
+         *
+         * then your going to want to send a message to everyone in the session that a user has joined, use broadcast
+         * user the connection manager to make sure you add them to the correct spot
+         *  - similarly, throw errors when needed
+         */
     }
 
     private void observeGame(){

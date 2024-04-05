@@ -2,26 +2,18 @@ package server;
 
 import services.handlers.*;
 import server.WebSocketServer.WebSocketHandler;
-
-import org.eclipse.jetty.websocket.api.annotations.*;
-import org.eclipse.jetty.websocket.api.*;
 import spark.*;
 
-@WebSocket
+
 public class Server {
-
-
 
     public int run(int desiredPort) {
         Spark.port(desiredPort);
 
-
-
-
         Spark.staticFiles.location("web");
 
         // Register your endpoints and handle exceptions here.
-        installFilter();
+        installWebSocket();
         installEndPoints();
 
         Spark.awaitInitialization();
@@ -91,16 +83,10 @@ public class Server {
             return joinGame.joinGameHandler(request,response);
 
         });
-
-        // connects to the websocket FIXME: MIGHT HAVE SOME ERRORS
-        Spark.webSocket("/connect", WebSocketHandler.class);
-
         Spark.notFound("{Invalid Page}");
     }
 
-    private void installFilter(){
-        Spark.before((request,response) -> {
-            // you would put code here to check for valid Id's
-        });
+    private void installWebSocket(){
+        Spark.webSocket("/connect", WebSocketHandler.class);
     }
 }
