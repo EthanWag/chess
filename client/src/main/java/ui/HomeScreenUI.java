@@ -71,6 +71,9 @@ public class HomeScreenUI extends ChessUI{
                         server.joinGame(joinPackage,authorization);
                         System.out.println("Joining Game...");
 
+                        // this should be the id of the game we want to join, this will be important for tons if different things
+                        int gameID = joinPackage.gameID();
+
                         //FIXME: this is a temp solution, change this as needed
                         Game newPlayerGame = new Game(-1,"","","",false,false);
 

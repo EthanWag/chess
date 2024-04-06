@@ -5,8 +5,8 @@ import java.io.IOException;
 
 public class Connection {
 
-    private String username;
-    private Session session;
+    private final String username;
+    private final Session session;
 
     // possibly add a authToken variable here
     public Connection(String myUsername, Session mySession){

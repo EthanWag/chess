@@ -49,10 +49,10 @@ public class WebSocketFacade extends Endpoint{
 
     // I want to add all the functions that you can do to communicate with the server
     // TODO: these functions are completely up for redesign, I'm just trying to write down my train of thought
-    public void joinGame(String authToken){
+    public void joinGame(String authToken,int gameId){
 
         try {
-            var serverCmd = new UserGameCommand(authToken);
+            var serverCmd = new UserGameCommand(authToken,gameId);
             serverCmd.setCommandType(CommandType.JOIN_PLAYER);
 
             String jsonCmd = serializer.objToJson(serverCmd);
@@ -67,9 +67,9 @@ public class WebSocketFacade extends Endpoint{
         }
     }
 
-    public void observeGame(String authToken){
+    public void observeGame(String authToken,int gameId){
         try {
-            var serverCmd = new UserGameCommand(authToken);
+            var serverCmd = new UserGameCommand(authToken,gameId);
             serverCmd.setCommandType(CommandType.JOIN_OBSERVER);
 
             String jsonCmd = serializer.objToJson(serverCmd);
@@ -84,9 +84,9 @@ public class WebSocketFacade extends Endpoint{
         }
     }
 
-    public void makeMove(String authToken){
+    public void makeMove(String authToken,int gameId){
         try {
-            var serverCmd = new UserGameCommand(authToken);
+            var serverCmd = new UserGameCommand(authToken,gameId);
             serverCmd.setCommandType(CommandType.MAKE_MOVE);
 
             String jsonCmd = serializer.objToJson(serverCmd);
@@ -101,9 +101,9 @@ public class WebSocketFacade extends Endpoint{
         }
     }
 
-    public void leave(String authToken){
+    public void leave(String authToken,int gameId){
         try {
-            var serverCmd = new UserGameCommand(authToken);
+            var serverCmd = new UserGameCommand(authToken,gameId);
             serverCmd.setCommandType(CommandType.LEAVE);
 
             String jsonCmd = serializer.objToJson(serverCmd);
@@ -118,9 +118,9 @@ public class WebSocketFacade extends Endpoint{
         }
     }
 
-    public void resign(String authToken){
+    public void resign(String authToken,int gameId){
         try {
-            var serverCmd = new UserGameCommand(authToken);
+            var serverCmd = new UserGameCommand(authToken,gameId);
             serverCmd.setCommandType(CommandType.RESIGN);
 
             String jsonCmd = serializer.objToJson(serverCmd);
@@ -135,15 +135,8 @@ public class WebSocketFacade extends Endpoint{
         }
     }
 
-
-
-
-
-
-
-
     public static void main(String[]args){
         WebSocketFacade test = new WebSocketFacade("http://localhost:8080");
-        test.joinGame("abc123");
+        test.joinGame("abc123",1);
     }
 }

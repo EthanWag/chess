@@ -10,7 +10,6 @@ public class ConnectionManager {
 
     public ConnectionManager(){}
 
-
     public void addSession(String username,Session mySession){
 
         var newConnection = new Connection(username, mySession);
@@ -23,7 +22,6 @@ public class ConnectionManager {
 
     // this also allows for you to give a message to everyone, and exclude one user
     public void broadcast(String message, String exclusiveUser, boolean isExclusive){
-
 
         try {
 
@@ -53,5 +51,14 @@ public class ConnectionManager {
 
         }
 
+    }
+
+
+    public boolean containsUser(String username){
+        return serverConnections.containsKey(username);
+    }
+
+    public boolean isEmpty(){
+        return serverConnections.isEmpty();
     }
 }

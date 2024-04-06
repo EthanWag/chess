@@ -113,16 +113,16 @@ public class SqlGameDAO implements GameDAO{
         }
     }
 
-    public void updatePlayer(int gameId,String username, String color) throws DataAccessException{
+    public void updatePlayer(int gameId,String username,boolean join, String color) throws DataAccessException{
 
         // first builds the string we are going to send to the database
         StringBuilder strBuilder = new StringBuilder();
         strBuilder.append("UPDATE GameDAO ");
 
         if(color.equals("WHITE")){
-            strBuilder.append("SET whiteUsername = ?, whiteTaken = true ");
+            strBuilder.append("SET whiteUsername = ?, whiteTaken = ? ");
         }else{
-            strBuilder.append("SET blackUsername = ?, blackTaken = true ");
+            strBuilder.append("SET blackUsername = ?, blackTaken = ? ");
         }
 
         strBuilder.append("WHERE gameId = ?");
@@ -132,7 +132,11 @@ public class SqlGameDAO implements GameDAO{
             // grabs the connection and then tries the execute the program
             var statement = myConnection.prepareStatement(sqlUpdate);
             statement.setString(1,username);
-            statement.setInt(2,gameId);
+
+            // new additions!!!!
+            statement.setBoolean(2,join);
+
+            statement.setInt(3,gameId);
             statement.executeUpdate();
 
         }catch(SQLException sqlErr){ // this tackles more the case that the connection was bad

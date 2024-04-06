@@ -40,7 +40,7 @@ public class JoinGameService extends Service{
                     joinGame.joinWhiteSide(username);
 
                     var accessGame = new SqlGameDAO();
-                    accessGame.updatePlayer(joinGame.getGameID(),username,"WHITE");
+                    accessGame.updatePlayer(joinGame.getGameID(),username,true,"WHITE");
                     accessGame.commit();
 
 
@@ -53,7 +53,7 @@ public class JoinGameService extends Service{
                 if(!joinGame.isBlackTaken()){ // if black is not taken
 
                     var accessGame = new SqlGameDAO();
-                    accessGame.updatePlayer(joinGame.getGameID(),username,"BLACK");
+                    accessGame.updatePlayer(joinGame.getGameID(),username,true,"BLACK");
                     accessGame.commit();
 
                 }else{
@@ -69,6 +69,36 @@ public class JoinGameService extends Service{
 
                 // right here you need to add functionality of watching a game
                 throw new DataAccessException("ERROR: Bad request",400);
+        }
+    }
+
+    // for websocket connections
+
+
+    // lets a player leave the game
+    public void deletePlayer(String authToken,String username,int gameId)throws DataAccessException{
+
+        try {
+            checkAuthToken(authToken);
+            Game currentGame = getGame(gameId);
+
+            // now we need to search and see if the user is even in the game
+            if((currentGame.getWhiteUsername().equals(username)) && currentGame.isWhiteTaken()){
+
+                var accessGame = new SqlGameDAO();
+                accessGame.updatePlayer(gameId,"",false,"WHITE");
+                accessGame.commit();
+
+            }else if((currentGame.getBlackUsername().equals(username)) && currentGame.isBlackTaken()){
+
+                var accessGame = new SqlGameDAO();
+                accessGame.updatePlayer(gameId,"",false,"BLACK");
+                accessGame.commit();
+            }else{
+                System.err.println("There is an error here, be sure to figure it out");
+            }
+        }catch(DataAccessException error){
+            throw new DataAccessException("ERROR: Unauthorized",404);
         }
     }
 }
