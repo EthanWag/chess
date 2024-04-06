@@ -1,6 +1,7 @@
 package WebSocketClient;
 
 import ConvertToGson.GsonConverter;
+import com.google.gson.JsonSyntaxException;
 import webSocketMessages.userCommands.UserGameCommand;
 import webSocketMessages.userCommands.UserGameCommand.CommandType;
 import webSocketMessages.ServerMessages.ServerMessage;
@@ -9,10 +10,12 @@ import javax.websocket.*;
 import java.io.IOException;
 import java.net.URI;
 
+import static java.lang.Thread.sleep;
+
 public class WebSocketFacade extends Endpoint{
 
     // might cause errors for threads,
-    private static GsonConverter serializer = new GsonConverter();
+    private final GsonConverter serializer = new GsonConverter();
 
     private Session session;
 
@@ -30,9 +33,8 @@ public class WebSocketFacade extends Endpoint{
 
             // from here I need more research
             this.session.addMessageHandler(new MessageHandler.Whole<String>() {
-                @Override
-                public void onMessage(String message) { // on a message when you recive it, go here to figure out what to do
-                    // we will figure this out soon enough
+                public void onMessage(String message) {
+                    handleMessage(message);
                 }
             });
 
@@ -45,10 +47,9 @@ public class WebSocketFacade extends Endpoint{
     public void onOpen(Session session, EndpointConfig endpointConfig) {
     }
 
+    // these methods reach the server and send messages to it
 
-
-    // I want to add all the functions that you can do to communicate with the server
-    // TODO: these functions are completely up for redesign, I'm just trying to write down my train of thought
+    // join game method
     public void joinGame(String authToken,int gameId){
 
         try {
@@ -67,6 +68,7 @@ public class WebSocketFacade extends Endpoint{
         }
     }
 
+    // observe game function
     public void observeGame(String authToken,int gameId){
         try {
             var serverCmd = new UserGameCommand(authToken,gameId);
@@ -84,6 +86,7 @@ public class WebSocketFacade extends Endpoint{
         }
     }
 
+    // make move function
     public void makeMove(String authToken,int gameId){
         try {
             var serverCmd = new UserGameCommand(authToken,gameId);
@@ -101,6 +104,7 @@ public class WebSocketFacade extends Endpoint{
         }
     }
 
+    // leave the game, usually an observer
     public void leave(String authToken,int gameId){
         try {
             var serverCmd = new UserGameCommand(authToken,gameId);
@@ -118,6 +122,7 @@ public class WebSocketFacade extends Endpoint{
         }
     }
 
+    // resigns and gives up from someone playing the game
     public void resign(String authToken,int gameId){
         try {
             var serverCmd = new UserGameCommand(authToken,gameId);
@@ -135,8 +140,48 @@ public class WebSocketFacade extends Endpoint{
         }
     }
 
+
+    // these functions help receive messages from the server and handle them appropriately
+    private void handleMessage(String strMessage){
+
+        try{
+            Object objMessage = serializer.jsonToObj(strMessage,ServerMessage.class);
+            ServerMessage message = (ServerMessage) objMessage;
+
+            switch(message.getServerMessageType()){
+                case LOAD_GAME -> handleLoadBoard();
+                case ERROR -> handleError();
+                case NOTIFICATION -> handleNotification();
+            }
+
+        }catch(JsonSyntaxException jsonError){
+            System.err.println("error in making obj");
+        }
+    }
+
+    // different kinds of messages that we can be passed
+    private void handleError(){
+        System.out.println("handling error");
+    }
+
+    private void handleLoadBoard(){
+        System.out.println("loading board");
+    }
+
+    private void handleNotification(){
+        System.out.println("handling notification");
+    }
+
+
     public static void main(String[]args){
         WebSocketFacade test = new WebSocketFacade("http://localhost:8080");
         test.joinGame("abc123",1);
+
+        try {
+            sleep(3000);
+        }catch(Exception e){
+            System.out.println("invalid stuff");
+        }
+
     }
 }

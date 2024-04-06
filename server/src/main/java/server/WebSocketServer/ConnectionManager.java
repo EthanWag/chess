@@ -35,6 +35,10 @@ public class ConnectionManager {
                     if (isExclusive && (exclusiveUser.equals(con.getUsername()))){
                         continue; // just continues if it is the exclsive user
                     }
+
+
+                    // here you
+
                     con.send(message);
 
                 } else {

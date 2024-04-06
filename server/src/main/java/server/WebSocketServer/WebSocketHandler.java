@@ -7,11 +7,15 @@ import services.JoinGameService;
 import org.eclipse.jetty.websocket.api.annotations.*;
 import org.eclipse.jetty.websocket.api.*;
 
+import webSocketMessages.ServerMessages.ServerMessage;
+import webSocketMessages.ServerMessages.ServerMessage.ServerMessageType;
+
 import webSocketMessages.userCommands.UserGameCommand;
 import webSocketMessages.userCommands.UserGameCommand.CommandType;
 import ConvertToGson.GsonConverter;
 import com.google.gson.JsonSyntaxException;
 
+import java.io.IOException;
 import java.util.HashMap;
 
 @WebSocket
@@ -36,8 +40,12 @@ public class WebSocketHandler {
             String userAuth = userCommand.getAuthString();
             int userGameId = userCommand.getGameId();
 
+            // checks for authTokens to make sure you can make a valid move
             WebSocketService webSer = new WebSocketService();
-            String username = webSer.getAuthUsername(userAuth);
+            // String username = webSer.getAuthUsername(userAuth);
+
+            String username = "hello";
+
 
             var command = userCommand.getCommandType();
 
@@ -45,16 +53,19 @@ public class WebSocketHandler {
             switch (command) {
                 case CommandType.JOIN_PLAYER -> joinGame(username,userGameId,session);
                 case CommandType.JOIN_OBSERVER -> observeGame(username,userGameId,session);
-                case CommandType.MAKE_MOVE -> makeMove();
-                case CommandType.RESIGN -> resign(userAuth,username,userGameId,session);
+                case CommandType.MAKE_MOVE -> makeMove(username,userGameId,session);
+                case CommandType.RESIGN -> resign(userAuth,username,userGameId);
                 case CommandType.LEAVE -> leave();
             }
 
         }catch(JsonSyntaxException error){
             System.err.println("Broken");
-        }catch(DataAccessException InvalidAuth){
+        }
+        /*
+        catch(DataAccessException InvalidAuth){
             System.err.println("throw error here");
         }
+         */
     }
 
     private void joinGame(String username, int gameId, Session session){
@@ -72,25 +83,15 @@ public class WebSocketHandler {
             System.err.println("print an error here");
         }
 
+        // FIXME: be sure to make some better messages so the server knows what to do
+        ServerMessage serverMessage = new ServerMessage(ServerMessageType.LOAD_GAME,"Load client board");
+        sendMessage(session, serverMessage);
+
+        // broadcasts message to everyone playing the game
         gameManager.addSession(username,session);
         String message = username + " has joined the game";
         gameManager.broadcast(message,username,true);
 
-
-
-        //here is where we send a message back to the server to draw the board
-
-
-        /**
-         * TODO
-         * when a player joins a game, it needs to first update the game and database and put the user into the game.
-         * your going to want to have authTokens and usernames and plan for what happens if it is invalid or a bad username
-         * - throw errors when it does not make sense
-         *
-         * then your going to want to send a message to everyone in the session that a user has joined, use broadcast
-         * user the connection manager to make sure you add them to the correct spot
-         *  - similarly, throw errors when needed
-         */
     }
 
     private void observeGame(String username, int gameId, Session session){
@@ -122,7 +123,7 @@ public class WebSocketHandler {
     }
 
     private void resign(String authToken, String username, int gameId){
-        // TIP: makes a new connection if it is already not in the database
+        // throws an error because there should be a manager here
         if(!connections.containsKey(gameId)){
             System.err.println("Error here, can't resign if there is no game being played here");
         }
@@ -156,6 +157,20 @@ public class WebSocketHandler {
         System.out.println("leaving game");
     }
 
+    // sending messages back to the client
+    private void sendMessage(Session session, ServerMessage message){
+
+        GsonConverter gsonConverter = new GsonConverter();
+        String output = gsonConverter.objToJson(message);
+
+        try {
+            session.getRemote().sendString(output);
+        }catch(IOException error){
+            System.err.println("error here");
+        }
+    }
+
+    // helper functions for the handler
     private void allLeft(int gameId){
         if(connections.containsKey(gameId)){
             var gameManager = connections.get(gameId);
@@ -172,6 +187,4 @@ public class WebSocketHandler {
     public static void main(String [] args){
 
     }
-
-
 }
