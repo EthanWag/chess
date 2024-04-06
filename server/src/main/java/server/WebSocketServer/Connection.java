@@ -22,7 +22,7 @@ public class Connection {
     // sends a message to that user
     public void send(String message)throws IOException{
 
-        var userMessage = new ServerMessage(ServerMessageType.NOTIFICATION,message);
+        var userMessage = new ServerMessage(ServerMessageType.NOTIFICATION,message,200);
         String gsonMessage = serilizer.objToJson(userMessage);
 
         try {

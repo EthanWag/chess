@@ -29,7 +29,6 @@ public class WebSocketHandler {
 
     @OnWebSocketMessage
     public void onMessage(Session session, String message){
-    // FIXME: This needs to have some more development and you need to pass around sessions
 
         try {
             GsonConverter gsonConverter = new GsonConverter();
@@ -42,49 +41,44 @@ public class WebSocketHandler {
 
             // checks for authTokens to make sure you can make a valid move
             WebSocketService webSer = new WebSocketService();
-            // String username = webSer.getAuthUsername(userAuth);
-
-            String username = "hello";
+            String username = webSer.getAuthUsername(userAuth);
 
 
             var command = userCommand.getCommandType();
 
             // here you would put some sort of switch statement that map each server message to a particular value
             switch (command) {
-                case CommandType.JOIN_PLAYER -> joinGame(username,userGameId,session);
-                case CommandType.JOIN_OBSERVER -> observeGame(username,userGameId,session);
-                case CommandType.MAKE_MOVE -> makeMove(username,userGameId,session);
-                case CommandType.RESIGN -> resign(userAuth,username,userGameId);
-                case CommandType.LEAVE -> leave();
+                case CommandType.JOIN_PLAYER -> joinGame(session,username,userGameId);
+                case CommandType.JOIN_OBSERVER -> observeGame(session,username,userGameId);
+                case CommandType.MAKE_MOVE -> makeMove(session,username,userGameId);
+                case CommandType.RESIGN -> resign(session,userAuth,username,userGameId);
+                case CommandType.LEAVE -> leave(session,username,userGameId);
             }
 
         }catch(JsonSyntaxException error){
-            System.err.println("Broken");
+            sendError(session,"ERROR: Bad request",400);
+
+        }catch(DataAccessException InvalidAuth){
+            sendError(session,"ERROR: Unauthorized",404);
         }
-        /*
-        catch(DataAccessException InvalidAuth){
-            System.err.println("throw error here");
-        }
-         */
     }
 
-    private void joinGame(String username, int gameId, Session session){
+    private void joinGame(Session session, String username, int gameId){
 
-        // TIP: makes a new connection if it is already not in the database
+        // if this is the first person in the database, it adds them
         if(!connections.containsKey(gameId)){
             connections.put(gameId,new ConnectionManager());
         }
 
-        // gets the game manager in the connections map
-        var gameManager = connections.get(gameId);
+        // gets the correct ConnectionManager
+        ConnectionManager gameManager = validateUser(session,gameId,username);
 
-        // checks to see if the user is already in the game
-        if(gameManager.containsUser(username)){
-            System.err.println("print an error here");
+        // if error is detected, it just ends the program
+        if(gameManager == null){
+            return;
         }
 
-        // FIXME: be sure to make some better messages so the server knows what to do
-        ServerMessage serverMessage = new ServerMessage(ServerMessageType.LOAD_GAME,"Load client board");
+        ServerMessage serverMessage = new ServerMessage(ServerMessageType.LOAD_GAME,"Load client board",200);
         sendMessage(session, serverMessage);
 
         // broadcasts message to everyone playing the game
@@ -94,46 +88,39 @@ public class WebSocketHandler {
 
     }
 
-    private void observeGame(String username, int gameId, Session session){
+    private void observeGame(Session session, String username, int gameId){
 
         // TIP: makes a new connection if it is already not in the database
         if(!connections.containsKey(gameId)){
             connections.put(gameId,new ConnectionManager());
         }
 
-        // gets the game manager in the connections map
-        var gameManager = connections.get(gameId);
+        ConnectionManager gameManager = validateUser(session,gameId,username);
 
-        // checks to see if the user is already in the game
-        if(gameManager.containsUser(username)){
-            System.err.println("print an error here");
+        if(gameManager == null){
+            return;
         }
+
+        // sends a message to the client as well as all those in playing the game
+        ServerMessage serverMessage = new ServerMessage(ServerMessageType.LOAD_GAME,"Load client board",200);
+        sendMessage(session, serverMessage);
 
         gameManager.addSession(username,session);
         String message = username + " is now observing the game";
         gameManager.broadcast(message,username,true);
-
-        // send a message back to the client
-
-
     }
 
-    private void makeMove(String username, int gameId, Session session){
+    private void makeMove(Session session, String username, int gameId){
         System.out.println("Making move");
     }
 
-    private void resign(String authToken, String username, int gameId){
-        // throws an error because there should be a manager here
-        if(!connections.containsKey(gameId)){
-            System.err.println("Error here, can't resign if there is no game being played here");
-        }
+    private void resign(Session session, String authToken, String username, int gameId){
 
-        // gets the game manager in the connections map
-        var gameManager = connections.get(gameId);
+        // first grabs the correct connection
+        var gameManager = validateUser(session,gameId,username);
 
-        // checks to see if the user is already in the game
-        if(gameManager.containsUser(username)){
-            System.err.println("print an error here");
+        if(gameManager == null){
+            return;
         }
 
         try {
@@ -149,12 +136,22 @@ public class WebSocketHandler {
             allLeft(gameId);
 
         }catch(DataAccessException error){
-            System.err.println("Error here, not valid user info");
+            sendError(session,"ERROR: Invalid user data",400);
         }
     }
 
-    private void leave(){
-        System.out.println("leaving game");
+    private void leave(Session session, String username, int gameId){
+
+        var gameManager = validateUser(session,gameId,username);
+
+        if(gameManager == null){
+            return;
+        }
+
+        // should remove the user from the session and that is about it
+        gameManager.removeSession(username);
+        allLeft(gameId);
+
     }
 
     // sending messages back to the client
@@ -166,8 +163,30 @@ public class WebSocketHandler {
         try {
             session.getRemote().sendString(output);
         }catch(IOException error){
-            System.err.println("error here");
+            return; // just gives up if it can't be sent over the connection
         }
+    }
+
+    private ConnectionManager validateUser(Session session, int gameId, String username){
+        if(!connections.containsKey(gameId)){
+            sendError(session,"ERROR: Game does not exist",400);
+            return null;
+        }
+
+        // gets the game manager in the connections map
+        ConnectionManager gameManager = connections.get(gameId);
+
+        // checks to see if the user is already in the game
+        if(gameManager.containsUser(username)){
+            sendError(session,"ERROR: User is already ",401);
+            return null;
+        }
+        return gameManager;
+    }
+
+    private void sendError(Session session, String strMessage,int code){
+        ServerMessage message = new ServerMessage(ServerMessageType.ERROR,strMessage,code);
+        sendMessage(session,message);
     }
 
     // helper functions for the handler
@@ -179,12 +198,5 @@ public class WebSocketHandler {
                 connections.remove(gameId);
             }
         }
-    }
-
-
-
-    // just for testing, be sure to get rid of this once you are done
-    public static void main(String [] args){
-
     }
 }

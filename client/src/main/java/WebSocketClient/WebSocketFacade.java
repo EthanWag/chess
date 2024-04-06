@@ -14,8 +14,9 @@ import static java.lang.Thread.sleep;
 
 public class WebSocketFacade extends Endpoint{
 
-    // might cause errors for threads,
     private final GsonConverter serializer = new GsonConverter();
+
+    private final ServerMessageHandler messageHandler = new ServerMessageHandler();
 
     private Session session;
 
@@ -34,7 +35,7 @@ public class WebSocketFacade extends Endpoint{
             // from here I need more research
             this.session.addMessageHandler(new MessageHandler.Whole<String>() {
                 public void onMessage(String message) {
-                    handleMessage(message);
+                    messageHandler.handleMessage(message);
                 }
             });
 
@@ -141,44 +142,28 @@ public class WebSocketFacade extends Endpoint{
     }
 
 
-    // these functions help receive messages from the server and handle them appropriately
-    private void handleMessage(String strMessage){
 
-        try{
-            Object objMessage = serializer.jsonToObj(strMessage,ServerMessage.class);
-            ServerMessage message = (ServerMessage) objMessage;
 
-            switch(message.getServerMessageType()){
-                case LOAD_GAME -> handleLoadBoard();
-                case ERROR -> handleError();
-                case NOTIFICATION -> handleNotification();
-            }
 
-        }catch(JsonSyntaxException jsonError){
-            System.err.println("error in making obj");
-        }
-    }
 
-    // different kinds of messages that we can be passed
-    private void handleError(){
-        System.out.println("handling error");
-    }
 
-    private void handleLoadBoard(){
-        System.out.println("loading board");
-    }
 
-    private void handleNotification(){
-        System.out.println("handling notification");
-    }
+
+
+
 
 
     public static void main(String[]args){
         WebSocketFacade test = new WebSocketFacade("http://localhost:8080");
         test.joinGame("abc123",1);
 
+        WebSocketFacade test2 = new WebSocketFacade("http://localhost:8080");
+        test2.observeGame("442",1);
+
         try {
-            sleep(3000);
+            while(true) {
+                sleep(1);
+            }
         }catch(Exception e){
             System.out.println("invalid stuff");
         }

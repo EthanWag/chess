@@ -11,6 +11,7 @@ import java.util.Objects;
 public class ServerMessage {
     ServerMessageType serverMessageType;
     String message;
+    int errCode;
 
     public enum ServerMessageType {
         LOAD_GAME,
@@ -18,9 +19,10 @@ public class ServerMessage {
         NOTIFICATION
     }
 
-    public ServerMessage(ServerMessageType type,String message) {
+    public ServerMessage(ServerMessageType type,String message,int code) {
         this.serverMessageType = type;
         this.message = message;
+        this.errCode = code;
     }
 
     public ServerMessageType getServerMessageType() {
@@ -36,11 +38,11 @@ public class ServerMessage {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         ServerMessage that = (ServerMessage) o;
-        return serverMessageType == that.serverMessageType && Objects.equals(message, that.message);
+        return errCode == that.errCode && serverMessageType == that.serverMessageType && Objects.equals(message, that.message);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(serverMessageType, message);
+        return Objects.hash(serverMessageType, message, errCode);
     }
 }
