@@ -38,7 +38,6 @@ public abstract class Service {
         }
     }
 
-
     // Generates AuthTokens and adds them to the Database. Used in multiple services
     protected AuthData createAuthData(String username)throws DataAccessException {
 
@@ -53,5 +52,13 @@ public abstract class Service {
         authAccess.commit();
 
         return newAuth;
+    }
+
+    public Game getGame(int gameID) throws DataAccessException{
+        var gameAccess = new SqlGameDAO();
+        Game foundGame = gameAccess.read(gameID);
+
+        gameAccess.close();
+        return foundGame;
     }
 }

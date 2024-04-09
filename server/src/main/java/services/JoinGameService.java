@@ -22,16 +22,15 @@ public class JoinGameService extends Service{
     }
 
     // Service functions
-
-    private Game getGame(int gameID) throws DataAccessException{
+/*
+    public Game getGame(int gameID) throws DataAccessException{
         var gameAccess = new SqlGameDAO();
         Game foundGame = gameAccess.read(gameID);
 
         gameAccess.close();
         return foundGame;
-
     }
-
+*/
     private void addPlayer(Game joinGame, String username, String teamColor)throws DataAccessException{
 
         switch(teamColor){ //checks to see what team they entered

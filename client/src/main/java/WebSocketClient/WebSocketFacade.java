@@ -1,9 +1,8 @@
 package WebSocketClient;
 
 import ConvertToGson.GsonConverter;
-import com.google.gson.JsonSyntaxException;
-import webSocketMessages.userCommands.UserGameCommand;
-import webSocketMessages.userCommands.UserGameCommand.CommandType;
+import chess.ChessMove;
+import webSocketMessages.userCommands.*;
 import webSocketMessages.ServerMessages.ServerMessage;
 
 import javax.websocket.*;
@@ -51,11 +50,10 @@ public class WebSocketFacade extends Endpoint{
     // these methods reach the server and send messages to it
 
     // join game method
-    public void joinGame(String authToken,int gameId){
+    public void joinGame(String authToken,int gameId,boolean isWhite){
 
         try {
-            var serverCmd = new UserGameCommand(authToken,gameId);
-            serverCmd.setCommandType(CommandType.JOIN_PLAYER);
+            var serverCmd = new JoinPlayerMessage(authToken,gameId,isWhite);
 
             String jsonCmd = serializer.objToJson(serverCmd);
 
@@ -72,8 +70,7 @@ public class WebSocketFacade extends Endpoint{
     // observe game function
     public void observeGame(String authToken,int gameId){
         try {
-            var serverCmd = new UserGameCommand(authToken,gameId);
-            serverCmd.setCommandType(CommandType.JOIN_OBSERVER);
+            var serverCmd = new JoinObserverMessage(authToken,gameId);
 
             String jsonCmd = serializer.objToJson(serverCmd);
 
@@ -88,10 +85,9 @@ public class WebSocketFacade extends Endpoint{
     }
 
     // make move function
-    public void makeMove(String authToken,int gameId){
+    public void makeMove(String authToken, ChessMove move, int gameId){
         try {
-            var serverCmd = new UserGameCommand(authToken,gameId);
-            serverCmd.setCommandType(CommandType.MAKE_MOVE);
+            var serverCmd = new MakeMoveMessage(authToken,gameId,move);
 
             String jsonCmd = serializer.objToJson(serverCmd);
 
@@ -108,8 +104,7 @@ public class WebSocketFacade extends Endpoint{
     // leave the game, usually an observer
     public void leave(String authToken,int gameId){
         try {
-            var serverCmd = new UserGameCommand(authToken,gameId);
-            serverCmd.setCommandType(CommandType.LEAVE);
+            var serverCmd = new LeaveMessage(authToken,gameId);
 
             String jsonCmd = serializer.objToJson(serverCmd);
 
@@ -126,8 +121,7 @@ public class WebSocketFacade extends Endpoint{
     // resigns and gives up from someone playing the game
     public void resign(String authToken,int gameId){
         try {
-            var serverCmd = new UserGameCommand(authToken,gameId);
-            serverCmd.setCommandType(CommandType.RESIGN);
+            var serverCmd = new ResignMessage(authToken,gameId);
 
             String jsonCmd = serializer.objToJson(serverCmd);
 
@@ -155,10 +149,10 @@ public class WebSocketFacade extends Endpoint{
 
     public static void main(String[]args){
         WebSocketFacade test = new WebSocketFacade("http://localhost:8080");
-        test.joinGame("abc123",1);
+        test.joinGame("6733b021-92fa-48a4-8ce8-49e74e220d3b",1,true);
 
         WebSocketFacade test2 = new WebSocketFacade("http://localhost:8080");
-        test2.observeGame("442",1);
+        test2.observeGame("0d19368e-545e-436c-8609-600faecb34bd",1);
 
         try {
             while(true) {

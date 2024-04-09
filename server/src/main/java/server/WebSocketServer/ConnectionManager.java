@@ -33,11 +33,8 @@ public class ConnectionManager {
                 if (curSession.isOpen()) {
 
                     if (isExclusive && (exclusiveUser.equals(con.getUsername()))){
-                        continue; // just continues if it is the exclsive user
+                        continue; // just continues if it is the exclusive user
                     }
-
-
-                    // here you
 
                     con.send(message);
 
@@ -50,9 +47,7 @@ public class ConnectionManager {
 
 
         }catch(IOException error){
-
-            System.out.println("Error: FIXME, Error in invalid session use");
-
+            return;
         }
 
     }

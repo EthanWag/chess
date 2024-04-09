@@ -1,15 +1,17 @@
 package server.WebSocketServer;
 
 import dataAccess.DataAccessException;
+import models.Game;
 import services.WebSocketService;
 import services.JoinGameService;
 
 import org.eclipse.jetty.websocket.api.annotations.*;
 import org.eclipse.jetty.websocket.api.*;
 
+import webSocketMessages.ServerMessages.*;
 import webSocketMessages.ServerMessages.ServerMessage;
-import webSocketMessages.ServerMessages.ServerMessage.ServerMessageType;
 
+import webSocketMessages.userCommands.*;
 import webSocketMessages.userCommands.UserGameCommand;
 import webSocketMessages.userCommands.UserGameCommand.CommandType;
 import ConvertToGson.GsonConverter;
@@ -18,12 +20,15 @@ import com.google.gson.JsonSyntaxException;
 import java.io.IOException;
 import java.util.HashMap;
 
+import static java.lang.System.exit;
+
 @WebSocket
 public class WebSocketHandler {
 
     // so the way this datastructures works is that in this map, you have a list of maps, each element representing one game
     // currently being played. the Id is the key and the map inside is the user and their authToken plus their session
     private static final HashMap<Integer,ConnectionManager> connections = new HashMap<>();
+    private final GsonConverter serializer = new GsonConverter();
 
     public WebSocketHandler(){}
 
@@ -31,13 +36,11 @@ public class WebSocketHandler {
     public void onMessage(Session session, String message){
 
         try {
-            GsonConverter gsonConverter = new GsonConverter();
-            var output = gsonConverter.jsonToObj(message, UserGameCommand.class);
+            var output = serializer.jsonToObj(message,UserGameCommand.class);
             UserGameCommand userCommand = (UserGameCommand)output;
 
             // before we do anything, lets get the username, authToken and gameId we are going to use
             String userAuth = userCommand.getAuthString();
-            int userGameId = userCommand.getGameId();
 
             // checks for authTokens to make sure you can make a valid move
             WebSocketService webSer = new WebSocketService();
@@ -48,22 +51,55 @@ public class WebSocketHandler {
 
             // here you would put some sort of switch statement that map each server message to a particular value
             switch (command) {
-                case CommandType.JOIN_PLAYER -> joinGame(session,username,userGameId);
-                case CommandType.JOIN_OBSERVER -> observeGame(session,username,userGameId);
-                case CommandType.MAKE_MOVE -> makeMove(session,username,userGameId);
-                case CommandType.RESIGN -> resign(session,userAuth,username,userGameId);
-                case CommandType.LEAVE -> leave(session,username,userGameId);
+                case CommandType.JOIN_PLAYER:
+
+                    var joinMess = serializer.jsonToObj(message,JoinPlayerMessage.class);
+                    JoinPlayerMessage join = (JoinPlayerMessage)joinMess;
+                    joinGame(session,username,join.getGameId());
+
+                    break;
+
+                case CommandType.JOIN_OBSERVER:
+
+                    var oberMess = serializer.jsonToObj(message,JoinObserverMessage.class);
+                    JoinObserverMessage observe = (JoinObserverMessage) oberMess;
+                    observeGame(session,username,observe.getGameId());
+
+                    break;
+
+                case CommandType.MAKE_MOVE:
+
+                    var moveMess = serializer.jsonToObj(message,MakeMoveMessage.class);
+                    MakeMoveMessage move = (MakeMoveMessage) moveMess;
+                    makeMove(session,username,move.getGameId());
+
+                    break;
+
+                case CommandType.RESIGN:
+
+                    var resMess = serializer.jsonToObj(message,ResignMessage.class);
+                    ResignMessage userResign = (ResignMessage) resMess;
+                    resign(session,username,userAuth,userResign.getGameId());
+
+                    break;
+
+                case CommandType.LEAVE:
+
+                    var leaveMess = serializer.jsonToObj(message,LeaveMessage.class);
+                    LeaveMessage userLeave = (LeaveMessage) leaveMess;
+                    leave(session,username,userLeave.getGameId());
+
+                    break;
             }
 
-        }catch(JsonSyntaxException error){
-            sendError(session,"ERROR: Bad request",400);
-
+        }catch(JsonSyntaxException error) {
+            sendError(session, "ERROR: Bad request", 400);
         }catch(DataAccessException InvalidAuth){
             sendError(session,"ERROR: Unauthorized",404);
         }
     }
 
-    private void joinGame(Session session, String username, int gameId){
+    private void joinGame(Session session, String username,int gameId){
 
         // if this is the first person in the database, it adds them
         if(!connections.containsKey(gameId)){
@@ -78,7 +114,16 @@ public class WebSocketHandler {
             return;
         }
 
-        ServerMessage serverMessage = new ServerMessage(ServerMessageType.LOAD_GAME,"Load client board",200);
+        // get the game right here
+
+        var myGame = getGame(session,gameId);
+        if(myGame == null){
+            return;
+        }
+
+        String strGame = serializer.objToJson(myGame);
+
+        ServerMessage serverMessage = new LoadGameMessage(strGame);
         sendMessage(session, serverMessage);
 
         // broadcasts message to everyone playing the game
@@ -90,7 +135,6 @@ public class WebSocketHandler {
 
     private void observeGame(Session session, String username, int gameId){
 
-        // TIP: makes a new connection if it is already not in the database
         if(!connections.containsKey(gameId)){
             connections.put(gameId,new ConnectionManager());
         }
@@ -101,8 +145,15 @@ public class WebSocketHandler {
             return;
         }
 
+        var myGame = getGame(session,gameId);
+        if(myGame == null){
+            return;
+        }
+
+        String strGame = serializer.objToJson(myGame);
+
         // sends a message to the client as well as all those in playing the game
-        ServerMessage serverMessage = new ServerMessage(ServerMessageType.LOAD_GAME,"Load client board",200);
+        ServerMessage serverMessage = new LoadGameMessage(strGame);
         sendMessage(session, serverMessage);
 
         gameManager.addSession(username,session);
@@ -110,19 +161,19 @@ public class WebSocketHandler {
         gameManager.broadcast(message,username,true);
     }
 
-    private void makeMove(Session session, String username, int gameId){
+    private void makeMove(Session session, String username,int gameId){
         System.out.println("Making move");
     }
 
-    private void resign(Session session, String authToken, String username, int gameId){
+    private void resign(Session session, String authToken, String username,int gameId){
 
         // first grabs the correct connection
         var gameManager = validateUser(session,gameId,username);
 
+        // checks to see if stuff changed if it didn't it throws an error
         if(gameManager == null){
             return;
         }
-
         try {
 
             // removes them from the database
@@ -157,8 +208,7 @@ public class WebSocketHandler {
     // sending messages back to the client
     private void sendMessage(Session session, ServerMessage message){
 
-        GsonConverter gsonConverter = new GsonConverter();
-        String output = gsonConverter.objToJson(message);
+        String output = serializer.objToJson(message);
 
         try {
             session.getRemote().sendString(output);
@@ -185,7 +235,7 @@ public class WebSocketHandler {
     }
 
     private void sendError(Session session, String strMessage,int code){
-        ServerMessage message = new ServerMessage(ServerMessageType.ERROR,strMessage,code);
+        ServerMessage message = new ErrorMessage(strMessage,code);
         sendMessage(session,message);
     }
 
@@ -199,4 +249,15 @@ public class WebSocketHandler {
             }
         }
     }
+
+    private Game getGame(Session session, int gameId){
+        try{
+            var webSer = new WebSocketService();
+            return webSer.getGame(gameId);
+        }catch(DataAccessException error){
+            sendError(session,"ERROR: Invalid game ID", 404);
+            return null;
+        }
+    }
+
 }
