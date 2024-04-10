@@ -1,5 +1,6 @@
 package ui;
 
+import WebSocketClient.WebSocketFacade;
 import chess.ChessBoard;
 import chess.ChessGame;
 import chess.ChessPiece;
@@ -16,8 +17,7 @@ public class GameScreenUI extends ChessUI{
 
     private boolean runtimeUser = true;
     private String authorization;
-    private Game game;
-    private boolean isWhite;
+    private WebSocketFacade server;
 
     // Board values for coloring
     private static final int BOARD_SIZE_IN_SQUARES = 8;
@@ -27,19 +27,17 @@ public class GameScreenUI extends ChessUI{
 
 
 
-    public GameScreenUI(Game myGame,boolean myIsWhite,String myAuthorization){
-        game = myGame;
-        isWhite = myIsWhite;
+    public GameScreenUI(String myAuthorization,WebSocketFacade myServer){
+        server = myServer;
         authorization = myAuthorization;
+    }
+
+    public void setFacade(WebSocketFacade server){
+        this.server = server;
     }
 
 
     public void run(){
-
-        clearScreen();
-        drawBoard(isWhite,game.getGame().getBoard());
-        setBackNormal();
-
         String input;
 
         do{
@@ -66,7 +64,10 @@ public class GameScreenUI extends ChessUI{
         }while(runtimeUser);
     }
 
-    private static void drawBoard(boolean isWhite, ChessBoard chessboard){
+    public void drawBoard(boolean isWhite, ChessBoard chessboard){
+
+        clearScreen();
+
         var out = new PrintStream(System.out, true, StandardCharsets.UTF_8);
         out.print(ERASE_SCREEN); // clears screen for me to start using
 
@@ -74,7 +75,11 @@ public class GameScreenUI extends ChessUI{
         drawChessBoard(isWhite,chessboard,out);
         drawBottomHeaders(isWhite,out);
 
+        setBackNormal();
+    }
 
+    public void print(String message){
+        System.out.println(message);
     }
 
     // functions for drawing the board ----------------------------------------------------------------------------
@@ -234,16 +239,6 @@ public class GameScreenUI extends ChessUI{
         out.print(SET_BG_COLOR_BLACK);
         out.print(SET_TEXT_BOLD);
         out.print(SET_TEXT_COLOR_WHITE);
-    }
-
-
-
-    public static void main(String[] args){
-
-        Game newGame = new Game(-1,"user1","user2","game",false,false);
-
-        GameScreenUI newScreen = new GameScreenUI(newGame,false,"123");
-        newScreen.run();
     }
 
 }

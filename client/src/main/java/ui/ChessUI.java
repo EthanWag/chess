@@ -8,6 +8,7 @@ import static ui.EscapeSequences.*;
 
 public abstract class ChessUI {
 
+    protected String url = "http://localhost:8080";
     protected ServerFacade server = new ServerFacade("http://localhost:8080");
     protected static Scanner userInput = new Scanner(System.in);
 

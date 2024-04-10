@@ -2,8 +2,8 @@ package WebSocketClient;
 
 import ConvertToGson.GsonConverter;
 import chess.ChessMove;
+import ui.GameScreenUI;
 import webSocketMessages.userCommands.*;
-import webSocketMessages.ServerMessages.ServerMessage;
 
 import javax.websocket.*;
 import java.io.IOException;
@@ -15,11 +15,13 @@ public class WebSocketFacade extends Endpoint{
 
     private final GsonConverter serializer = new GsonConverter();
 
-    private final ServerMessageHandler messageHandler = new ServerMessageHandler();
+    private final ServerMessageHandler messageHandler;
 
     private Session session;
 
-    public WebSocketFacade(String url){
+    public WebSocketFacade(String url,GameScreenUI screenUI){
+
+        messageHandler = new ServerMessageHandler(screenUI);
 
         try {
 
@@ -31,7 +33,7 @@ public class WebSocketFacade extends Endpoint{
             WebSocketContainer container = ContainerProvider.getWebSocketContainer();
             this.session = container.connectToServer(this,sockURI);
 
-            // from here I need more research
+
             this.session.addMessageHandler(new MessageHandler.Whole<String>() {
                 public void onMessage(String message) {
                     messageHandler.handleMessage(message);
@@ -148,19 +150,6 @@ public class WebSocketFacade extends Endpoint{
 
 
     public static void main(String[]args){
-        WebSocketFacade test = new WebSocketFacade("http://localhost:8080");
-        test.joinGame("6733b021-92fa-48a4-8ce8-49e74e220d3b",1,true);
-
-        WebSocketFacade test2 = new WebSocketFacade("http://localhost:8080");
-        test2.observeGame("0d19368e-545e-436c-8609-600faecb34bd",1);
-
-        try {
-            while(true) {
-                sleep(1);
-            }
-        }catch(Exception e){
-            System.out.println("invalid stuff");
-        }
 
     }
 }

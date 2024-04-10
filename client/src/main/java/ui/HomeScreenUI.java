@@ -1,6 +1,8 @@
 package ui;
 
 import java.util.HashMap;
+
+import WebSocketClient.WebSocketFacade;
 import models.Game;
 import models.reqModels.*;
 import models.resModels.*;
@@ -72,23 +74,11 @@ public class HomeScreenUI extends ChessUI{
                         System.out.println("Joining Game...");
 
                         // this should be the id of the game we want to join, this will be important for tons if different things
-                        int gameID = joinPackage.gameID();
+                        // int gameID = joinPackage.gameID();
 
-
-
-
-
-
-
-                        //FIXME: this is a temp solution, change this as needed
-                        Game newPlayerGame = new Game(-1,"","","",false,false);
-
-
-
-
-
-
-                        GameScreenUI playChess = new GameScreenUI(newPlayerGame,playerWhite(joinPackage),authorization);
+                        GameScreenUI playChess = new GameScreenUI(authorization,null);
+                        WebSocketFacade newConnection = new WebSocketFacade(url,playChess);
+                        playChess.setFacade(newConnection);
                         playChess.run();
 
                     }catch(InvalidRequestException error){

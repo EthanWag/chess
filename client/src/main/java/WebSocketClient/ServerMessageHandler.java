@@ -3,6 +3,7 @@ package WebSocketClient;
 import ConvertToGson.GsonConverter;
 import com.google.gson.JsonSyntaxException;
 import models.Game;
+import ui.GameScreenUI;
 import webSocketMessages.ServerMessages.*;
 import webSocketMessages.ServerMessages.ServerMessage;
 
@@ -10,7 +11,11 @@ public class ServerMessageHandler {
 
     private final GsonConverter serializer = new GsonConverter();
 
-    public ServerMessageHandler() {}
+    private final GameScreenUI playerScreen;
+
+    public ServerMessageHandler(GameScreenUI screen) {
+        playerScreen = screen;
+    }
 
     // these functions help receive messages from the server and handle them appropriately
     public void handleMessage(String strMessage){
@@ -32,18 +37,16 @@ public class ServerMessageHandler {
 
     // different kinds of messages that we can be passed
 
-    // TODO: Go through these functions and do according what you need to do depending on the context
-    private String handleError(String message){
+    private void handleError(String message){
 
         var objMessage = serializer.jsonToObj(message,ErrorMessage.class);
         ErrorMessage err = (ErrorMessage)objMessage;
 
         String errMessage = err.getMessage();
 
-        System.out.println("got here");
-        System.out.println(errMessage);
+        // FIXME: this is a temp solution that I just put here for testing
+        playerScreen.print(errMessage);
 
-        return errMessage;
     }
 
     private void handleLoadBoard(String message){
@@ -54,19 +57,16 @@ public class ServerMessageHandler {
         var strGame = serializer.jsonToObj(userGameObj.getGame(), Game.class);
         Game game = (Game)strGame;
 
-        System.out.println("got here");
-        System.out.println(game);
+        // FIXME: need to be able to how it should draw the board, rn always prints it as white
+        playerScreen.drawBoard(true,game.getGame().getBoard());
 
     }
 
-    private String handleNotification(String message){
+    private void handleNotification(String message){
 
         var objMessage = serializer.jsonToObj(message,NotificationMessage.class);
         NotificationMessage userNotification = (NotificationMessage) objMessage;
 
-        System.out.println("got here");
-        System.out.println(userNotification.getMessage());
-
-        return userNotification.getMessage();
+        playerScreen.print(userNotification.getMessage());
     }
 }
