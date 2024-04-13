@@ -1,6 +1,7 @@
 package WebSocketClient;
 
 import ConvertToGson.GsonConverter;
+import chess.ChessGame;
 import chess.ChessMove;
 import ui.GameScreenUI;
 import webSocketMessages.userCommands.*;
@@ -52,10 +53,17 @@ public class WebSocketFacade extends Endpoint{
     // these methods reach the server and send messages to it
 
     // join game method
-    public void joinGame(String authToken,int gameId,boolean isWhite){
+    public void joinGame(String authToken,int gameId,String isWhite){
+
+        ChessGame.TeamColor color;
+        try {
+            color = findColor(isWhite);
+        }catch(Exception error){
+            return;
+        }
 
         try {
-            var serverCmd = new JoinPlayerMessage(authToken,gameId,isWhite);
+            var serverCmd = new JoinPlayerMessage(authToken,gameId,color);
 
             String jsonCmd = serializer.objToJson(serverCmd);
 
@@ -138,18 +146,20 @@ public class WebSocketFacade extends Endpoint{
     }
 
 
-
-
-
-
-
-
-
-
-
-
-
-    public static void main(String[]args){
-
+    private ChessGame.TeamColor findColor(String color)throws Exception{
+        if(color.equalsIgnoreCase("white")){
+            return ChessGame.TeamColor.WHITE;
+        }else if(color.equalsIgnoreCase("black")){
+            return ChessGame.TeamColor.BLACK;
+        }else{
+            throw new Exception("invalid color type");
+        }
     }
+
+
+
+
+
+
+
 }

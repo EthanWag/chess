@@ -1,16 +1,21 @@
 package webSocketMessages.userCommands;
 
+import chess.ChessGame;
 import webSocketMessages.ServerMessages.ServerMessage;
 
 import java.util.Objects;
 
 public class JoinPlayerMessage extends UserGameCommand {
 
-    private final boolean isWhite;
+    private final ChessGame.TeamColor playerColor;
 
-    public JoinPlayerMessage(String myAuthToken,int myGameId,boolean myColor){
+    public JoinPlayerMessage(String myAuthToken,int myGameId,ChessGame.TeamColor playerColor){
         super(UserGameCommand.CommandType.JOIN_PLAYER,myAuthToken,myGameId);
-        isWhite = myColor;
+        this.playerColor = playerColor;
+    }
+
+    public ChessGame.TeamColor getPlayerColor(){
+        return playerColor;
     }
 
     @Override
@@ -19,11 +24,11 @@ public class JoinPlayerMessage extends UserGameCommand {
         if (o == null || getClass() != o.getClass()) return false;
         if (!super.equals(o)) return false;
         JoinPlayerMessage that = (JoinPlayerMessage) o;
-        return isWhite == that.isWhite;
+        return Objects.equals(playerColor, that.playerColor);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(super.hashCode(), isWhite);
+        return Objects.hash(super.hashCode(), playerColor.hashCode());
     }
 }

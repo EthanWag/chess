@@ -50,7 +50,11 @@ public class ChessGame {
      */
     public enum TeamColor {
         WHITE,
-        BLACK
+        BLACK,
+        RESIGN
+
+        // possibly put a resign enum value here so that you can easily know if it is over
+
     }
 
     /**
@@ -66,6 +70,10 @@ public class ChessGame {
         return simulator.approvedMoves(startPosition);
     }
     // helpful for makeMove function below, will find a position and find the moves it can make
+
+    public void endGame(){
+        myTeam = TeamColor.RESIGN;
+    }
 
 
     /**

@@ -5,6 +5,7 @@ import com.google.gson.JsonSyntaxException;
 import models.Game;
 import ui.GameScreenUI;
 import webSocketMessages.ServerMessages.*;
+import webSocketMessages.ServerMessages.Error;
 import webSocketMessages.ServerMessages.ServerMessage;
 
 public class ServerMessageHandler {
@@ -39,10 +40,10 @@ public class ServerMessageHandler {
 
     private void handleError(String message){
 
-        var objMessage = serializer.jsonToObj(message,ErrorMessage.class);
-        ErrorMessage err = (ErrorMessage)objMessage;
+        var objMessage = serializer.jsonToObj(message, Error.class);
+        Error err = (Error)objMessage;
 
-        String errMessage = err.getMessage();
+        String errMessage = err.getErrorMessage();
 
         // FIXME: this is a temp solution that I just put here for testing
         playerScreen.print(errMessage);

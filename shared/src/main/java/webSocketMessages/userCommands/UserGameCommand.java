@@ -13,7 +13,7 @@ public class UserGameCommand {
     protected UserGameCommand(CommandType command,String authToken,int gameId) {
         this.commandType = command;
         this.authToken = authToken;
-        this.gameId = gameId;
+        this.gameID = gameId;
     }
 
     public enum CommandType {
@@ -28,7 +28,7 @@ public class UserGameCommand {
 
     protected final String authToken;
 
-    protected final int gameId;
+    protected final int gameID;
 
 
     public String getAuthString() {
@@ -39,8 +39,8 @@ public class UserGameCommand {
         return this.commandType;
     }
 
-    public int getGameId(){
-        return this.gameId;
+    public int getGameID(){
+        return this.gameID;
     }
 
     @Override
@@ -48,11 +48,11 @@ public class UserGameCommand {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         UserGameCommand that = (UserGameCommand) o;
-        return gameId == that.gameId && commandType == that.commandType && Objects.equals(authToken, that.authToken);
+        return gameID == that.gameID && commandType == that.commandType && Objects.equals(authToken, that.authToken);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(commandType, authToken, gameId);
+        return Objects.hash(commandType, authToken, gameID);
     }
 }

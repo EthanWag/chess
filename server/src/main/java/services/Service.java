@@ -55,10 +55,12 @@ public abstract class Service {
     }
 
     public Game getGame(int gameID) throws DataAccessException{
-        var gameAccess = new SqlGameDAO();
+
+        var gameAccess = new SqlGameDAO(); //  this is where there the error happens always for some reason can't seem to find the game and fails the test
         Game foundGame = gameAccess.read(gameID);
 
         gameAccess.close();
         return foundGame;
+
     }
 }

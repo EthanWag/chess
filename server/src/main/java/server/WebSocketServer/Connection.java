@@ -1,9 +1,11 @@
 package server.WebSocketServer;
 
+import models.Game;
 import org.eclipse.jetty.websocket.api.Session;
 import java.io.IOException;
 
 import ConvertToGson.GsonConverter;
+import webSocketMessages.ServerMessages.LoadGameMessage;
 import webSocketMessages.ServerMessages.NotificationMessage;
 
 public class Connection {
@@ -23,6 +25,18 @@ public class Connection {
 
         var userMessage = new NotificationMessage(message);
         String gsonMessage = serializer.objToJson(userMessage);
+
+        try {
+            session.getRemote().sendString(gsonMessage);
+        }catch(IOException error){
+            throw new IOException("Error: Session is invalid");
+        }
+    }
+
+    // sends an update to everyone on the board
+    public void sendUpdate(String strGame)throws IOException{
+        var loadMessage = new LoadGameMessage(strGame);
+        String gsonMessage = serializer.objToJson(loadMessage);
 
         try {
             session.getRemote().sendString(gsonMessage);

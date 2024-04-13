@@ -2,19 +2,19 @@ package webSocketMessages.ServerMessages;
 
 import java.util.Objects;
 
-public class ErrorMessage extends ServerMessage{
+public class Error extends ServerMessage{
 
-    String message;
+    String errorMessage;
     int errCode;
 
-    public ErrorMessage(String myMessage,int myErrorCode){
+    public Error(String myMessage, int myErrorCode){
         super(ServerMessageType.ERROR);
-        message = myMessage;
+        errorMessage = myMessage;
         errCode = myErrorCode;
     }
 
-    public String getMessage(){
-        return message;
+    public String getErrorMessage(){
+        return errorMessage;
     }
 
     public int getErrCode(){
@@ -26,12 +26,12 @@ public class ErrorMessage extends ServerMessage{
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         if (!super.equals(o)) return false;
-        ErrorMessage that = (ErrorMessage) o;
-        return errCode == that.errCode && Objects.equals(message, that.message);
+        Error that = (Error) o;
+        return errCode == that.errCode && Objects.equals(errorMessage, that.errorMessage);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(super.hashCode(), message, errCode);
+        return Objects.hash(super.hashCode(), errorMessage, errCode);
     }
 }

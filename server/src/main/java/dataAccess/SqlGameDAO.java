@@ -52,8 +52,6 @@ public class SqlGameDAO implements GameDAO{
 
             if(key.first()) {
                 return key.getInt(1);
-                //newGame.setGameID(gameId);
-                //return gameId;
             }else{
                 DatabaseConnection.closeConnection(myConnection);
                 throw new DataAccessException("ERROR:Auto generation failed",500);
@@ -133,7 +131,6 @@ public class SqlGameDAO implements GameDAO{
             var statement = myConnection.prepareStatement(sqlUpdate);
             statement.setString(1,username);
 
-            // new additions!!!!
             statement.setBoolean(2,join);
 
             statement.setInt(3,gameId);
@@ -143,7 +140,34 @@ public class SqlGameDAO implements GameDAO{
             DatabaseConnection.closeConnection(myConnection);
             throw new DataAccessException("ERROR: Database connection lost",500);
         }
+    }
 
+    public void updateGame(int gameId, Game updateGame)throws DataAccessException{
+
+        String strGame = serializer.objToJson(updateGame);
+
+        // first builds the string we are going to send to the database
+        StringBuilder strBuilder = new StringBuilder();
+        strBuilder.append("UPDATE GameDAO ");
+
+        strBuilder.append("SET game = ?");
+
+        strBuilder.append("WHERE gameId = ?");
+        String sqlUpdate = strBuilder.toString();
+
+        try{
+            // grabs the connection and then tries the execute the program
+            var statement = myConnection.prepareStatement(sqlUpdate);
+
+
+            statement.setString(1,strGame);
+            statement.setInt(2,gameId);
+            statement.executeUpdate();
+
+        }catch(SQLException sqlErr){ // this tackles more the case that the connection was bad
+            DatabaseConnection.closeConnection(myConnection);
+            throw new DataAccessException("ERROR: Database connection lost",500);
+        }
     }
 
     public void deleteAll(){

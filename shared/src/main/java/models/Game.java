@@ -2,9 +2,12 @@ package models;
 
 import chess.ChessGame;
 
+import java.io.IOException;
 import java.util.Objects;
 
 public class Game {
+
+    // another option is to put a over value here so that you know easily if the game is over
 
     private int gameID; // this is a temp value, this will change as they are added to the database
     private String whiteUsername;
@@ -59,6 +62,17 @@ public class Game {
 
     public boolean isBlackTaken(){
         return blackTaken;
+    }
+
+
+    public ChessGame.TeamColor getColor(String username)throws IOException{
+        if(whiteTaken && (whiteUsername.equals(username))){
+            return ChessGame.TeamColor.WHITE;
+        }else if(blackTaken && (blackUsername.equals(username))){
+            return ChessGame.TeamColor.BLACK;
+        }else{
+            throw new IOException("Not a player");
+        }
     }
 
 
