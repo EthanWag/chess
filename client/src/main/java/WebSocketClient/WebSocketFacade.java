@@ -115,23 +115,6 @@ public class WebSocketFacade extends Endpoint{
     public void leave(String authToken,int gameId){
         try {
             var serverCmd = new LeaveMessage(authToken,gameId);
-
-            String jsonCmd = serializer.objToJson(serverCmd);
-
-            // we will make a user connection object here
-            session.getBasicRemote().sendText(jsonCmd);
-
-            // I'll have some more code here that process that connection
-
-        }catch(IOException error){
-            System.err.println("Put error here");
-        }
-    }
-
-    // resigns and gives up from someone playing the game
-    public void resign(String authToken,int gameId){
-        try {
-            var serverCmd = new ResignMessage(authToken,gameId);
             String jsonCmd = serializer.objToJson(serverCmd);
 
             // we will make a user connection object here
