@@ -142,7 +142,7 @@ public class SqlGameDAO implements GameDAO{
         }
     }
 
-    public void updateGame(int gameId, Game updateGame)throws DataAccessException{
+    public void updateGame(int gameId, ChessGame updateGame)throws DataAccessException{
 
         String strGame = serializer.objToJson(updateGame);
 
@@ -187,7 +187,8 @@ public class SqlGameDAO implements GameDAO{
 
     // just simply closes the connection
     public void close() throws DataAccessException{
-        DatabaseConnection.commit(myConnection);
+        //DatabaseConnection.commit(myConnection);
+        DatabaseConnection.closeConnection(myConnection);
     }
 
     // converts a result set item into a Game

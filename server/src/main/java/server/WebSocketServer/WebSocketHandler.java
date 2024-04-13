@@ -68,9 +68,7 @@ public class WebSocketHandler {
 
                 case CommandType.RESIGN:
 
-                    var resMess = serializer.jsonToObj(message,ResignMessage.class);
-                    ResignMessage userResign = (ResignMessage) resMess;
-                    resign(session,username,userAuth,userResign.getGameID());
+                    resign(session,message,username);
 
                     break;
 
@@ -221,7 +219,12 @@ public class WebSocketHandler {
         }
     }
 
-    private void resign(Session session, String authToken, String username,int gameId){
+    private void resign(Session session, String message, String username){
+
+        var output = serializer.jsonToObj(message,ResignMessage.class);
+        ResignMessage userMessage = (ResignMessage)output;
+
+        int gameId = userMessage.getGameID();
 
         // first makes sure that they can resign
         try{
@@ -239,7 +242,7 @@ public class WebSocketHandler {
             WebSocketService webSer = new WebSocketService();
             webSer.updateGame(gameId,game);
 
-            sendGameBroadcast(username + "has lost the game!!", gameId,username,true);
+            sendGameBroadcast(username + " has lost the game!!", gameId,"",false);
 
         }catch(DataAccessException error){
             sendError(session,"Error: gameID not in database",404);
@@ -366,5 +369,8 @@ public class WebSocketHandler {
         }
     }
 
+    public void clearManager(){
+        connections.clear();
+    }
 
 }

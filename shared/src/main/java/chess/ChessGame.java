@@ -52,9 +52,6 @@ public class ChessGame {
         WHITE,
         BLACK,
         RESIGN
-
-        // possibly put a resign enum value here so that you can easily know if it is over
-
     }
 
     /**
@@ -83,6 +80,10 @@ public class ChessGame {
      * @throws InvalidMoveException if move is invalid
      */
     public void makeMove(ChessMove move) throws InvalidMoveException {
+
+        if(myTeam == TeamColor.RESIGN){
+            throw new InvalidMoveException("ERROR: Game already ended");
+        }
 
         // get the start position, the piece and the valid moves
         ChessPosition start = move.getStartPosition();

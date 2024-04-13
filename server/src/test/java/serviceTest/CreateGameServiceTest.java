@@ -64,4 +64,26 @@ class CreateGameServiceTest {
             assertTrue(true);
         }
     }
+
+    @Test
+    public void clearService(){
+
+        try {
+
+            for (int i = 0; i < 40; i++) {
+                testCreateGame.completeJob(authToken, "newGame" + i);
+            }
+
+            // System.out.println("breakpoint");
+
+            clearService.completeJob();
+
+            // System.out.println("breakpoint");
+
+            assertTrue(true);
+        }catch(Exception error){
+            System.err.println("failed to load all games");
+            fail();
+        }
+    }
 }

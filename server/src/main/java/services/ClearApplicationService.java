@@ -4,6 +4,7 @@ import dataAccess.DataAccessException;
 import dataAccess.SqlAuthDAO;
 import dataAccess.SqlGameDAO;
 import dataAccess.SqlUserDAO;
+import server.WebSocketServer.WebSocketHandler;
 
 public class ClearApplicationService extends Service{
 
@@ -21,9 +22,12 @@ public class ClearApplicationService extends Service{
         var authAccess = new SqlAuthDAO();
         var userAccess = new SqlUserDAO();
 
+        WebSocketHandler webSer = new WebSocketHandler();
+
         gameAccess.deleteAll();
         authAccess.deleteAll();
         userAccess.deleteAll();
+        webSer.clearManager();
 
         // commits all change
         gameAccess.commit();

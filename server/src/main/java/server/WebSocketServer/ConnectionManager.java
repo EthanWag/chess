@@ -9,6 +9,7 @@ import org.eclipse.jetty.websocket.api.Session;
 import services.WebSocketService;
 
 import java.io.IOException;
+import java.util.Iterator;
 
 public class ConnectionManager {
 
@@ -25,23 +26,24 @@ public class ConnectionManager {
 
         try {
 
-            for (Connection con : serverConnections.values()) {
+            Iterator<Connection> iterator = serverConnections.values().iterator();
 
-                var curSession = con.getSession();
+            while (iterator.hasNext()) {
+                Connection curConnection = iterator.next();
+                Session curSession = curConnection.getSession();
 
                 // handles people just disappearing out of nowhere
                 if (curSession.isOpen()) {
 
-                    if (isExclusive && (exclusiveUser.equals(con.getUsername()))){
+                    if (isExclusive && (exclusiveUser.equals(curConnection.getUsername()))){
                         continue; // just continues if it is the exclusive user
                     }
 
-                    con.send(message);
+                    curConnection.send(message);
 
                 } else {
-                    // FIXME: come back here to fix potential bugs, editing a data structure while looping
                     curSession.close();
-                    serverConnections.remove(con.getUsername());
+                    iterator.remove();
                 }
             }
 
@@ -87,6 +89,7 @@ public class ConnectionManager {
 
     public void safeConnect(Session session, String username)throws IOException{
         // make sure they haven't already joined the game twice
+
         if(serverConnections.containsKey(username)){
             throw new IOException("ERROR: User Already joined");
         }
