@@ -81,17 +81,6 @@ public class DatabaseConnection {
 
     }
 
-    // simply tries to reconnect to the database, otherwise throws an error
-    public static Connection reconnect() throws DataAccessException{
-        try{
-            return DatabaseManager.getConnection();
-        }catch(DataAccessException connectError){
-            throw new DataAccessException("ERROR: Database connection lost",500);
-        }
-    }
-
-
-
     public static void commit(Connection connection)throws DataAccessException{
         try {
             connection.commit();

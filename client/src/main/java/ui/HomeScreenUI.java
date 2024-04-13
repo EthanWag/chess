@@ -208,20 +208,6 @@ public class HomeScreenUI extends ChessUI{
         System.out.println("Please select a game you would like to join or create a new game");
     }
 
-    private boolean playerWhite(RequestJoinPackage joinPackage){
-        switch(joinPackage.playerColor()){
-            case "WHITE" -> {
-                return true;
-            }
-            case null -> {
-                return true;
-            }
-            default -> {
-                return false;
-            }
-        }
-    }
-
     // loads all the games the are currently on the database
     private void loadGames(String authToken)throws InvalidRequestException{
         var allGames = server.listGame(authToken);

@@ -126,8 +126,7 @@ public class WebSocketHandler {
         sendMessage(session, serverMessage);
 
         // broadcasts message to everyone playing the game
-        String resMessage = username + " has joined the game";
-        sendGameBroadcast(resMessage,gameId,username,true);
+        sendGameBroadcast(username + " has joined the game",gameId,username,true,false);
 
     }
 
@@ -147,8 +146,6 @@ public class WebSocketHandler {
             sendError(session,"ERROR: Invalid game ID", 404);
             return;
         }
-        // we can be 100% sure that after this line, that the game exists
-
 
         // connects to server and if there are any problems, it then sends an error
         if(!connectToSession(session,gameId,username)){
@@ -163,8 +160,7 @@ public class WebSocketHandler {
         sendMessage(session, serverMessage);
 
         // sends everyone a message that in the game
-        String resMessage = username + " is now observing the game";
-        sendGameBroadcast(resMessage,gameId,username,true);
+        sendGameBroadcast(username + " is now observing the game",gameId,username,true,false);
     }
 
     private void makeMove(Session session, String message, String username){
@@ -209,8 +205,11 @@ public class WebSocketHandler {
         try {
             makeValidMove(myGame, userMove,color);
             webSer.updateGame(gameId,myGame);
-            updateGameBroadcast(gameId);
-            sendGameBroadcast(username + "Moved!",gameId,username,true);
+
+            String strGame = serializer.objToJson(myGame);
+
+            sendGameBroadcast(strGame,gameId,"",false,true);
+            sendGameBroadcast(username + "Moved!",gameId,username,true,false);
 
         }catch(InvalidMoveException error){
             sendError(session,error.getMessage(), 500);
@@ -242,7 +241,7 @@ public class WebSocketHandler {
             WebSocketService webSer = new WebSocketService();
             webSer.updateGame(gameId,game);
 
-            sendGameBroadcast(username + " has lost the game!!", gameId,"",false);
+            sendGameBroadcast(username + " has lost the game!!", gameId,"",false,false);
 
         }catch(DataAccessException error){
             sendError(session,"Error: gameID not in database",404);
@@ -254,9 +253,10 @@ public class WebSocketHandler {
 
     private void leave(Session session, String username, int gameId) {
 
-        sendGameBroadcast((username + "has left the game"),gameId,username,true);
+        sendGameBroadcast((username + "has left the game"),gameId,username,true,false);
         leaveSession(gameId, username);
         session.close();
+        allLeft(gameId);
 
     }
 
@@ -302,14 +302,9 @@ public class WebSocketHandler {
         gameManager.removeSession(username);
     }
 
-    private void sendGameBroadcast(String message, int gameId,String exclusiveUser, boolean isExclusive){
+    private void sendGameBroadcast(String message, int gameId,String exclusiveUser, boolean isExclusive, boolean isUpdate){
         var gameManager = connections.get(gameId);
-        gameManager.broadcast(message,exclusiveUser,isExclusive);
-    }
-
-    private void updateGameBroadcast(int gameId){
-        var gameManager = connections.get(gameId);
-        gameManager.updateEveryone(gameId);
+        gameManager.broadcast(message,exclusiveUser,isExclusive,isUpdate);
     }
 
     private boolean validGameConnect(Game game, String username,ChessGame.TeamColor playerColor){

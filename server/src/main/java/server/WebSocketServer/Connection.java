@@ -21,9 +21,14 @@ public class Connection {
     }
 
     // sends a message to that user
-    public void send(String message)throws IOException{
+    public void send(String message,boolean update)throws IOException{
 
-        var userMessage = new NotificationMessage(message);
+        Object userMessage;
+        if(update){
+            userMessage = new LoadGameMessage(message);
+        }else {
+            userMessage = new NotificationMessage(message);
+        }
         String gsonMessage = serializer.objToJson(userMessage);
 
         try {
@@ -33,20 +38,7 @@ public class Connection {
         }
     }
 
-    // sends an update to everyone on the board
-    public void sendUpdate(String strGame)throws IOException{
-        var loadMessage = new LoadGameMessage(strGame);
-        String gsonMessage = serializer.objToJson(loadMessage);
-
-        try {
-            session.getRemote().sendString(gsonMessage);
-        }catch(IOException error){
-            throw new IOException("Error: Session is invalid");
-        }
-    }
-
     // simple getters and setters
-
     public String getUsername(){
         return username;
     }

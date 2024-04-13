@@ -45,7 +45,6 @@ public class ServerMessageHandler {
 
         String errMessage = err.getErrorMessage();
 
-        // FIXME: this is a temp solution that I just put here for testing
         playerScreen.print(errMessage);
 
     }
@@ -58,7 +57,6 @@ public class ServerMessageHandler {
         var strGame = serializer.jsonToObj(userGameObj.getGame(), Game.class);
         Game game = (Game)strGame;
 
-        // FIXME: need to be able to how it should draw the board, rn always prints it as white
         playerScreen.drawBoard(true,game.getGame().getBoard());
 
     }

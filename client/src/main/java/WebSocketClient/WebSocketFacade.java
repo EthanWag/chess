@@ -132,13 +132,10 @@ public class WebSocketFacade extends Endpoint{
     public void resign(String authToken,int gameId){
         try {
             var serverCmd = new ResignMessage(authToken,gameId);
-
             String jsonCmd = serializer.objToJson(serverCmd);
 
             // we will make a user connection object here
             session.getBasicRemote().sendText(jsonCmd);
-
-            // I'll have some more code here that process that connection
 
         }catch(IOException error){
             System.err.println("Put error here");
