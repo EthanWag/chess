@@ -1,4 +1,3 @@
-import server.Server;
 import ui.LoginUI;
 
 public class Main {
