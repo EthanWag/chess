@@ -3,6 +3,7 @@ package ui;
 import java.util.HashMap;
 
 import WebSocketClient.WebSocketFacade;
+import chess.ChessGame;
 import models.Game;
 import models.reqModels.*;
 import models.resModels.*;
@@ -74,9 +75,14 @@ public class HomeScreenUI extends ChessUI{
                         System.out.println("Joining Game...");
 
                         // this should be the id of the game we want to join, this will be important for tons if different things
-                        // int gameID = joinPackage.gameID();
+                        int gameID = joinPackage.gameID();
+                        boolean player;
+                        player = joinPackage.playerColor() != null;
 
-                        GameScreenUI playChess = new GameScreenUI(authorization,null);
+                        GameScreenUI playChess = new GameScreenUI(authorization,null,
+                                                findColor(joinPackage.playerColor()),gameID,player);
+
+
                         WebSocketFacade newConnection = new WebSocketFacade(url,playChess);
                         playChess.setFacade(newConnection);
                         playChess.run();
@@ -238,6 +244,14 @@ public class HomeScreenUI extends ChessUI{
         System.out.println("\t - list games (lists all possible games to can join)");
         System.out.println("\t - new game (create a new game)");
         System.out.println("\t - logout (logout of your account)\n");
+    }
+
+    private boolean findColor(String color){
+        if(color.equalsIgnoreCase("black")){
+            return false;
+        }else{
+            return true;
+        }
     }
 
 }

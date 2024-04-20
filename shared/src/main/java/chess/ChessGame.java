@@ -61,8 +61,7 @@ public class ChessGame {
      * @return Set of valid moves for requested piece, or null if no piece at
      * startPosition
      */
-    public Collection<ChessMove> validMoves(ChessPosition startPosition) {
-
+    public Collection<ChessMove> validMoves(ChessPosition startPosition) throws InvalidMoveException{
         simulator.setBoard(myBoard);
         return simulator.approvedMoves(startPosition);
     }

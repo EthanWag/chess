@@ -57,7 +57,7 @@ public class ServerMessageHandler {
         var strGame = serializer.jsonToObj(userGameObj.getGame(), Game.class);
         Game game = (Game)strGame;
 
-        playerScreen.drawBoard(true,game.getGame().getBoard());
+        playerScreen.drawBoard(game.getGame().getBoard());
 
     }
 

@@ -29,13 +29,12 @@ public class WebSocketFacade extends Endpoint{
             String wsUrl = url.replace("http", "ws"); // changes the connection to a websocket connection
             URI sockURI = new URI(wsUrl + "/connect");
 
-            System.out.println(sockURI);
-
             WebSocketContainer container = ContainerProvider.getWebSocketContainer();
             this.session = container.connectToServer(this,sockURI);
 
 
             this.session.addMessageHandler(new MessageHandler.Whole<String>() {
+                @Override
                 public void onMessage(String message) {
                     messageHandler.handleMessage(message);
                 }
@@ -53,13 +52,13 @@ public class WebSocketFacade extends Endpoint{
     // these methods reach the server and send messages to it
 
     // join game method
-    public void joinGame(String authToken,int gameId,String isWhite){
+    public void joinGame(String authToken,int gameId,boolean isWhite){
 
         ChessGame.TeamColor color;
-        try {
-            color = findColor(isWhite);
-        }catch(Exception error){
-            return;
+        if (isWhite) {
+            color = ChessGame.TeamColor.WHITE;
+        }else {
+            color = ChessGame.TeamColor.BLACK;
         }
 
         try {
@@ -69,11 +68,8 @@ public class WebSocketFacade extends Endpoint{
 
             // we will make a user connection object here
             session.getBasicRemote().sendText(jsonCmd);
-
-            // I'll have some more code here that process that connection
-
         }catch(IOException error){
-            System.err.println("Put error here");
+            System.err.println("Error: Unable to join game");
         }
     }
 
@@ -125,21 +121,17 @@ public class WebSocketFacade extends Endpoint{
         }
     }
 
+    public void resign(String authToken,int gameId){
+        try {
+            var serverCmd = new LeaveMessage(authToken,gameId);
+            String jsonCmd = serializer.objToJson(serverCmd);
 
-    private ChessGame.TeamColor findColor(String color)throws Exception{
-        if(color.equalsIgnoreCase("white")){
-            return ChessGame.TeamColor.WHITE;
-        }else if(color.equalsIgnoreCase("black")){
-            return ChessGame.TeamColor.BLACK;
-        }else{
-            throw new Exception("invalid color type");
+            // we will make a user connection object here
+            session.getBasicRemote().sendText(jsonCmd);
+
+        }catch(IOException error){
+            System.err.println("Put error here");
         }
     }
-
-
-
-
-
-
 
 }

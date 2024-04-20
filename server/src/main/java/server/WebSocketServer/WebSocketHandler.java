@@ -195,11 +195,13 @@ public class WebSocketHandler {
             return;
         }
 
+        /*
         // checks to see if anyone is in checkmate
         if(myGame.getGame().isInCheckmate(ChessGame.TeamColor.WHITE) || myGame.getGame().isInCheckmate(ChessGame.TeamColor.BLACK)){
-            sendError(session,"Error: Game Already ended", 400);
+            sendError(session,"Error: Game already ended", 400);
             return;
         }
+         */
 
         // makes the move and updates the board
         try {
@@ -209,9 +211,35 @@ public class WebSocketHandler {
             String strGame = serializer.objToJson(myGame);
 
             sendGameBroadcast(strGame,gameId,"",false,true);
-            sendGameBroadcast(username + "Moved!",gameId,username,true,false);
+            sendGameBroadcast(username + " Moved!",gameId,username,true,false);
 
         }catch(InvalidMoveException error){
+
+            if(myGame.getGame().isInCheckmate(ChessGame.TeamColor.WHITE)){
+                sendError(session,"White is in checkmate",400);
+                return;
+            }
+            if(myGame.getGame().isInCheckmate(ChessGame.TeamColor.BLACK)){
+                sendError(session,"Black is in checkmate",400);
+                return;
+            }
+            if(myGame.getGame().isInStalemate(ChessGame.TeamColor.WHITE)){
+                sendError(session,"White is in stalemate",400);
+                return;
+            }
+            if(myGame.getGame().isInStalemate(ChessGame.TeamColor.BLACK)){
+                sendError(session,"White is in stalemate",400);
+                return;
+            }
+            if(myGame.getGame().isInCheck(ChessGame.TeamColor.WHITE)){
+                sendError(session,"White is in check",400);
+                return;
+            }
+            if(myGame.getGame().isInCheck(ChessGame.TeamColor.BLACK)){
+                sendError(session,"White is in check",400);
+                return;
+            }
+
             sendError(session,error.getMessage(), 500);
         }catch(DataAccessException error){
             sendError(session,"Unable to update board", 500);
@@ -272,8 +300,6 @@ public class WebSocketHandler {
             return;
         }
     }
-
-
 
     private boolean connectToSession(Session session,int gameId,String username){
 
@@ -367,5 +393,4 @@ public class WebSocketHandler {
     public void clearManager(){
         connections.clear();
     }
-
 }
