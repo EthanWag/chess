@@ -38,9 +38,8 @@ public class WebSocketHandler {
 
         try {
             var output = serializer.jsonToObj(message,UserGameCommand.class);
-            UserGameCommand userCommand = (UserGameCommand)output;
 
-            // before we do anything, lets get the username, authToken and gameId we are going to use
+            UserGameCommand userCommand = (UserGameCommand)output;
             String userAuth = userCommand.getAuthString();
 
             // checks for authTokens to make sure you can make a valid move
@@ -51,33 +50,19 @@ public class WebSocketHandler {
             // here you would put some sort of switch statement that map each server message to a particular value
             switch (command) {
                 case CommandType.JOIN_PLAYER:
-
                     joinGame(session,message,username);
                     break;
-
                 case CommandType.JOIN_OBSERVER:
-
                     observeGame(session,message,username);
                     break;
-
                 case CommandType.MAKE_MOVE:
-
                     makeMove(session,message,username);
-
                     break;
-
                 case CommandType.RESIGN:
-
                     resign(session,message,username);
-
                     break;
-
                 case CommandType.LEAVE:
-
-                    var leaveMess = serializer.jsonToObj(message,LeaveMessage.class);
-                    LeaveMessage userLeave = (LeaveMessage) leaveMess;
-                    leave(session,username,userLeave.getGameID());
-
+                    leave(session,message,username);
                     break;
             }
 
@@ -191,7 +176,7 @@ public class WebSocketHandler {
 
         // checks to make sure that you can the game hasn't ended
         if(myGame.getGame().getTeamTurn() == ChessGame.TeamColor.RESIGN){
-            sendError(session,"Error: Game Already ended", 400);
+            sendError(session,"Error: Game already ended", 400);
             return;
         }
 
@@ -279,13 +264,20 @@ public class WebSocketHandler {
 
     }
 
-    private void leave(Session session, String username, int gameId) {
+    private void leave(Session session, String message, String username) {
 
+        // gets info the the function to use
+        var output = serializer.jsonToObj(message,LeaveMessage.class);
+        LeaveMessage userMessage = (LeaveMessage)output;
+
+        int gameId = userMessage.getGameID();
+
+
+        // actually lets the user leave the game
         sendGameBroadcast((username + "has left the game"),gameId,username,true,false);
         leaveSession(gameId, username);
         session.close();
         allLeft(gameId);
-
     }
 
 
@@ -393,4 +385,29 @@ public class WebSocketHandler {
     public void clearManager(){
         connections.clear();
     }
+
+
+    // Methods to make for chess 2.0
+
+    /*
+    - Make some new classes to handle websocket moves and or processes.
+    - Also need to handle concurrency, maybe go through options that handle that better
+    - Update sql statements so they handle concurrency better
+
+    TODO UI:
+
+    - Learn Javascript basics to design UI
+    - make a nice website for you chess game
+
+     */
+
+
+
+
+
+
+
+
+
+
 }
