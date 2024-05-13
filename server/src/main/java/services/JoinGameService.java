@@ -23,6 +23,7 @@ public class JoinGameService extends Service{
 
     // Service functions
 
+    // TODO: Be sure to refine this, this function needs a rehaul!!
     private void addPlayer(Game joinGame, String username, String teamColor)throws DataAccessException{
 
         switch(teamColor){ //checks to see what team they entered
@@ -33,7 +34,6 @@ public class JoinGameService extends Service{
                     var accessGame = new SqlGameDAO();
                     accessGame.updatePlayer(joinGame.getGameID(),username,true,"WHITE");
                     accessGame.commit();
-
 
                 }else{
                     throw new DataAccessException("ERROR: User already taken",403);

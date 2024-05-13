@@ -3,38 +3,49 @@ package services;
 import dataAccess.SqlGameDAO;
 import models.*;
 import dataAccess.DataAccessException;
+import models.resModels.ResponseListPackage;
 
 import java.util.Collection;
 
 public class ListGamesService extends Service{
 
-    public ListGamesService() {}
+    private final SqlGameDAO gameAccess;
 
-    public GamesPackage completeJob(String authtoken)throws DataAccessException{
+    public ListGamesService() throws DataAccessException{
+        try{
+            gameAccess = new SqlGameDAO();
+        }catch(DataAccessException error){
+            throw new DataAccessException("ERROR: Unable to connect to database",500);
+        }
+    }
 
-        // Note: there is a return value of User but we ignore it because it is not important
-        checkAuthToken(authtoken); // throws an exception in case it can't find it
+    public ResponseListPackage completeJob(String authToken)throws DataAccessException{
+
+        try {
+            checkAuthToken(authToken); // throws an exception in case it can't find it
+        }catch(DataAccessException error){
+            throw new DataAccessException("ERROR: Invalid authorization",401);
+        }
 
         Collection<Game> allGames = getAllGames();
-
-        // returns all the new games
-        return new GamesPackage(allGames);
+        return new ResponseListPackage(allGames);
     }
 
     // service functions
     private Collection<Game> getAllGames() throws DataAccessException{
-        var gameAccess = new SqlGameDAO();
-        Collection<Game> allGames = gameAccess.getAll();
-
-        gameAccess.close();
-        return allGames;
+        try {
+            return gameAccess.getAll();
+        }catch(DataAccessException error){
+            throw new DataAccessException("ERROR: Database Connection lost",500);
+        }
     }
 
-
+    // TODO: make sure to get rid of this
     public static class GamesPackage {
         public Collection<Game> games;
         public GamesPackage(Collection<Game> games){
             this.games = games;
         }
     }
+
 }

@@ -84,7 +84,6 @@ public class DatabaseConnection {
     public static void commit(Connection connection)throws DataAccessException{
         try {
             connection.commit();
-            closeConnection(connection);
 
         }catch(SQLException error){
             throw new DataAccessException("ERROR: Unable to connect to database",500);

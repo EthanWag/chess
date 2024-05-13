@@ -6,28 +6,32 @@ import models.*;
 
 public class LogoutService extends Service{
 
-    public LogoutService() {}
+    private final SqlAuthDAO authAccess;
+
+    public LogoutService() throws DataAccessException{
+        try{
+            authAccess = new SqlAuthDAO();
+        }catch(DataAccessException error){
+            throw new DataAccessException("Error: Unable to connect to the database",500);
+        }
+    }
 
     // returns if it is successful
     public void completeJob(String authToken)throws DataAccessException{
 
-        AuthData userAuthToken = getAuthData(authToken);
-
-        // deletes AuthData and lets the user know whether or not it was successful
+        // checks to see if it is a valid delete
+        AuthData userAuthToken;
+        try{
+            userAuthToken = getAuthData(authToken);
+        }catch(DataAccessException error){
+            throw new DataAccessException("ERROR: Invalid authorization",401);
+        }
         deleteAuthData(userAuthToken);
-
     }
 
-    // service functions
-
     private void deleteAuthData(AuthData delAuthData)throws DataAccessException{
-
         // grabs authToken from the object
         String authToken = delAuthData.authToken();
-
-        // selects it from the database and commits changes
-        var authAccess = new SqlAuthDAO();
         authAccess.delete(authToken);
-        authAccess.commit();
     }
 }

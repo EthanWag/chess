@@ -51,6 +51,7 @@ public class SqlGameDAO implements GameDAO{
             var key = statement.getGeneratedKeys();
 
             if(key.first()) {
+                commit();
                 return key.getInt(1);
             }else{
                 DatabaseConnection.closeConnection(myConnection);
@@ -90,7 +91,7 @@ public class SqlGameDAO implements GameDAO{
             throw new DataAccessException("ERROR: Database connection lost",500);
         }
     }
-    public Collection<Game> getAll(){
+    public Collection<Game> getAll() throws DataAccessException{
 
         Collection<Game> allGames = new ArrayList<>();
 
@@ -102,12 +103,11 @@ public class SqlGameDAO implements GameDAO{
                 Game listGame = convertGame(resultItems);
                 allGames.add(listGame);
             }
-
             return allGames;
 
-        }catch(Exception error){
-            System.out.println("error");
-            return allGames; // temp solution, come here to fix
+        }catch(SQLException error){
+            DatabaseConnection.closeConnection(myConnection);
+            throw new DataAccessException("ERROR: Database connection lost",500);
         }
     }
 
@@ -187,7 +187,6 @@ public class SqlGameDAO implements GameDAO{
 
     // just simply closes the connection
     public void close() throws DataAccessException{
-        //DatabaseConnection.commit(myConnection);
         DatabaseConnection.closeConnection(myConnection);
     }
 

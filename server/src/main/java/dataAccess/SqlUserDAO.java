@@ -39,6 +39,10 @@ public class SqlUserDAO implements UserDAO{
 
             statement.executeUpdate();
 
+            // FIXME: I am putting a commit here because it makes sence, when you create a object, you push it to
+            // FIXME: the database, however if you want to remove the functionality, here it is.
+            commit();
+
         }catch(SQLException sqlErr){
             // grabs the error code of the sqlException
             int statusCode = sqlErr.getErrorCode();

@@ -3,48 +3,50 @@ package services;
 import dataAccess.SqlGameDAO;
 import models.*;
 import dataAccess.DataAccessException;
+import models.resModels.ResponseGamePackage;
+
+import javax.xml.crypto.Data;
 
 
 public class CreateGameService extends Service{
 
-    public CreateGameService(){}
+    private SqlGameDAO gameAccess;
 
-
-    public GamePackage completeJob(String authToken, String gameName)throws DataAccessException{
-
-        checkAuthToken(authToken); // throws exception in case if can't find authToken
-
-        // returns gameId
-        int newGameID = createGame(gameName);
-
-        // finally returns the new object
-        return new GamePackage(newGameID);
+    public CreateGameService()throws DataAccessException{
+        try{
+            gameAccess = new SqlGameDAO();
+        }catch(DataAccessException error){
+            throw new DataAccessException("Error: Unable to connect to the database",500);
+        }
     }
 
-    // service functions
+    public ResponseGamePackage completeJob(String authToken, String gameName)throws DataAccessException{
 
+        try {
+            checkAuthToken(authToken);
+        }catch(DataAccessException error){
+            throw new DataAccessException("ERROR: Invalid authorization",401);
+        }
+
+        int newGameID = createGame(gameName);
+        return new ResponseGamePackage(newGameID);
+    }
+
+    // helper functions for the class
     private int createGame(String gameName)throws DataAccessException{
 
         // creates all the new variables
         String black = null;
         String white = null;
 
+        // TODO: go over this code again, what is it asking me todo?
         // creates game and adds it to the database
         Game newGame = new Game(-1,white,black,gameName,false,false);
 
         // creates game and then commits changes
-        var gameAccess = new SqlGameDAO();
         int newGameId = gameAccess.create(newGame);
-        gameAccess.commit();
 
         newGame.setGameID(newGameId); // sets the new game ID
         return newGameId;
-    }
-
-    public static class GamePackage {
-        public int gameID;
-        public GamePackage(int gameID){
-            this.gameID = gameID;
-        }
     }
 }

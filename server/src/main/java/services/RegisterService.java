@@ -11,8 +11,15 @@ import java.util.Objects;
 
 public class RegisterService extends Service{
 
-    public RegisterService() {}
+    private final SqlUserDAO userAccess;
 
+    public RegisterService() throws DataAccessException{
+        try {
+            userAccess = new SqlUserDAO();
+        }catch(DataAccessException error){
+            throw new DataAccessException("Error: Unable to connect to the database",500);
+        }
+    }
 
     public ResponseRegisterPackage completeJob(String username, String password, String email)throws DataAccessException{
 
@@ -22,53 +29,34 @@ public class RegisterService extends Service{
         }
 
         AuthData authorization = createUser(username,password,email);
-
-        // create an authToken and return it
         return new ResponseRegisterPackage(authorization.username(),authorization.authToken());
     }
 
-    // creates user and authData, returns the authData
+    // closes connection to database, should only be called when the server is being closed
+    public void closeConnection() throws DataAccessException{
+        try {
+            userAccess.close();
+        }catch(DataAccessException error){
+            throw new DataAccessException("Error: Unable to close connection to database",500);
+        }
+    }
+
+
+    // Private methods for the program to use
     private AuthData createUser(String username, String password, String email)throws DataAccessException{
 
         // put password shuffle here
-
         BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
         String hashedPassword = encoder.encode(password);
 
+        // makes user and puts it into the database
         User newUser = new User(username,hashedPassword,email);
-
-        // creates data Access object and commits
-        var userAccess = new SqlUserDAO();
         userAccess.create(newUser);
-        userAccess.commit(); // possibly make it so you have to commit and then close the connection???
 
-        // creates new authData and returns that object
-        return createAuthData(username);
+        return createAuthData(username); // returns newly created authToken
     }
 
     private boolean checkRegister(String username, String password, String email){
         return !((username == null) || (password == null) || (email == null));
-    }
-
-    public static class RegisterPackage {
-        public String username,authToken;
-        public RegisterPackage(String username, String newAuthToken){
-            this.username = username;
-            this.authToken = newAuthToken;
-        }
-
-        // simple getters and setters for testing
-        @Override
-        public boolean equals(Object o) {
-            if (this == o) return true;
-            if (o == null || getClass() != o.getClass()) return false;
-            RegisterPackage that = (RegisterPackage) o;
-            return Objects.equals(username, that.username) && Objects.equals(authToken, that.authToken);
-        }
-
-        @Override
-        public int hashCode() {
-            return Objects.hash(username, authToken);
-        }
     }
 }

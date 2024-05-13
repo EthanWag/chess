@@ -10,12 +10,23 @@ import spark.Response;
 
 public class LoginHandler {
 
-    private static LoginService service = new LoginService();
-    private static GsonConverterReq gsonConverter = new GsonConverterReq();
-    private static ExceptionHandler exceptionHandler = new ExceptionHandler();
+    private static LoginService service;
+    private static GsonConverterReq gsonConverter;
+    private static ExceptionHandler exceptionHandler;
+
+    public LoginHandler() throws DataAccessException{
+        gsonConverter = new GsonConverterReq();
+        exceptionHandler = new ExceptionHandler();
+
+        // tries to connect the service to the database
+        try{
+            service = new LoginService();
+        }catch(DataAccessException error){
+            throw new DataAccessException("ERROR: Cannot connect to the database",500);
+        }
+    }
 
     public String loginHandler(Request request,Response response){
-
         try {
 
             // Simply just creates a register object and casts it to a register object

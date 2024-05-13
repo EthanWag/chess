@@ -2,14 +2,25 @@ package services.handlers;
 
 import com.google.gson.JsonSyntaxException;
 import dataAccess.DataAccessException;
+import services.LoginService;
 import services.LogoutService;
 import spark.Request;
 import spark.Response;
 
 public class LogoutHandler {
 
-    private static LogoutService service = new LogoutService();
-    private static ExceptionHandler exceptionHandler = new ExceptionHandler();
+    private static LogoutService service;
+    private static ExceptionHandler exceptionHandler;
+
+    public LogoutHandler() throws DataAccessException{
+        exceptionHandler = new ExceptionHandler();
+
+        try{
+            service = new LogoutService();
+        }catch(DataAccessException error){
+            throw new DataAccessException("ERROR: Cannot connect to the database",500);
+        }
+    }
 
     public String logoutHandler(Request request,Response response){
         try {

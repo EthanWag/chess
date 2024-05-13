@@ -91,6 +91,8 @@ public class SqlAuthDAO implements AuthDAO{
                 throw new DataAccessException("ERROR: Invalid delete",401);
             }
 
+            commit(); // finally commits if it is a valid delete
+
         }catch(SQLException sqlErr){
             DatabaseConnection.closeConnection(myConnection);
             throw new DataAccessException("ERROR: Database connection lost",500);

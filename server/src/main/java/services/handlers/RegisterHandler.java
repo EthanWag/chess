@@ -9,16 +9,25 @@ import spark.*;
 
 public class RegisterHandler {
 
-    private static RegisterService service = new RegisterService();
-    private static GsonConverterReq gsonConverter = new GsonConverterReq();
-    private static ExceptionHandler exceptionHandler = new ExceptionHandler();
+    private final RegisterService service;
+    private final GsonConverterReq gsonConverter;
+    private final ExceptionHandler exceptionHandler;
 
-    public RegisterHandler(){}
+    public RegisterHandler() throws DataAccessException{
+        gsonConverter = new GsonConverterReq();
+        exceptionHandler = new ExceptionHandler();
+
+        // tries to connect the service to the database
+        try{
+            service = new RegisterService();
+        }catch(DataAccessException error){
+            throw new DataAccessException("ERROR: Cannot connect to the database",500);
+        }
+    }
 
     public String registerHandler(Request request,Response response){
 
         try {
-
             var newObj = gsonConverter.requestToObj(request, Register.class);
             Register newRegister = (Register) newObj;
 
@@ -34,6 +43,15 @@ public class RegisterHandler {
             return exceptionHandler.jsonException(response);
         }catch(DataAccessException err) {
             return exceptionHandler.handleException(err,response);
+        }
+    }
+
+    public void closeConnection() throws DataAccessException{
+
+        try {
+            service.closeConnection();
+        }catch(DataAccessException error){
+            throw new DataAccessException("ERROR: Could not close connection",500);
         }
     }
 
