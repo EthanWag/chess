@@ -22,8 +22,6 @@ public class WebSocketService extends Service{
         try {
             SqlGameDAO update = new SqlGameDAO();
             update.updateGame(gameId, game.getGame());
-            update.commit();
-            update.close();
         }catch(DataAccessException error){
             throw new DataAccessException("unable to update board",500);
         }

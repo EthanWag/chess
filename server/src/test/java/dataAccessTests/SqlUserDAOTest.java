@@ -21,7 +21,6 @@ class SqlUserDAOTest {
 
             SqlUserDAO sqlSetup = new SqlUserDAO();
             sqlSetup.deleteAll();
-            sqlSetup.commit();
 
         }catch(Exception error){
             fail("Error: Cannot set up");
@@ -34,7 +33,6 @@ class SqlUserDAOTest {
 
             SqlUserDAO sqlSetup = new SqlUserDAO();
             sqlSetup.create(newUser);
-            sqlSetup.commit();
 
         }catch(Exception error){
             fail("Error: failure to set up");
@@ -52,7 +50,6 @@ class SqlUserDAOTest {
 
             SqlUserDAO testUser = new SqlUserDAO();
             testUser.create(newUser);
-            testUser.commit();
 
             // successfully logged in user
             assertTrue(true);
@@ -72,7 +69,6 @@ class SqlUserDAOTest {
 
             SqlUserDAO testUser = new SqlUserDAO();
             testUser.create(newUser);
-            testUser.commit();
 
             // successfully logged in user
             fail("Error: this user already exists");
@@ -89,7 +85,6 @@ class SqlUserDAOTest {
         try {
             SqlUserDAO testRead = new SqlUserDAO();
             User myUser = testRead.read("Ethan");
-            testRead.commit();
 
             assertTrue(myUser.email().equals("123email.com"));
 
@@ -106,7 +101,6 @@ class SqlUserDAOTest {
         try {
             SqlUserDAO testRead = new SqlUserDAO();
             User myUser = testRead.read("Ethann");
-            testRead.commit();
 
             fail("Error: user does not exist");
 
@@ -123,7 +117,6 @@ class SqlUserDAOTest {
         try {
             SqlUserDAO testDel = new SqlUserDAO();
             testDel.deleteAll();
-            testDel.commit();
 
         }catch(Exception error){
             fail("Error: cannot clear");

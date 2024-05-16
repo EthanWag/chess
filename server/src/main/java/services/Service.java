@@ -11,10 +11,7 @@ public abstract class Service {
     protected AuthData getAuthData(String authToken) throws DataAccessException{
 
         var authAccess = new SqlAuthDAO();
-        AuthData foundAuth = authAccess.read(authToken);
-
-        authAccess.close();
-        return foundAuth;
+        return authAccess.read(authToken);
     }
 
     // checks to make sure you entered in the correct authToken
@@ -24,14 +21,10 @@ public abstract class Service {
             // checks to see if the authToken is in the database
             var authAccess = new SqlAuthDAO();
             AuthData checkData = authAccess.read(authToken);
-            authAccess.close();
 
             // checks to see if the authToken is assigned to that user
             var userAccess = new SqlUserDAO();
-            User foundUser = userAccess.read(checkData.username());
-            userAccess.close();
-
-            return foundUser;
+            return userAccess.read(checkData.username());
 
         }catch(DataAccessException invalid){ // throws an unauthorized execption in case it can't find it
             throw new DataAccessException("ERROR:Invalid authToken",401);
@@ -49,7 +42,6 @@ public abstract class Service {
 
         // makes the data access object and commits
         authAccess.create(newAuth);
-        authAccess.commit();
 
         return newAuth;
     }
@@ -57,10 +49,8 @@ public abstract class Service {
     public Game getGame(int gameID) throws DataAccessException{
 
         var gameAccess = new SqlGameDAO(); //  this is where there the error happens always for some reason can't seem to find the game and fails the test
-        Game foundGame = gameAccess.read(gameID);
 
-        gameAccess.close();
-        return foundGame;
+        return gameAccess.read(gameID);
 
     }
 }

@@ -10,18 +10,9 @@ import java.util.ArrayList;
 
 public class SqlGameDAO implements GameDAO{
 
-    private Connection myConnection;
     private static final GsonConverterReq serializer = new GsonConverterReq();
 
     public SqlGameDAO() throws DataAccessException{
-        try{
-            myConnection = DatabaseConnection.connectToDb();
-            myConnection.setAutoCommit(false);
-
-        }catch(Exception dbConnection){ // catches errors in connections
-            DatabaseConnection.closeConnection(myConnection);
-            throw new DataAccessException("ERROR: Database connection lost",500);
-        }
     }
 
     public int create(Game newGame) throws DataAccessException{
@@ -34,9 +25,10 @@ public class SqlGameDAO implements GameDAO{
         strBuilder.append("VALUES(?,?,?,?,?,?);");
         String sqlCreate = strBuilder.toString();
 
-        try {
+        Connection connection = open();
 
-            var statement = myConnection.prepareStatement(sqlCreate, Statement.RETURN_GENERATED_KEYS);
+        try {
+            var statement = connection.prepareStatement(sqlCreate, Statement.RETURN_GENERATED_KEYS);
 
             // add on the parameters here
             statement.setString(1,newGame.getWhiteUsername());
@@ -51,15 +43,17 @@ public class SqlGameDAO implements GameDAO{
             var key = statement.getGeneratedKeys();
 
             if(key.first()) {
-                commit();
-                return key.getInt(1);
+
+                int myKey = key.getInt(1);
+                close(connection);
+                return myKey;
             }else{
-                DatabaseConnection.closeConnection(myConnection);
+                errClose(connection);
                 throw new DataAccessException("ERROR:Auto generation failed",500);
             }
 
         }catch(SQLException sqlErr){
-            DatabaseConnection.closeConnection(myConnection);
+            errClose(connection);
             throw new DataAccessException("ERROR: Database connection lost",500);
         }
     }
@@ -71,23 +65,29 @@ public class SqlGameDAO implements GameDAO{
         strBuilder.append("SELECT * FROM GameDAO WHERE gameId=?");
         String sqlRead = strBuilder.toString();
 
+        Connection connection = open();
+
         try{
             // grabs the connection and then tries the execute the program
-            var statement = myConnection.prepareStatement(sqlRead,ResultSet.TYPE_SCROLL_INSENSITIVE,
+            var statement = connection.prepareStatement(sqlRead,ResultSet.TYPE_SCROLL_INSENSITIVE,
                                                                     ResultSet.CONCUR_READ_ONLY);
             statement.setInt(1,gameId);
             ResultSet resultItems = statement.executeQuery();
 
             // if the statement returns true, then it finds all info about this object and returns a new one
             if(resultItems.first()){
-                return convertGame(resultItems);
+
+                var myGame = convertGame(resultItems);
+                close(connection);
+
+                return myGame;
             }else{
-                DatabaseConnection.closeConnection(myConnection);
+                errClose(connection);
                 throw new DataAccessException("ERROR:Bad Request",400);
             }
 
         }catch(SQLException error){ // this tackles more the case that the connection was bad
-            DatabaseConnection.closeConnection(myConnection);
+            errClose(connection);
             throw new DataAccessException("ERROR: Database connection lost",500);
         }
     }
@@ -95,18 +95,22 @@ public class SqlGameDAO implements GameDAO{
 
         Collection<Game> allGames = new ArrayList<>();
 
+        Connection connection = open();
+
         try {
-            var statement = myConnection.prepareStatement("SELECT * FROM GameDAO");
+
+            var statement = connection.prepareStatement("SELECT * FROM GameDAO");
             ResultSet resultItems = statement.executeQuery();
 
             while(resultItems.next()){
                 Game listGame = convertGame(resultItems);
                 allGames.add(listGame);
             }
+            close(connection);
             return allGames;
 
         }catch(SQLException error){
-            DatabaseConnection.closeConnection(myConnection);
+            errClose(connection);
             throw new DataAccessException("ERROR: Database connection lost",500);
         }
     }
@@ -126,18 +130,22 @@ public class SqlGameDAO implements GameDAO{
         strBuilder.append("WHERE gameId = ?");
         String sqlUpdate = strBuilder.toString();
 
+        Connection connection = open();
+
         try{
+
             // grabs the connection and then tries the execute the program
-            var statement = myConnection.prepareStatement(sqlUpdate);
+            var statement = connection.prepareStatement(sqlUpdate);
             statement.setString(1,username);
 
             statement.setBoolean(2,join);
 
             statement.setInt(3,gameId);
             statement.executeUpdate();
+            close(connection);
 
         }catch(SQLException sqlErr){ // this tackles more the case that the connection was bad
-            DatabaseConnection.closeConnection(myConnection);
+            errClose(connection);
             throw new DataAccessException("ERROR: Database connection lost",500);
         }
     }
@@ -155,39 +163,54 @@ public class SqlGameDAO implements GameDAO{
         strBuilder.append("WHERE gameId = ?");
         String sqlUpdate = strBuilder.toString();
 
+        Connection connection = open();
+
         try{
+
             // grabs the connection and then tries the execute the program
-            var statement = myConnection.prepareStatement(sqlUpdate);
+            var statement = connection.prepareStatement(sqlUpdate);
 
 
             statement.setString(1,strGame);
             statement.setInt(2,gameId);
             statement.executeUpdate();
+            close(connection);
 
         }catch(SQLException sqlErr){ // this tackles more the case that the connection was bad
-            DatabaseConnection.closeConnection(myConnection);
+            errClose(connection);
             throw new DataAccessException("ERROR: Database connection lost",500);
         }
     }
 
     public void deleteAll(){
         try {
-            var statement = myConnection.prepareStatement("TRUNCATE TABLE GameDAO");
+            Connection connection = open();
+            var statement = connection.prepareStatement("TRUNCATE TABLE GameDAO");
             statement.execute();
+            close(connection);
 
         } catch (Exception error){
-            System.err.println("error"); // what actually might be worth doing is making it so it calls the exception
-            // handler directly
+            System.err.println("error");
         }
     }
 
-    public void commit()throws DataAccessException{
-        DatabaseConnection.commit(myConnection);
+    private void close(Connection connection) throws DataAccessException {
+        DatabaseConnection.commit(connection);
+        DatabaseConnection.closeConnection(connection);
     }
 
-    // just simply closes the connection
-    public void close() throws DataAccessException{
-        DatabaseConnection.closeConnection(myConnection);
+    private void errClose(Connection connection)throws DataAccessException{
+        DatabaseConnection.closeConnection(connection);
+    }
+    private Connection open() throws DataAccessException{
+        try{
+            Connection connection = DatabaseConnection.connectToDb();
+            connection.setAutoCommit(false);
+            return connection;
+
+        }catch(DataAccessException | SQLException error){
+            throw new DataAccessException("ERROR: Database connection lost",500);
+        }
     }
 
     // converts a result set item into a Game

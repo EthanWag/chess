@@ -5,19 +5,8 @@ import java.sql.*;
 
 public class SqlUserDAO implements UserDAO{
 
-    private Connection myConnection;
-
     public SqlUserDAO() throws DataAccessException{
-        try{
 
-            myConnection = DatabaseConnection.connectToDb();
-            myConnection.setAutoCommit(false);
-
-        }catch(Exception dbConnection){ // unable to connect for some reason
-
-            DatabaseConnection.closeConnection(myConnection);
-            throw new DataAccessException("ERROR: Database connection lost",500);
-        }
     }
     public void create(User newUser) throws DataAccessException{
 
@@ -28,34 +17,33 @@ public class SqlUserDAO implements UserDAO{
 
         String sqlCreate = strBuilder.toString();
 
-        // then execute the command
+        Connection connection = open();
+
         try {
-            var statement = myConnection.prepareStatement(sqlCreate);
+            var statement = connection.prepareStatement(sqlCreate);
 
             // fills in parameters and executes the code
-            statement.setString(1,newUser.username());
-            statement.setString(2,newUser.password());
-            statement.setString(3,newUser.email());
-
+            statement.setString(1, newUser.username());
+            statement.setString(2, newUser.password());
+            statement.setString(3, newUser.email());
             statement.executeUpdate();
-
-            // FIXME: I am putting a commit here because it makes sence, when you create a object, you push it to
-            // FIXME: the database, however if you want to remove the functionality, here it is.
-            commit();
+            close(connection);
 
         }catch(SQLException sqlErr){
+
+            errClose(connection);
             // grabs the error code of the sqlException
             int statusCode = sqlErr.getErrorCode();
-
             if(statusCode == 1062){ // 1062 is the error code for already taken, handles accordingly
-                DatabaseConnection.closeConnection(myConnection);
                 throw new DataAccessException("ERROR: Username is Taken",403);
             }else{ // this is if the connection broke
-                DatabaseConnection.closeConnection(myConnection);
                 throw new DataAccessException("ERROR: Database connection lost",500);
             }
+        }catch(DataAccessException error){
+            throw new DataAccessException("ERROR: Unable to connect",500);
         }
     }
+
     public User read(String username) throws DataAccessException{
 
         // first builds the string we are going to send to the database
@@ -63,9 +51,11 @@ public class SqlUserDAO implements UserDAO{
         strBuilder.append("SELECT * FROM UserDAO WHERE username= ?");
         String sqlRead = strBuilder.toString();
 
+        Connection connection = open();
+
         try{
 
-            var statement = myConnection.prepareStatement(sqlRead,ResultSet.TYPE_SCROLL_INSENSITIVE,ResultSet.CONCUR_READ_ONLY);
+            var statement = connection.prepareStatement(sqlRead,ResultSet.TYPE_SCROLL_INSENSITIVE,ResultSet.CONCUR_READ_ONLY);
             statement.setString(1,username);
 
             ResultSet resultItems = statement.executeQuery();
@@ -77,34 +67,59 @@ public class SqlUserDAO implements UserDAO{
                 String foundPassword = resultItems.getString("password");
                 String foundEmail = resultItems.getString("email");
 
+                close(connection);
+
                 return new User(foundUsername,foundPassword,foundEmail);
 
             }else{
-                DatabaseConnection.closeConnection(myConnection);
-                throw new DataAccessException("ERROR: Game Not Found",401);
+                errClose(connection);
+                throw new DataAccessException("ERROR: Person not found",401);
             }
 
         }catch(SQLException sqlErr){
-            DatabaseConnection.closeConnection(myConnection);
+            errClose(connection); // just closes the connection when it is done
             throw new DataAccessException("ERROR: Database connection lost",500);
         }
     }
     public void deleteAll(){ // come here and add some code
         try {
-            var statement = myConnection.prepareStatement("TRUNCATE TABLE UserDAO");
+            Connection connection = open();
+            var statement = connection.prepareStatement("TRUNCATE TABLE UserDAO");
             statement.execute();
+            close(connection);
 
         } catch (Exception error){
-            System.err.println(error.getMessage()); // what actually might be worth doing is making it so it calls the exception
-            // handler directly
+            // FIXME: temp solution, make database connection pool to really solve some of these problems
+            System.err.println(error.getMessage());
         }
     }
 
-    public void close() throws DataAccessException {
-        DatabaseConnection.closeConnection(myConnection);
+    // For now we will handle database connections manually but in the future, be sure to implement a database connection pool
+    private void close(Connection connection) throws DataAccessException {
+        DatabaseConnection.commit(connection);
+        DatabaseConnection.closeConnection(connection);
     }
-    public void commit() throws DataAccessException {
-        DatabaseConnection.commit(myConnection);
+
+    private void errClose(Connection connection)throws DataAccessException{
+        DatabaseConnection.closeConnection(connection);
     }
+    private Connection open() throws DataAccessException{
+        try{
+            Connection connection = DatabaseConnection.connectToDb();
+            connection.setAutoCommit(false);
+            return connection;
+
+        }catch(DataAccessException | SQLException error){
+            throw new DataAccessException("ERROR: Database connection lost",500);
+        }
+    }
+
+    // come back to in the future to deal with concurrency
+    /*
+    private void commit(Connection connection) throws DataAccessException {
+        DatabaseConnection.commit(connection);
+    }
+    */
+
 
 }

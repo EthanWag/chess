@@ -33,7 +33,6 @@ public class JoinGameService extends Service{
 
                     var accessGame = new SqlGameDAO();
                     accessGame.updatePlayer(joinGame.getGameID(),username,true,"WHITE");
-                    accessGame.commit();
 
                 }else{
                     throw new DataAccessException("ERROR: User already taken",403);
@@ -46,7 +45,6 @@ public class JoinGameService extends Service{
 
                     var accessGame = new SqlGameDAO();
                     accessGame.updatePlayer(joinGame.getGameID(),username,true,"BLACK");
-                    accessGame.commit();
 
                 }else{
                     throw new DataAccessException("ERROR: User already taken",403);

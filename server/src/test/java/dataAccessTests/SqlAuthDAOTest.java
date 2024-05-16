@@ -18,11 +18,9 @@ class SqlAuthDAOTest {
 
             SqlUserDAO sqlSetup = new SqlUserDAO();
             sqlSetup.deleteAll();
-            sqlSetup.commit();
 
             SqlAuthDAO authSetup = new SqlAuthDAO();
             authSetup.deleteAll();
-            authSetup.commit();
 
         }catch(Exception error){
             fail("Error: Cannot set up");
@@ -37,13 +35,11 @@ class SqlAuthDAOTest {
             SqlUserDAO sqlSetup = new SqlUserDAO();
             sqlSetup.create(newUser1);
             sqlSetup.create(newUser2);
-            sqlSetup.commit();
 
             AuthData newData = new AuthData("testing-auth-token","Ethan");
 
             SqlAuthDAO authTest = new SqlAuthDAO();
             authTest.create(newData);
-            authTest.commit();
 
         }catch(Exception error){
             fail("Error: failure to set up");
@@ -60,7 +56,6 @@ class SqlAuthDAOTest {
 
             SqlAuthDAO authTest = new SqlAuthDAO();
             authTest.create(newAuth);
-            authTest.commit();
 
             System.out.println("creation successful");
             assertTrue(true);
@@ -78,7 +73,6 @@ class SqlAuthDAOTest {
 
             SqlAuthDAO authTest = new SqlAuthDAO();
             AuthData newData = authTest.read("testing-auth-token");
-            authTest.commit();
 
             assertEquals("Ethan", newData.username());
 
@@ -94,7 +88,6 @@ class SqlAuthDAOTest {
         try{
             SqlAuthDAO authTest = new SqlAuthDAO();
             AuthData newData = authTest.read("Baker49");
-            authTest.commit();
 
             fail("Error: Baker49 does not have a token and isn't a token");
 
@@ -110,7 +103,6 @@ class SqlAuthDAOTest {
         try{
             SqlAuthDAO authTest = new SqlAuthDAO();
             authTest.delete("testing-auth-token");
-            authTest.commit();
 
             System.out.println("successful delete");
             assertTrue(true);
@@ -126,7 +118,6 @@ class SqlAuthDAOTest {
         try{
             SqlAuthDAO authTest = new SqlAuthDAO();
             authTest.delete("made-up-token");
-            authTest.commit();
 
             fail("Error: should have failed, no auth");
 
@@ -145,7 +136,6 @@ class SqlAuthDAOTest {
 
             SqlAuthDAO authTest = new SqlAuthDAO();
             authTest.deleteAll();
-            authTest.commit();
 
             assertTrue(true);
         }catch(Exception error){

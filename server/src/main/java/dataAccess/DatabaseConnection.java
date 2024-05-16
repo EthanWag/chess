@@ -99,5 +99,4 @@ public class DatabaseConnection {
             throw new DataAccessException("ERROR: Unable to close", 501);
         }
     }
-
 }

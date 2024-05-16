@@ -46,15 +46,6 @@ public class RegisterHandler {
         }
     }
 
-    public void closeConnection() throws DataAccessException{
-
-        try {
-            service.closeConnection();
-        }catch(DataAccessException error){
-            throw new DataAccessException("ERROR: Could not close connection",500);
-        }
-    }
-
     // this is my private class and it can only be used by my RegisterHandler
     private static class Register {
         public String username,password,email;

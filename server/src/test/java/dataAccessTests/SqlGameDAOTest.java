@@ -23,7 +23,6 @@ class SqlGameDAOTest {
             // sets up database's for tests to use
             SqlGameDAO sqlSetup = new SqlGameDAO();
             sqlSetup.deleteAll();
-            sqlSetup.commit();
 
             // creates games for tests to use to use. Note should be index 1
             Game newGame1 = new Game(-1, "","","fun game",false,false);
@@ -47,7 +46,6 @@ class SqlGameDAOTest {
             // adds game to the database
             SqlGameDAO addTestGame = new SqlGameDAO();
             addTestGame.create(newGame1);
-            addTestGame.commit();
 
 
         }catch(Exception error){
@@ -66,7 +64,6 @@ class SqlGameDAOTest {
 
             SqlGameDAO sqlSetup = new SqlGameDAO();
             sqlSetup.create(testGame);
-            sqlSetup.commit();
 
             assertTrue(true);
 
@@ -85,7 +82,6 @@ class SqlGameDAOTest {
 
             SqlGameDAO sqlSetup = new SqlGameDAO();
             sqlSetup.create(testGame);
-            sqlSetup.commit();
 
             fail("Error: NULL value, should have rejected");
 
@@ -105,7 +101,6 @@ class SqlGameDAOTest {
         try {
             SqlGameDAO readTest = new SqlGameDAO();
             readGame = readTest.read(GAME_INDEX);
-            readTest.commit();
 
         }catch(Exception error){
             System.out.println(error.getMessage());
@@ -135,7 +130,6 @@ class SqlGameDAOTest {
 
             SqlGameDAO readTest = new SqlGameDAO();
             Game failGame = readTest.read(badIndex);
-            readTest.commit();
 
             fail("Error: There is no game at index 2");
 
@@ -173,7 +167,7 @@ class SqlGameDAOTest {
             SqlGameDAO sqlSetup = new SqlGameDAO();
             sqlSetup.create(testGame1);
             sqlSetup.create(testGame2);
-            sqlSetup.commit();
+
         }catch(Exception error){
             System.err.println(error.getMessage());
             System.err.println("Error: should have returned 200 for creation");
@@ -187,7 +181,7 @@ class SqlGameDAOTest {
         try {
             SqlGameDAO test = new SqlGameDAO();
             result = test.getAll();
-            test.commit();
+
         }catch(Exception error){
             System.err.println(error.getMessage());
             System.err.println("Error: invalid, should have received");
@@ -206,11 +200,9 @@ class SqlGameDAOTest {
 
             SqlGameDAO sqlDel = new SqlGameDAO();
             sqlDel.deleteAll();
-            sqlDel.commit();
 
             SqlGameDAO sqlSetup = new SqlGameDAO();
             Collection<Game> testGames = sqlSetup.getAll();
-            sqlSetup.commit();
 
             assertEquals(0, testGames.size());
 
@@ -218,6 +210,4 @@ class SqlGameDAOTest {
             fail("should have cleared");
         }
     }
-
-    // possibly need to add more cases
 }

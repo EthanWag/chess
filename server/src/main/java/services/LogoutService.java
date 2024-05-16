@@ -9,11 +9,7 @@ public class LogoutService extends Service{
     private final SqlAuthDAO authAccess;
 
     public LogoutService() throws DataAccessException{
-        try{
-            authAccess = new SqlAuthDAO();
-        }catch(DataAccessException error){
-            throw new DataAccessException("Error: Unable to connect to the database",500);
-        }
+        authAccess = new SqlAuthDAO();
     }
 
     // returns if it is successful

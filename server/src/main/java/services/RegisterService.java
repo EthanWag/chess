@@ -32,16 +32,6 @@ public class RegisterService extends Service{
         return new ResponseRegisterPackage(authorization.username(),authorization.authToken());
     }
 
-    // closes connection to database, should only be called when the server is being closed
-    public void closeConnection() throws DataAccessException{
-        try {
-            userAccess.close();
-        }catch(DataAccessException error){
-            throw new DataAccessException("Error: Unable to close connection to database",500);
-        }
-    }
-
-
     // Private methods for the program to use
     private AuthData createUser(String username, String password, String email)throws DataAccessException{
 

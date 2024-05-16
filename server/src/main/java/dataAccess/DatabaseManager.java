@@ -42,7 +42,7 @@ public class DatabaseManager {
                 preparedStatement.executeUpdate();
             }
         } catch (SQLException e) {
-            throw new DataAccessException(e.getMessage(),500); // possibly change these
+            throw new DataAccessException(e.getMessage(),500);
         }
     }
 

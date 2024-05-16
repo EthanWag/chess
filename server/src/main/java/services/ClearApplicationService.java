@@ -6,9 +6,28 @@ import dataAccess.SqlGameDAO;
 import dataAccess.SqlUserDAO;
 import server.WebSocketServer.WebSocketHandler;
 
+import static java.lang.System.exit;
+
 public class ClearApplicationService extends Service{
 
-    public ClearApplicationService() {}
+    SqlGameDAO gameAccess;
+    SqlAuthDAO authAccess;
+    SqlUserDAO userAccess;
+
+
+    public ClearApplicationService() {
+
+        try{
+            gameAccess = new SqlGameDAO();
+            authAccess = new SqlAuthDAO();
+            userAccess = new SqlUserDAO();
+
+        }catch(DataAccessException error){
+            System.err.println("Unsuccessful in clearing database");
+            exit(1);
+        }
+
+    }
 
     // service functions
 
@@ -18,21 +37,12 @@ public class ClearApplicationService extends Service{
 
     private void clearApplication() throws DataAccessException {
 
-        var gameAccess = new SqlGameDAO();
-        var authAccess = new SqlAuthDAO();
-        var userAccess = new SqlUserDAO();
-
         WebSocketHandler webSer = new WebSocketHandler();
 
         gameAccess.deleteAll();
         authAccess.deleteAll();
         userAccess.deleteAll();
         webSer.clearManager();
-
-        // commits all change
-        gameAccess.commit();
-        authAccess.commit();
-        userAccess.commit();
 
     }
 
