@@ -1,5 +1,6 @@
 package services;
 
+import chess.ChessGame;
 import dataAccess.DataAccessException;
 import dataAccess.SqlGameDAO;
 import models.Game;
@@ -8,10 +9,15 @@ import models.Game;
 
 public class WebSocketService extends Service{
 
+    private SqlGameDAO gameAccess;
 
-
-
-    public WebSocketService(){}
+    public WebSocketService()throws DataAccessException{
+        try{
+            gameAccess = new SqlGameDAO();
+        }catch(DataAccessException error){
+            throw new DataAccessException("ERROR: Unable to connect to database",500);
+        }
+    }
 
     public String getAuthUsername(String authToken) throws DataAccessException {
         var user = getAuthData(authToken);
@@ -20,8 +26,7 @@ public class WebSocketService extends Service{
 
     public void updateGame(int gameId, Game game)throws DataAccessException{
         try {
-            SqlGameDAO update = new SqlGameDAO();
-            update.updateGame(gameId, game.getGame());
+            gameAccess.updateGame(gameId, game.getGame());
         }catch(DataAccessException error){
             throw new DataAccessException("unable to update board",500);
         }
@@ -32,6 +37,16 @@ public class WebSocketService extends Service{
             return super.getGame(gameId);
         }catch(DataAccessException error){
             throw new DataAccessException("ERROR: game could not be found",404);
+        }
+    }
+
+    public void leaveGame(int gameId,ChessGame.TeamColor color)throws DataAccessException{
+        try {
+            if ((color == ChessGame.TeamColor.WHITE) || (color == ChessGame.TeamColor.BLACK)) {
+                gameAccess.updatePlayer(gameId,null,false,color);
+            }
+        }catch(DataAccessException error){
+            throw new DataAccessException("ERROR: Failure to leave game",500);
         }
     }
 }

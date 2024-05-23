@@ -11,6 +11,8 @@ import server.InvalidRequestException;
 
 import java.util.Scanner;
 
+import static java.lang.System.exit;
+
 public class HomeScreenUI extends ChessUI{
 
     private boolean runtimeUser = true;
@@ -77,7 +79,8 @@ public class HomeScreenUI extends ChessUI{
                         // this should be the id of the game we want to join, this will be important for tons if different things
                         int gameID = joinPackage.gameID();
                         boolean player;
-                        player = joinPackage.playerColor() != null;
+
+                        player = !joinPackage.playerColor().equalsIgnoreCase("watch");
 
                         GameScreenUI playChess = new GameScreenUI(authorization,null,
                                                 findColor(joinPackage.playerColor()),gameID,player);
@@ -155,11 +158,11 @@ public class HomeScreenUI extends ChessUI{
         System.out.print("Please enter team color: ");
         String teamColor = joinGameScanner.nextLine();
 
-        if (teamColor.equalsIgnoreCase("WATCH")) {
-            teamColor = null;
-        }else{
-            teamColor = teamColor.toUpperCase();
+        if (teamColor.equalsIgnoreCase("RESIGN")) {
+            exit(0);
         }
+
+        teamColor = teamColor.toUpperCase();
         return new RequestJoinPackage(teamColor,myGameId);
     }
 
@@ -253,5 +256,4 @@ public class HomeScreenUI extends ChessUI{
             return true;
         }
     }
-
 }

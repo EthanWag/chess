@@ -1,12 +1,23 @@
 package services;
 
+import chess.ChessGame;
 import dataAccess.DataAccessException;
 import dataAccess.SqlGameDAO;
 import models.*;
 
 public class JoinGameService extends Service{
 
-    public JoinGameService() {}
+    private final SqlGameDAO gameAccess;
+
+    public JoinGameService()throws DataAccessException{
+
+        try{
+            gameAccess = new SqlGameDAO();
+        }catch(DataAccessException error){
+            throw new DataAccessException("ERROR: Unable to connect to database",500);
+        }
+
+    }
 
     public void completeJob(String authToken, String clientColor, int gameId) throws DataAccessException{
 
@@ -23,17 +34,13 @@ public class JoinGameService extends Service{
 
     // Service functions
 
-    // TODO: Be sure to refine this, this function needs a rehaul!!
     private void addPlayer(Game joinGame, String username, String teamColor)throws DataAccessException{
 
         switch(teamColor){ //checks to see what team they entered
             case "WHITE":
                 if(!joinGame.isWhiteTaken()){ // if white is not taken
                     joinGame.joinWhiteSide(username);
-
-                    var accessGame = new SqlGameDAO();
-                    accessGame.updatePlayer(joinGame.getGameID(),username,true,"WHITE");
-
+                    gameAccess.updatePlayer(joinGame.getGameID(),username,true, ChessGame.TeamColor.WHITE);
                 }else{
                     throw new DataAccessException("ERROR: User already taken",403);
                 }
@@ -42,22 +49,17 @@ public class JoinGameService extends Service{
             case "BLACK":
                 if(!joinGame.isBlackTaken()){ // if black is not taken
                     joinGame.joinBlackSide(username);
-
-                    var accessGame = new SqlGameDAO();
-                    accessGame.updatePlayer(joinGame.getGameID(),username,true,"BLACK");
+                    gameAccess.updatePlayer(joinGame.getGameID(),username,true, ChessGame.TeamColor.BLACK);
 
                 }else{
                     throw new DataAccessException("ERROR: User already taken",403);
                 }
                 break;
 
-            case null:
-                break; // they just want to watch the game
-
+            case "WATCH":
+                break;
 
             default: // throws an error if they entered in a invalid team color
-
-                // right here you need to add functionality of watching a game
                 throw new DataAccessException("ERROR: Bad request",400);
         }
     }

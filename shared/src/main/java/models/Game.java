@@ -65,17 +65,6 @@ public class Game {
     }
 
 
-    public ChessGame.TeamColor getColor(String username)throws IOException{
-        if(whiteTaken && (whiteUsername.equals(username))){
-            return ChessGame.TeamColor.WHITE;
-        }else if(blackTaken && (blackUsername.equals(username))){
-            return ChessGame.TeamColor.BLACK;
-        }else{
-            throw new IOException("Not a player");
-        }
-    }
-
-
     // override equals and hashCode
     @Override
     public boolean equals(Object o) {
@@ -103,5 +92,16 @@ public class Game {
         blackUsername = username;
         blackTaken = true;
     }
+
+    public void leaveWhiteSide(){
+        whiteUsername = null;
+        whiteTaken = false;
+    }
+
+    public void leaveBlackSide(){
+        blackUsername = null;
+        blackTaken = false;
+    }
+
 
 }

@@ -67,7 +67,7 @@ public class GameScreenUI extends ChessUI{
                 case "hints":
                     hints();
                     break;
-                case "quit":
+                case "leave":
                     server.leave(authorization,gameId);
                     runtimeUser = false;
                     break;

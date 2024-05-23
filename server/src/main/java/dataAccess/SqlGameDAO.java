@@ -115,16 +115,18 @@ public class SqlGameDAO implements GameDAO{
         }
     }
 
-    public void updatePlayer(int gameId,String username,boolean join, String color) throws DataAccessException{
+    public void updatePlayer(int gameId,String username,boolean join, ChessGame.TeamColor color) throws DataAccessException{
 
         // first builds the string we are going to send to the database
         StringBuilder strBuilder = new StringBuilder();
         strBuilder.append("UPDATE GameDAO ");
 
-        if(color.equals("WHITE")){
+        if(color == ChessGame.TeamColor.WHITE){
             strBuilder.append("SET whiteUsername = ?, whiteTaken = ? ");
-        }else{
+        }else if(color == ChessGame.TeamColor.BLACK){
             strBuilder.append("SET blackUsername = ?, blackTaken = ? ");
+        }else{
+            throw new DataAccessException("ERROR: Not a Color",400);
         }
 
         strBuilder.append("WHERE gameId = ?");
@@ -237,3 +239,16 @@ public class SqlGameDAO implements GameDAO{
         return foundGame;
     }
 }
+
+
+/* TODO:
+*
+* So when you are working on concurrency, make sure to come back and work on making a proper connection manager.
+* The one you currently have works because it opens and closes connections very quickly. that works for small applications
+* but in the real world you will want something more professional. Having a connection manager will be beneficial as
+* as it will handle a log of the back end spesfics you might not want to deal with. In short it's cleaner and will work better
+* with concurrency
+*
+* That being said it's going to need to have a complete re-design of the backend of this project so make sure you do this later
+*
+ */

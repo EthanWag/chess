@@ -5,21 +5,16 @@ import dataAccess.DataAccessException;
 import models.Game;
 import services.WebSocketService;
 
-import org.eclipse.jetty.websocket.api.annotations.*;
-import org.eclipse.jetty.websocket.api.*;
-
-import webSocketMessages.ServerMessages.*;
-import webSocketMessages.ServerMessages.Error;
-import webSocketMessages.ServerMessages.ServerMessage;
-
 import webSocketMessages.userCommands.*;
 import webSocketMessages.userCommands.UserGameCommand;
 import webSocketMessages.userCommands.UserGameCommand.CommandType;
 import ConvertToGson.GsonConverter;
 import com.google.gson.JsonSyntaxException;
 
-import java.io.IOException;
-import java.util.HashMap;
+import org.eclipse.jetty.websocket.api.annotations.*;
+import org.eclipse.jetty.websocket.api.*;
+
+import static java.lang.System.exit;
 
 @WebSocket
 public class WebSocketHandler {
@@ -27,12 +22,22 @@ public class WebSocketHandler {
     // so the way this datastructures works is that in this map, you have a list of maps, each element representing one game
     // currently being played. the Id is the key and the map inside is the user and their authToken plus their session
 
-    private final WebSocketService webSer = new WebSocketService();
-    private static HashMap<Integer,ConnectionManager> connections = new HashMap<>();
+    private WebSocketService webSer;
+
+    private final static ConnectionHandler manager = new ConnectionHandler();
+
     private final GsonConverter serializer = new GsonConverter();
 
-    public WebSocketHandler(){}
+    public WebSocketHandler()throws DataAccessException{
+        try{
+            webSer = new WebSocketService();
+        }catch(DataAccessException error){
+            throw new DataAccessException("ERROR: unable to connect to database",500);
+        }
+    }
 
+
+    // This seems fine, keeps this the same
     @OnWebSocketMessage
     public void onMessage(Session session, String message){
 
@@ -67,9 +72,9 @@ public class WebSocketHandler {
             }
 
         }catch(JsonSyntaxException error) {
-            sendError(session, "ERROR: Bad request", 400);
+            manager.sendError(session, "ERROR: Bad request", 400);
         }catch(DataAccessException InvalidAuth){
-            sendError(session,"ERROR: Unauthorized",404);
+            manager.sendError(session,"ERROR: Unauthorized",404);
         }
     }
 
@@ -80,72 +85,48 @@ public class WebSocketHandler {
         JoinPlayerMessage userCmd = (JoinPlayerMessage)output;
 
         int gameId = userCmd.getGameID();
-        ChessGame.TeamColor color = userCmd.getPlayerColor();
+        ChessGame.TeamColor myColor = userCmd.getPlayerColor();
 
-        // this double checks to make sure you are getting the correct game and that it even exists
-        Game myGame;
         try{
-            myGame = findDBGame(gameId);
+
+            Game myGame = findDBGame(gameId);
+            manager.joinGame(session,myGame,gameId,username,myColor);
+            manager.sendUpdate(session,myGame);
+
         }catch(DataAccessException error){
-            sendError(session,"ERROR: Invalid game ID", 404);
-            return;
+            switch(error.getErrorCode()){
+                case 500 -> manager.sendError(session,"ERROR: Failure to connect",500);
+                case 404 -> manager.sendError(session,"ERROR: Not found",404);
+                case 400 -> manager.sendError(session,error.getMessage(),400);
+                default -> manager.sendError(session,"ERROR: unknown error",502);
+            }
         }
-        // we can be 100% sure that after this line, that the game exists
-
-        // now we want to see if they correctly can and are able to join the game
-        if(!validGameConnect(myGame,username,color)){
-            sendError(session, "ERROR: Bad request", 400);
-            return;
-        }
-
-        // connects to server and if there are any problems, it then sends an error
-        if(!connectToSession(session,gameId,username)){
-            sendError(session, "ERROR: Bad request", 400);
-            return;
-        }
-
-        String strGame = serializer.objToJson(myGame);
-
-        // sends message to everyone saying that they have joined the game
-        ServerMessage serverMessage = new LoadGameMessage(strGame);
-        sendMessage(session, serverMessage);
-
-        // broadcasts message to everyone playing the game
-        sendGameBroadcast(username + " has joined the game",gameId,username,true,false);
 
     }
 
     // lets a player watch a game if they so wish
     private void observeGame(Session session, String message, String username){
 
+        // de-serialize the message into a language the join game function can understand
         var output = serializer.jsonToObj(message,JoinObserverMessage.class);
-        JoinObserverMessage userCmd = (JoinObserverMessage) output;
+        JoinObserverMessage userCmd = (JoinObserverMessage)output;
 
         int gameId = userCmd.getGameID();
 
-        // checks to see if the game even exists and that it can be joined
-        Game myGame;
         try{
-            myGame = findDBGame(gameId);
+
+            Game myGame = findDBGame(gameId);
+            manager.joinGame(session,myGame,gameId,username, ChessGame.TeamColor.WATCH);
+            manager.sendUpdate(session,myGame);
+
         }catch(DataAccessException error){
-            sendError(session,"ERROR: Invalid game ID", 404);
-            return;
+            switch(error.getErrorCode()){
+                case 500 -> manager.sendError(session,"ERROR: Failure to connect",500);
+                case 404 -> manager.sendError(session,"ERROR: Game Not Found",404);
+                case 400 -> manager.sendError(session,error.getMessage(),400);
+                default -> manager.sendError(session,"ERROR: unknown error",502);
+            }
         }
-
-        // connects to server and if there are any problems, it then sends an error
-        if(!connectToSession(session,gameId,username)){
-            sendError(session, "ERROR: Bad request", 400);
-            return;
-        }
-
-        String strGame = serializer.objToJson(myGame);
-
-        // sends a message to the client as well as all those in playing the game
-        ServerMessage serverMessage = new LoadGameMessage(strGame);
-        sendMessage(session, serverMessage);
-
-        // sends everyone a message that in the game
-        sendGameBroadcast(username + " is now observing the game",gameId,username,true,false);
     }
 
     private void makeMove(Session session, String message, String username){
@@ -157,77 +138,23 @@ public class WebSocketHandler {
         ChessMove userMove = userCmd.getMove();
 
         // checks to see if the game exists
-        Game myGame;
         try{
-            myGame = findDBGame(gameId);
-        }catch(DataAccessException error){
-            sendError(session,"ERROR: Invalid game ID", 404);
-            return;
-        }
+            Game myGame = findDBGame(gameId);
 
-        // right here we need to make it so
-        ChessGame.TeamColor color;
-        try{
-            color = myGame.getColor(username);
-        }catch(Exception error){
-            sendError(session,"ERROR: Bad color", 400);
-            return;
-        }
+            MoveValidator.validMove(username,myGame,userMove);
 
-        // checks to make sure that you can the game hasn't ended
-        if(myGame.getGame().getTeamTurn() == ChessGame.TeamColor.RESIGN){
-            sendError(session,"Error: Game already ended", 400);
-            return;
-        }
-
-        /*
-        // checks to see if anyone is in checkmate
-        if(myGame.getGame().isInCheckmate(ChessGame.TeamColor.WHITE) || myGame.getGame().isInCheckmate(ChessGame.TeamColor.BLACK)){
-            sendError(session,"Error: Game already ended", 400);
-            return;
-        }
-         */
-
-        // makes the move and updates the board
-        try {
-            makeValidMove(myGame, userMove,color);
             webSer.updateGame(gameId,myGame);
 
-            String strGame = serializer.objToJson(myGame);
+            manager.sendUpdateBroadcast(gameId,myGame,false,"");
+            manager.sendNotificationBroadcast(gameId,(username + " moved!"), true,username);
 
-            sendGameBroadcast(strGame,gameId,"",false,true);
-            sendGameBroadcast(username + " Moved!",gameId,username,true,false);
-
-        }catch(InvalidMoveException error){
-
-            if(myGame.getGame().isInCheckmate(ChessGame.TeamColor.WHITE)){
-                sendError(session,"White is in checkmate",400);
-                return;
-            }
-            if(myGame.getGame().isInCheckmate(ChessGame.TeamColor.BLACK)){
-                sendError(session,"Black is in checkmate",400);
-                return;
-            }
-            if(myGame.getGame().isInStalemate(ChessGame.TeamColor.WHITE)){
-                sendError(session,"White is in stalemate",400);
-                return;
-            }
-            if(myGame.getGame().isInStalemate(ChessGame.TeamColor.BLACK)){
-                sendError(session,"White is in stalemate",400);
-                return;
-            }
-            if(myGame.getGame().isInCheck(ChessGame.TeamColor.WHITE)){
-                sendError(session,"White is in check",400);
-                return;
-            }
-            if(myGame.getGame().isInCheck(ChessGame.TeamColor.BLACK)){
-                sendError(session,"White is in check",400);
-                return;
-            }
-
-            sendError(session,error.getMessage(), 500);
         }catch(DataAccessException error){
-            sendError(session,"Unable to update board", 500);
+
+            switch(error.getErrorCode()){ // other cases below, this includes a poor move made by the user
+                case 404 -> manager.sendError(session,"ERROR: Game Not Found", 404);
+                case 400 -> manager.sendError(session,"ERROR: Bad Move Made",400);
+                case 500 -> manager.sendError(session,"ERROR: Unable to update board",500);
+            }
         }
     }
 
@@ -238,138 +165,60 @@ public class WebSocketHandler {
 
         int gameId = userMessage.getGameID();
 
-        // first makes sure that they can resign
         try{
-            var game = findDBGame(gameId);
-            game.getColor(username); // this just checks to make sure they are even a user
 
-            if(game.getGame().getTeamTurn() == ChessGame.TeamColor.RESIGN){
-                sendError(session,"Error: game already ended", 400);
+            Game game = findDBGame(gameId); // gets game object
+            ChessGame playerGame = game.getGame(); // gets the actual chess game
+
+            // checks to see if they are a player in the game
+            if(!isPlayer(game,username)){
+                manager.sendError(session,"ERROR: Not a player", 400);
                 return;
             }
 
-            // ends the game and then lets everyone know that they lost
-            game.getGame().endGame();
+            // checks to see if the game is already resigned
+            if(playerGame.getTeamTurn() == ChessGame.TeamColor.RESIGN){
+                manager.sendError(session, "ERROR: Game already resigned",400);
+                return;
+            }
 
-            WebSocketService webSer = new WebSocketService();
+            playerGame.endGame();
             webSer.updateGame(gameId,game);
+            manager.sendNotificationBroadcast(gameId,(username + " has lost the game!!"),false,"");
 
-            sendGameBroadcast(username + " has lost the game!!", gameId,"",false,false);
 
         }catch(DataAccessException error){
-            sendError(session,"Error: gameID not in database",404);
-        }catch(IOException error){
-            sendError(session,"Error: Not a player",400);
+            switch(error.getErrorCode()){
+                case 404 -> manager.sendError(session,"ERROR: Game not found",404);
+                case 500 -> manager.sendError(session, "ERROR: unable to update board",500);
+            }
         }
 
     }
 
     private void leave(Session session, String message, String username) {
 
-        // gets info the the function to use
         var output = serializer.jsonToObj(message,LeaveMessage.class);
         LeaveMessage userMessage = (LeaveMessage)output;
 
         int gameId = userMessage.getGameID();
 
+        try{
+            Game game = findDBGame(gameId);
+            ChessGame.TeamColor color = getColor(game,username);
 
-        // actually lets the user leave the game
-        sendGameBroadcast((username + "has left the game"),gameId,username,true,false);
-        leaveSession(gameId, username);
-        session.close();
-        allLeft(gameId);
-    }
+            manager.leaveGame(username,gameId,game,color);
+            session.close();
 
+            // finally updates the database to reflect someone leaving
+            webSer.leaveGame(gameId,color);
 
-    // sending messages back to the client
-    private void sendMessage(Session session, ServerMessage message){
-
-        String output = serializer.objToJson(message);
-
-        try {
-            session.getRemote().sendString(output);
-        }catch(IOException error){
-            return;
-        }
-    }
-
-    private boolean connectToSession(Session session,int gameId,String username){
-
-        // if this condition is true, we know that this is the first person to join this game
-        // so we make then a connection manager
-        if(!connections.containsKey(gameId)){
-            connections.put(gameId,new ConnectionManager()); // now we make then a new connection manager
-        }
-
-        ConnectionManager gameManager = connections.get(gameId);
-
-        try {
-            gameManager.safeConnect(session,username);
-        }catch(IOException error){
-            return false;
-        }
-        return true;
-    }
-
-    private void leaveSession(int gameId, String username){
-        if(!connections.containsKey(gameId)){
-            return;
-        }
-
-        var gameManager = connections.get(gameId);
-        gameManager.removeSession(username);
-    }
-
-    private void sendGameBroadcast(String message, int gameId,String exclusiveUser, boolean isExclusive, boolean isUpdate){
-        var gameManager = connections.get(gameId);
-        gameManager.broadcast(message,exclusiveUser,isExclusive,isUpdate);
-    }
-
-    private boolean validGameConnect(Game game, String username,ChessGame.TeamColor playerColor){
-        return switch (playerColor) {
-            case ChessGame.TeamColor.WHITE -> game.isWhiteTaken() && game.getWhiteUsername().equals(username);
-            case ChessGame.TeamColor.BLACK -> game.isBlackTaken() && game.getBlackUsername().equals(username);
-            default -> false;
-        };
-    }
-
-    private void sendError(Session session, String strMessage,int code){
-        ServerMessage message = new Error(strMessage,code);
-        sendMessage(session,message);
-    }
-
-    // helper functions for the handler
-    private void allLeft(int gameId){
-        if(connections.containsKey(gameId)){
-            var gameManager = connections.get(gameId);
-
-            if(gameManager.isEmpty()){
-                connections.remove(gameId);
+        }catch(DataAccessException error){
+            switch(error.getErrorCode()){
+                case 400 -> manager.sendError(session, "ERROR: Player not currently in game",400);
+                case 404 -> manager.sendError(session, "ERROR: Game Not Found",404);
+                case 500 -> manager.sendError(session, "ERROR: Server Game could not be updated",500);
             }
-        }
-    }
-
-    private void makeValidMove(Game game, ChessMove move, ChessGame.TeamColor color)throws InvalidMoveException{
-
-        ChessGame chessGame = game.getGame();
-
-        // first checks to see if your making the correct move when you start
-        if(chessGame.getTeamTurn() != color){
-            throw new InvalidMoveException("Not player turn");
-        }
-
-        if(chessGame.isInCheckmate(color)){
-            throw new InvalidMoveException("Player in Checkmate");
-        }
-
-        var startPosition = move.getStartPosition();
-        var possibleMoves = chessGame.validMoves(startPosition);
-
-        if(possibleMoves.contains(move)){
-            chessGame.makeMove(move);
-
-        }else{
-            throw new InvalidMoveException("unable to make move");
         }
     }
 
@@ -382,8 +231,29 @@ public class WebSocketHandler {
         }
     }
 
+    private static boolean isPlayer(Game game,String username){
+        if(game.isWhiteTaken() && (game.getWhiteUsername().equals(username))){
+            return true;
+        }else{
+            return game.isBlackTaken() && (game.getBlackUsername().equals(username));
+        }
+    }
+
+    // simple function that tells you if you white, black or watching. NOT SAVE
+    private static ChessGame.TeamColor getColor(Game game, String username){
+        if(isPlayer(game, username)){
+            if((game.getWhiteUsername() != null) && game.getWhiteUsername().equals(username)){
+                return ChessGame.TeamColor.WHITE;
+            }else{
+                return ChessGame.TeamColor.BLACK;
+            }
+        }else{
+            return ChessGame.TeamColor.WATCH;
+        }
+    }
+
     public void clearManager(){
-        connections.clear();
+        manager.clear();
     }
 
 

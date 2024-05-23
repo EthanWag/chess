@@ -5,7 +5,7 @@ import com.google.gson.JsonSyntaxException;
 import models.Game;
 import ui.GameScreenUI;
 import webSocketMessages.ServerMessages.*;
-import webSocketMessages.ServerMessages.Error;
+import webSocketMessages.ServerMessages.ErrorMessage;
 import webSocketMessages.ServerMessages.ServerMessage;
 
 public class ServerMessageHandler {
@@ -40,8 +40,8 @@ public class ServerMessageHandler {
 
     private void handleError(String message){
 
-        var objMessage = serializer.jsonToObj(message, Error.class);
-        Error err = (Error)objMessage;
+        var objMessage = serializer.jsonToObj(message, ErrorMessage.class);
+        ErrorMessage err = (ErrorMessage)objMessage;
 
         String errMessage = err.getErrorMessage();
 

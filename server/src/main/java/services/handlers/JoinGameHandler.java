@@ -3,16 +3,26 @@ package services.handlers;
 import com.google.gson.JsonSyntaxException;
 import dataAccess.DataAccessException;
 import services.JoinGameService;
+import services.ListGamesService;
 import spark.Request;
 import spark.Response;
 
-public class JoinGameHandler {
+public class JoinGameHandler{
 
-    private static JoinGameService service = new JoinGameService();
-    private static GsonConverterReq gsonConverter = new GsonConverterReq();
-    private static ExceptionHandler exceptionHandler = new ExceptionHandler();
+    private static JoinGameService service;
+    private static GsonConverterReq gsonConverter;
+    private static ExceptionHandler exceptionHandler;
 
-    public JoinGameHandler(){}
+    public JoinGameHandler() throws DataAccessException{
+        gsonConverter = new GsonConverterReq();
+        exceptionHandler = new ExceptionHandler();
+
+        try{
+            service = new JoinGameService();
+        }catch(DataAccessException error){
+            throw new DataAccessException("ERROR: Cannot connect to the database",500);
+        }
+    }
 
     public String joinGameHandler(Request request,Response response){
         try {

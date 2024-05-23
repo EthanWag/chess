@@ -39,13 +39,4 @@ public class ListGamesService extends Service{
             throw new DataAccessException("ERROR: Database Connection lost",500);
         }
     }
-
-    // TODO: make sure to get rid of this
-    public static class GamesPackage {
-        public Collection<Game> games;
-        public GamesPackage(Collection<Game> games){
-            this.games = games;
-        }
-    }
-
 }

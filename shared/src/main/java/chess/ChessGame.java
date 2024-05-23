@@ -51,7 +51,8 @@ public class ChessGame {
     public enum TeamColor {
         WHITE,
         BLACK,
-        RESIGN
+        RESIGN,
+        WATCH
     }
 
     /**
@@ -81,9 +82,12 @@ public class ChessGame {
      */
     public void makeMove(ChessMove move) throws InvalidMoveException {
 
+        /*
         if(myTeam == TeamColor.RESIGN){
             throw new InvalidMoveException("ERROR: Game already ended");
         }
+         */
+
 
         // get the start position, the piece and the valid moves
         ChessPosition start = move.getStartPosition();

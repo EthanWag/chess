@@ -39,7 +39,6 @@ public class CreateGameService extends Service{
         String black = null;
         String white = null;
 
-        // TODO: go over this code again, what is it asking me todo?
         // creates game and adds it to the database
         Game newGame = new Game(-1,white,black,gameName,false,false);
 

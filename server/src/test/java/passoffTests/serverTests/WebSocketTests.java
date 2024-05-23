@@ -66,7 +66,7 @@ public class WebSocketTests {
 
         joinGame(gameID, white, ChessGame.TeamColor.WHITE);
         joinGame(gameID, black, ChessGame.TeamColor.BLACK);
-        joinGame(gameID, observer, null);
+        joinGame(gameID, observer, ChessGame.TeamColor.WATCH); // code inserted by me to match the programming. this used to be null
     }
 
     @AfterEach
@@ -485,7 +485,7 @@ public class WebSocketTests {
 
         joinGame(otherGameID, white2, ChessGame.TeamColor.WHITE);
         joinGame(otherGameID, black2, ChessGame.TeamColor.BLACK);
-        joinGame(otherGameID, observer2, null);
+        joinGame(otherGameID, observer2, ChessGame.TeamColor.WATCH); // code inserted by me, this used to be null
 
         setupNormalGame();
 
