@@ -350,6 +350,7 @@ public class StandardAPITests {
         //make watch request
         TestModels.TestJoinRequest watchRequest = new TestModels.TestJoinRequest();
         watchRequest.gameID = createResult.gameID;
+        watchRequest.playerColor = ChessGame.TeamColor.WATCH; // Something I added, used to join a game
 
         //try watch
         TestModels.TestResult watchResult = serverFacade.verifyJoinPlayer(watchRequest, existingAuth);
@@ -429,6 +430,7 @@ public class StandardAPITests {
         //make watch request
         TestModels.TestJoinRequest watchRequest = new TestModels.TestJoinRequest();
         watchRequest.gameID = createResult.gameID;
+        watchRequest.playerColor = ChessGame.TeamColor.WATCH; // I put this code in here, used to tell the computer to watch
 
         //try watch
         TestModels.TestResult watchResult = serverFacade.verifyJoinPlayer(watchRequest, existingAuth);

@@ -82,12 +82,10 @@ public class ChessGame {
      */
     public void makeMove(ChessMove move) throws InvalidMoveException {
 
-        /*
+        // just to check to see if the game has already ended
         if(myTeam == TeamColor.RESIGN){
             throw new InvalidMoveException("ERROR: Game already ended");
         }
-         */
-
 
         // get the start position, the piece and the valid moves
         ChessPosition start = move.getStartPosition();
@@ -109,9 +107,16 @@ public class ChessGame {
             throw new InvalidMoveException("Invalid Move");
         }
 
-        // makes the actual move on the board
-        myBoard.addPiece(move.getEndPosition(),movePiece);
-        myBoard.fillEmptySpot(move.getStartPosition());
+        // special moves are done in this in the first two if statements, other cases go to default
+
+        if(move.getPromotionPiece() == ChessPiece.PieceType.CASTLE){
+
+            moveCastle(move,movePiece);
+
+        }else {
+            // makes the actual move on the board
+            myBoard.moveOnBoard(move,movePiece);
+        }
 
         // finally promotes the pawn if applicable
         if(movePiece.getPieceType() == ChessPiece.PieceType.PAWN){
@@ -200,7 +205,6 @@ public class ChessGame {
     }
 
     private void promotePawn(ChessPiece pawn, ChessPosition pawnPos, ChessPiece.PieceType promotion){
-
         if(myTeam == TeamColor.WHITE){ // white case
             // 8 is just the row that white pawns have to get to in order to be promoted
            if(pawnPos.getRow() == 8){
@@ -211,6 +215,19 @@ public class ChessGame {
                 pawn.setPieceType(promotion);
             }
         }
+    }
+
+    private void moveCastle(ChessMove move,ChessPiece piece){
+
+        myBoard.moveOnBoard(move,piece);
+
+        // we can assume the rook is there because it passed all the tests
+        ChessPosition rookStartPos = new ChessPosition(move.getStartPosition().getRow(),8);
+        ChessPiece rook = myBoard.getPiece(rookStartPos);
+        ChessPosition rookEndPos = new ChessPosition(move.getStartPosition().getRow(),6);
+
+        ChessMove rookMove = new ChessMove(rookStartPos,rookEndPos,null);
+        myBoard.moveOnBoard(rookMove,rook);
 
     }
 

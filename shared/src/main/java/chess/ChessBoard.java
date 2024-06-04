@@ -34,6 +34,18 @@ public class ChessBoard {
         board[row][col] = piece;
     }
 
+    public void moveOnBoard(ChessMove move, ChessPiece piece){
+
+        piece.setFirstMove(false);
+
+        ChessPosition start = move.getStartPosition();
+        ChessPosition end = move.getEndPosition();
+
+        addPiece(end,piece);
+        fillEmptySpot(start);
+
+    }
+
     /**
      * Gets a chess piece on the chessboard
      *

@@ -40,7 +40,8 @@ public class ChessPiece {
         BISHOP,
         KNIGHT,
         ROOK,
-        PAWN
+        PAWN,
+        CASTLE
     }
 
     /**
@@ -65,6 +66,10 @@ public class ChessPiece {
         return firstMove;
     }
 
+    public void setFirstMove(boolean firstMove){
+        this.firstMove = firstMove;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -87,35 +92,14 @@ public class ChessPiece {
      */
     public Collection<ChessMove> pieceMoves(ChessBoard board, ChessPosition myPosition) {
 
-        ArrayList<ChessMove> possibleMoves;
-
-
-        switch(myType){
-
-            case QUEEN:
-                possibleMoves = CalculatorQueen.findMoves(board,myColor,myPosition);
-                break;
-            case KING:
-                possibleMoves = CalculatorKing.findMoves(board,myColor,myPosition);
-                break;
-            case ROOK:
-                possibleMoves = CalculatorRook.findMoves(board,myColor,myPosition);
-                break;
-            case BISHOP:
-                possibleMoves = CalculatorBishop.findMoves(board,myColor,myPosition);
-                break;
-            case KNIGHT:
-                possibleMoves = CalculatorKnight.findMoves(board,myColor,myPosition);
-                break;
-            case PAWN:
-                possibleMoves = CalculatorPawn.findMoves(board,myColor,myPosition,this);
-                break;
-            default:
-                possibleMoves = new ArrayList<>();
-                break;
-        }
-
-        firstMove = false;
-        return possibleMoves;
+        return switch (myType) {
+            case QUEEN -> CalculatorQueen.findMoves(board, myColor, myPosition);
+            case KING -> CalculatorKing.findMoves(board, myColor, myPosition);
+            case ROOK -> CalculatorRook.findMoves(board, myColor, myPosition);
+            case BISHOP -> CalculatorBishop.findMoves(board, myColor, myPosition);
+            case KNIGHT -> CalculatorKnight.findMoves(board, myColor, myPosition);
+            case PAWN -> CalculatorPawn.findMoves(board, myColor, myPosition, this);
+            default -> new ArrayList<>();
+        };
     }
 }
