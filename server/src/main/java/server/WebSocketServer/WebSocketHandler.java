@@ -14,8 +14,6 @@ import com.google.gson.JsonSyntaxException;
 import org.eclipse.jetty.websocket.api.annotations.*;
 import org.eclipse.jetty.websocket.api.*;
 
-import static java.lang.System.exit;
-
 @WebSocket
 public class WebSocketHandler {
 
