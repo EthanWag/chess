@@ -28,6 +28,7 @@ public class ListGamesService extends Service{
         }
 
         Collection<Game> allGames = getAllGames();
+
         return new ResponseListPackage(allGames);
     }
 

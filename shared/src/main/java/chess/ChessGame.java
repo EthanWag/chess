@@ -230,5 +230,4 @@ public class ChessGame {
         myBoard.moveOnBoard(rookMove,rook);
 
     }
-
 }

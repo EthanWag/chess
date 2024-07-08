@@ -1,35 +1,26 @@
 import {send} from "./send.js";
 
 // this is just the list of games that could be used
-const gamesMap = new Map();
+let gamesList = [];
 let joinButtonListener = null;
 renderTable();
 
 document.addEventListener('DOMContentLoaded',(event) =>{
     
     const logout = document.getElementById('logoutPic');
-    const search = document.getElementById('searchPic');
-
     logout.addEventListener('click',() => {
+
         const authToken = sessionStorage.getItem('authToken');
         submitLogout(authToken);
+
     });
-
-    search.addEventListener('click',() => {
-
-        const search = document.getElementById('searchInput').value;
-        let map = searchMap(search);
-
-        if(map){
-            renderTable(map);
-        }
-    });
-
 });
 
 document.getElementById('create').addEventListener('click', event => {
     event.preventDefault();
+
     document.getElementById('createPop').style.display = 'block';
+
 });
 
 document.getElementById('submitGame').addEventListener('click', event => {
@@ -61,12 +52,14 @@ function submitJoin(authToken,joinInfo){ // we are going to need to also get a p
     send(endpoint,request,method,authToken)
     .then(response => {
 
-        // takes you to the game screen
-        window.location.href = 'game.html';
+        console.log('successful');
+        console.log(response);
+        // this would take you to the next page
 
     })
     .catch(error => {
 
+        console.log('unsuccessful join');
         console.log(error);
     });
 }
@@ -90,7 +83,7 @@ function submitCreate(authToken,gameName){
     })
     .catch((error) => {
         console.log(error);
-        //errorPage();
+        errorPage();
     });
 }
 
@@ -109,8 +102,7 @@ function submitLogout(authToken){
 
     })
     .catch(error => {
-        console.log(error);
-        //errorPage();
+        errorPage();
     });
 }
 
@@ -124,8 +116,7 @@ async function submitList(authToken){
         let response = await send(endpoint, undefined, method, authToken);
         return response;
     }catch(error){
-        console.log(error);
-        //errorPage();
+        errorPage();
     }
 }
 
@@ -138,7 +129,7 @@ function errorPage(){
 
 function displayGame(gameId){
 
-    let game = gamesMap.get(gameId);
+    let game = findGame(gameId);
 
     // if there is nothing there
     if(game == undefined){
@@ -165,64 +156,27 @@ function displayGame(gameId){
     }
 }
 
-function searchMap(value){
-    const searchMap = new Map();
-
-    if(/^\s*$/.test(value)){ // is the value just whitespace
-        return false;
-    }
-
-    if(/^\d+$/.test(value)){ // search for an ID
-        for(let [id,game] of gamesMap){
-            if(id.toString().includes(value)){
-                searchMap.set(id,game);
-            }
-        }
-    }else{ // search for a string
-        for(let [id,game] of gamesMap){
-            if(game.gameName.includes(value)){
-                searchMap.set(id,game);
-            }
-        }
-    }
-    return searchMap;
-}
-
-async function renderTable(Map){
+async function renderTable(){
     let authToken = sessionStorage.getItem('authToken');
     
     return new Promise(async(resolve,reject) =>{
-        let displayMap;
+
             try{
 
-                let list = await submitList(authToken);
-                renderMap(list); // should fill the map
-
-                if(Map){
-                    displayMap = Map;
-                }else{
-                    displayMap = gamesMap;
-                }
+                gamesList = await submitList(authToken);
 
                 const tableBody = document.getElementById('tableBody');
                 tableBody.innerHTML = '';
-
-                let counter = 0;
         
-                // the first couple games of a given map
-                for(let [id,game] of displayMap){
-
-                    if(counter > 7){
-                        break; // breaks the loop if there are too many games
-                    }
+                for(let element of gamesList.games){
             
                     const row = document.createElement('tr');
                     row.innerHTML = `
             
-                        <td data-label="Game Name">${game.gameName}</td>
-                        <td data-label="Game ID">${id}</td>
+                        <td data-label="Game Name">${element.gameName}</td>
+                        <td data-label="Game ID">${element.gameID}</td>
                         <td data-label=" ">
-                            <button class="joinButton" id="button-${id}">
+                            <button class="joinButton" id="button-${element.gameID}">
                                 <img src="pictures/goto.png" style="height:20px">
                             </button>
                         </td>
@@ -231,14 +185,13 @@ async function renderTable(Map){
                     tableBody.appendChild(row);
 
                     // adds event handlers for all of those buttons
-                    document.getElementById(`button-${id}`).addEventListener('click',async(event) =>{
-                        displayGame(id);
-                        selectJoin(id)
+                    document.getElementById(`button-${element.gameID}`).addEventListener('click',async(event) =>{
+                        displayGame(element.gameID);
+                        selectJoin(element.gameID)
                         .then(response =>{
-                            optionsJoin(authToken,id,!game.whiteTaken,!game.blackTaken,true);
+                            optionsJoin(authToken,element.gameID,!element.whiteTaken,!element.blackTaken,true);
                         });
                     });
-                    counter++;
                 }
             resolve();
         }catch(error){
@@ -264,7 +217,7 @@ async function selectJoin(gameId){
 
 async function optionsJoin(authToken,gameID,isWhite,isBlack,isObserve){
 
-    let game = gamesMap.get(gameID);
+    let game = findGame(gameID);
     
     if(game == undefined){ // just ends if it can't find the game
         console.error('ERROR: Unable to idenfity game');
@@ -331,17 +284,11 @@ function getColor(isWhite,isBlack,isObserve){
     })
 }
 
-function renderMap(list){
-
-    for(let game of list.games){
-        // basic logic
-        if(gamesMap.has(game.gameID)){
-            continue; //skip ones you already have done
-        }else{
-            gamesMap.set(game.gameID,game);
+function findGame(gameID){
+    for(let game of gamesList.games){ 
+        if(game.gameID == gameID){
+            return game;
         }
-
-        // add some code here that will clear finished games
-
     }
+    return undefined;
 }

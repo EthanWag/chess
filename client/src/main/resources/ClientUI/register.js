@@ -1,6 +1,5 @@
 import {send} from './send.js';
 
-
 document.getElementById('newUserH1').addEventListener('click', event => {        
     event.preventDefault();
 

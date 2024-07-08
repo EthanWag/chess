@@ -26,7 +26,6 @@ public class JoinGameHandler{
 
     public String joinGameHandler(Request request,Response response){
         try {
-
             // finds the authorization token and puts it into the completeJob function
             String authToken = request.headers("authorization");
 
